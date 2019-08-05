@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome file</title>
   <link rel="stylesheet" href="https://stackedit.io/style.css" />
 </head>
 
@@ -11,6 +12,17 @@
   <div class="stackedit__left">
     <div class="stackedit__toc">
       
+<ul>
+<li><a href="#instructors-and-helpers-for-the-bioinformatics-training-workshop-pag2020">Instructors and helpers for the Bioinformatics Training Workshop @PAG2020</a>
+<ul>
+<li><a href="#instructors">Instructors</a></li>
+<li><a href="#helpers">Helpers</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
   <div class="stackedit__right">
     <div class="stackedit__html">
       <h1 id="instructors-and-helpers-for-the-bioinformatics-training-workshop-pag2020">Instructors and helpers for the Bioinformatics Training Workshop @PAG2020</h1>
@@ -18,7 +30,7 @@
 <p><strong>Peter Harrison: <a href="mailto:peter@ebi.ac.uk">peter@ebi.ac.uk</a></strong><br>
 <strong>Data Coordination and Presentation Coordinator - Cochrane team: Data Coordination and Archiving</strong><br>
 <strong>European Bioinformatics Institute</strong><br>
-<strong>Section: Submission, retrieval and management of Next Generation Sequencing (NGS) data and meta data</strong> </p><div><img src="https://lh3.googleusercontent.com/WPjj1Z2wOx2KbNwfK5DubX4VYERRIzysg2Agqk1UD2oBjbh-BknqQIUWMTFdKK270oNpY39mC-g" alt="enter image description here"> </div><br>
+<strong>Section: Submission, retrieval and management of Next Generation Sequencing (NGS) data and metadata</strong> </p><div><img src="https://lh3.googleusercontent.com/WPjj1Z2wOx2KbNwfK5DubX4VYERRIzysg2Agqk1UD2oBjbh-BknqQIUWMTFdKK270oNpY39mC-g" alt="enter image description here"> </div><br>
 Peter leads a team of bioinformaticians, data coordination engineers and software engineers to deliver data coordination and presentation solutions for scientific data resources and data coordination services. His team is part of the larger Data Coordination and Archiving team that sits within the Molecular Archive Cluster at the EMBL-European Bioinformatics Institute. The team is responsible for the technology to present the European Nucleotide Archive (<a href="https://www.ebi.ac.uk/ena">https://www.ebi.ac.uk/ena</a>) to the world and to deliver data coordination and presentation services to collaborative high-throughput ‘omics projects. They also develop and maintain a range of interactive project data portals including the Human Induced Pluripotent Stem Cell Initiative (HipSci;  <a href="http://www.hipsci.org/">www.hipsci.org</a>), the Functional Annotation of Animal Genomes project (FAANG;  <a href="http://data.faang.org/">http://data.faang.org/</a>) and the surveillance identification and investigation pathogens portal (<a href="https://www.ebi.ac.uk/ena/pathogens/">https://www.ebi.ac.uk/ena/pathogens/</a>).<p></p>
 <p>Peter joined EMBL-EBI in 2015, having previously worked as a postdoc at University College London and University of Oxford on the transcriptomics and evolution of sexual selection in birds. Peter obtained his PhD from the University of York, where he investigated bacterial secondary replicons through comparative genomics. He previously obtained an MRes in Bioinformatics from University of York and an MA in Biological Sciences from University of Oxford.<br>
 <br></p>
