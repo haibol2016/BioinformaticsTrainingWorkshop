@@ -78,7 +78,7 @@ Peter leads a team of bioinformaticians, data coordination engineers and softwar
 <a href="https://animalscience.ucdavis.edu/sites/g/files/dgvnsk446/files/inline-files/kern_colin_cv.pdf">Full CV</a><p></p>
 
     </div>
-  </div>
+
 </body>
 
 </html>
