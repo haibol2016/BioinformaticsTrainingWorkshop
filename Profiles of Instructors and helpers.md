@@ -11,10 +11,6 @@
   <div class="stackedit__left">
     <div class="stackedit__toc">
       
-<ul>
-<li><a href="#instructors-and-helpers-for-the-bioinformatics-training-workshop-pag2020">Instructors and helpers for the Bioinformatics Training Workshop @PAG2020</a>
-</li>
-</ul>
   <div class="stackedit__right">
     <div class="stackedit__html">
       <h1 id="instructors-and-helpers-for-the-bioinformatics-training-workshop-pag2020">Instructors and helpers for the Bioinformatics Training Workshop @PAG2020</h1>
