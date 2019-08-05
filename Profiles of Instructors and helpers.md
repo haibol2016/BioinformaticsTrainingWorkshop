@@ -4,7 +4,6 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workshop volunteers</title>
   <link rel="stylesheet" href="https://stackedit.io/style.css" />
 </head>
 
@@ -14,10 +13,6 @@
       
 <ul>
 <li><a href="#instructors-and-helpers-for-the-bioinformatics-training-workshop-pag2020">Instructors and helpers for the Bioinformatics Training Workshop @PAG2020</a>
-<ul>
-<li><a href="#instructors">Instructors</a></li>
-<li><a href="#helpers">Helpers</a></li>
-</ul>
 </li>
 </ul>
   <div class="stackedit__right">
