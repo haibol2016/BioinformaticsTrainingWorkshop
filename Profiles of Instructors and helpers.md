@@ -77,8 +77,6 @@ Peter leads a team of bioinformaticians, data coordination engineers and softwar
 <strong>Helper: UNIX command line and ChIP-seq</strong></p><div><img src="https://lh3.googleusercontent.com/l_wU8RGC5Vx6SqfR84z3fkfuzM7WL7LR4i8bawTvaCihKJzURLFKU8IXEvhoY6Wy7809NrAYoxA" alt="enter image description here"></div><br>
 <a href="https://animalscience.ucdavis.edu/sites/g/files/dgvnsk446/files/inline-files/kern_colin_cv.pdf">Full CV</a><p></p>
 
-    </div>
-
 </body>
 
 </html>
