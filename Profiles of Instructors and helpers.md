@@ -4,11 +4,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instructors and Helpers for BTW @ PAG2020</title>
   <link rel="stylesheet" href="https://stackedit.io/style.css" />
 </head>
 
 <body class="stackedit">
   <div class="stackedit__left">
+    <div class="stackedit__toc">
+      
+<ul>
+<li><a href="#instructors-and-helpers-for-the-bioinformatics-training-workshop-pag2020">Instructors and helpers for the Bioinformatics Training Workshop @PAG2020</a>
+<ul>
+<li><a href="#instructors">Instructors</a></li>
+<li><a href="#helpers">Helpers</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </div>
   <div class="stackedit__right">
     <div class="stackedit__html">
       <h1 id="instructors-and-helpers-for-the-bioinformatics-training-workshop-pag2020">Instructors and helpers for the Bioinformatics Training Workshop @PAG2020</h1>
@@ -45,29 +59,28 @@ Peter leads a team of bioinformaticians, data coordination engineers and softwar
 </p>
 <hr>
 <p><strong>Rafet AI-Tobasei: <a href="mailto:ratobasei@gmail.com">ratobasei@gmail.com</a></strong><br>
-<strong>Postdoctoral Fellow</strong><br>
-<strong>University of Alabama at Birmingham</strong><br>
+<strong>Assistant Professor</strong><br>
+<strong>Middle Tennessee State University</strong><br>
 <strong>Section: Introduction to ChIP-seq and its data analysis</strong></p><div><img src="https://lh3.googleusercontent.com/97LdRNnOygzK199QQjozMQo5Jj4DhLnTRnpsRLe3TCd2MxApbfACq8QDvrRR46Zv76aN8z9N-E0" alt="enter image description here"></div><br>
 <a href="https://www.linkedin.com/in/rafet-al-tobasei-bb924040/">LinkedIn Profile</a><br>
 <a href="https://www.soph.uab.edu/sites/edu.ssg/files/People/RTobasei/Rafet_Al-Tobasei_Resume.pdf">Full CV</a><p></p>
 <h2 id="helpers">Helpers</h2>
 <p><strong>Alexey Sokolov: <a href="mailto:alexey@ebi.ac.uk">alexey@ebi.ac.uk</a></strong><br>
 <strong>Bioinformatician - Cochrane team: Data Coordination and Archiving</strong><br>
-<strong>European Bioinformatics Institute</strong><br>
-<strong>Helper: ???</strong></p><div><img src="https://lh3.googleusercontent.com/k2ZDIO6wodhXUDkf60utpdonkOhyxck4vc39oEOcspm-DgTlF2mDO1RnUgbgxYROhhpxgarMPyQ" alt="enter image description here"></div><p></p>
+<strong>European Bioinformatics Institute</strong></p><div><img src="https://lh3.googleusercontent.com/k2ZDIO6wodhXUDkf60utpdonkOhyxck4vc39oEOcspm-DgTlF2mDO1RnUgbgxYROhhpxgarMPyQ" alt="enter image description here"></div><p></p>
 
 <p><a href="https://drive.google.com/file/d/1gBWfw82-_e-L5iMMO7j0bQFGPUlU368c/view?usp=sharing">Full CV</a></p>
 <br>
 <hr>
 <p><strong>Triant Deborah: <a href="mailto:triantd@missouri.edu">triantd@missouri.edu</a></strong><br>
 <strong>Research Scientist</strong><br>
-<strong>University of Missouri</strong><br>
-<br></p>
+<strong>University of Missouri</strong></p><div><img src="https://lh3.googleusercontent.com/BIbu972bB5AAzpZRKRo0o3AK9O_H6h2Coqj5RyTlC75SbWduLI66V2QBzFXb0OnMi8oBeuUJu1o" alt="enter image description here"></div><p></p>
+
+<br>
 <hr>
 <p><strong>Sichong Peng: <a href="mailto:scpeng@ucdavis.edu">scpeng@ucdavis.edu</a></strong><br>
 <strong>PhD student</strong><br>
-<strong>University of California at Davis</strong><br>
-<strong>Helper: ???</strong></p><div><img src="https://lh3.googleusercontent.com/W31shBACfzMYH3h4JXgfJfw8_VmMk1EEp1bG_N1DjxVthGAyKqvrCJH0SqzKiCeigsdDqaSJxzM" alt="enter image description here"></div><br>
+<strong>University of California at Davis</strong></p><div><img src="https://lh3.googleusercontent.com/W31shBACfzMYH3h4JXgfJfw8_VmMk1EEp1bG_N1DjxVthGAyKqvrCJH0SqzKiCeigsdDqaSJxzM" alt="enter image description here"></div><br>
 <a href="https://www.linkedin.com/in/sichong-peng/">LinkedIn Profile</a><br>
 <br><p></p>
 <hr>
@@ -77,6 +90,8 @@ Peter leads a team of bioinformaticians, data coordination engineers and softwar
 <strong>Helper: UNIX command line and ChIP-seq</strong></p><div><img src="https://lh3.googleusercontent.com/l_wU8RGC5Vx6SqfR84z3fkfuzM7WL7LR4i8bawTvaCihKJzURLFKU8IXEvhoY6Wy7809NrAYoxA" alt="enter image description here"></div><br>
 <a href="https://animalscience.ucdavis.edu/sites/g/files/dgvnsk446/files/inline-files/kern_colin_cv.pdf">Full CV</a><p></p>
 
+    </div>
+  </div>
 </body>
 
 </html>
