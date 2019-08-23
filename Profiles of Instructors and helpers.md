@@ -18,7 +18,7 @@ Peter leads a team of bioinformaticians, data coordination engineers and softwar
 <p><a href="https://www.linkedin.com/in/haibo-liu-a4559b69/">LinkedIn Profile</a><br>
 <br></p>
 <hr>
-<p><strong>Bickhart Derek: <a href="mailto:derek.bickhart@usda.gov">derek.bickhart@usda.gov</a></strong><br>
+<p><strong>Derek Bickhart: <a href="mailto:derek.bickhart@usda.gov">derek.bickhart@usda.gov</a></strong><br>
 <strong>Research Geneticist</strong><br>
 <strong>USDA-ARS</strong><br>
 <strong>Sections: Introduction to and advanced UNIX Command Line</strong></p><div><br>
@@ -47,7 +47,7 @@ Peter leads a team of bioinformaticians, data coordination engineers and softwar
 <p><a href="https://drive.google.com/file/d/1gBWfw82-_e-L5iMMO7j0bQFGPUlU368c/view?usp=sharing">Full CV</a></p>
 <br>
 <hr>
-<p><strong>Triant Deborah: <a href="mailto:triantd@missouri.edu">triantd@missouri.edu</a></strong><br>
+<p><strong>Deborah Triant: <a href="mailto:triantd@missouri.edu">triantd@missouri.edu</a></strong><br>
 <strong>Research Scientist</strong><br>
 <strong>University of Missouri</strong></p><div><img src="https://lh3.googleusercontent.com/BIbu972bB5AAzpZRKRo0o3AK9O_H6h2Coqj5RyTlC75SbWduLI66V2QBzFXb0OnMi8oBeuUJu1o" alt="enter image description here"></div><p></p>
 
