@@ -124,7 +124,7 @@
 * FAANG data and metadata submission
 * Querying and downloading legacy NGS data from ENA SRA databases
 ***
-## **APPENDIX: Resources for preparing yourself to meet the perquisites**
+## **APPENDIX: Resources for preparing yourself to meet the prerequisites**
 
 ### Resources for learning basics of UNIX (you can pick one of them you like most)
 
