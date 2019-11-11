@@ -131,12 +131,14 @@
 * UNIX Tutorial for Beginners: [http://www.ee.surrey.ac.uk/Teaching/Unix/](http://www.ee.surrey.ac.uk/Teaching/Unix/)
 * Learning UNIX through exercises: [https://www.doc.ic.ac.uk/~wjk/UnixIntro/](https://www.doc.ic.ac.uk/~wjk/UnixIntro/)
 * Learn Shell Programming - Free Interactive Shell Programming Tutorial: [https://www.learnshell.org/](https://www.learnshell.org/)
+* Free Linux shell access is available here: [https://bellard.org/jslinux/](https://bellard.org/jslinux/) or [https://linuxzoo.net/](https://linuxzoo.net/)
 
 ### **Resources for learning R basics (you can pick one you like most)**
 
 * Lear R, in R: [https://swirlstats.com/](https://swirlstats.com/)
 * Quick R: [https://www.statmethods.net/r-tutorial/index.html](https://www.statmethods.net/r-tutorial/index.html)
 * Introduction to R (DataCamp free course, providing interactive programming): [https://www.datacamp.com/courses/free-introduction-to-r](https://www.datacamp.com/courses/free-introduction-to-r)
+* Free RStudion cloud for practice: [https://rstudio.cloud/](https://rstudio.cloud/)
 
 #### Install R and RStudio
 Please follow this link to install R and RStudio before workshop: [https://www.datacamp.com/community/tutorials/installing-R-windows-mac-ubuntu](https://www.datacamp.com/community/tutorials/installing-R-windows-mac-ubuntu)
