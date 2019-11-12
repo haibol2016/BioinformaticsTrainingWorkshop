@@ -29,7 +29,7 @@
 * R package management
 * Different modes of running R scripts (interactive and batch)
 ***
-## **Day 2: Jan 9, 2020 (8:00 AM -5:30 PM)**
+## **Day 2: Jan 9, 2020 (8:00 AM -6:30 PM)**
 
 8:00-8:15 registration and welcome
 
