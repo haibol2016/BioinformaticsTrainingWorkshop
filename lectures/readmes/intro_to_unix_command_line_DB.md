@@ -71,8 +71,79 @@ Note the "/" (forward slash) delimiters in the directory **path**, these slashes
 ```bash
 ls /	# You'll get a bunch of folders like /home, /bin, /usr
 ```
-
 Theoretically, you can trace a path from the root directory to any file in the system, even very long ones!
+
+The ls command is very flexible and can be used to search all folders in your relative location in the file system.
+
+```bash
+ls      # This prints the files in the current directory
+ls ./   # This produces the same thing as the ls command immediately above it!
+ls ../  # This prints the directory immediately above the present one
+```
+
+In order to get different views of the files in your directories, we're going to have to talk about adding special options to "ls" and other commands.
 
 #### Anatomy of a command
 
+Unix has a pretty straightforward "grammar" for commands (aka: **syntax**). You can think of each "sentence" of a Unix command being as follows:
+
+```bash
+(the command) (argument1) (argument2) ... (argumentN)
+```
+
+You may have noticed that I have these parenthetical notations called **arguments** above. Please note that I'm not talking about "spirited discussions between two people" but extra values that you can pass to commands. These are split into two different categories:
+
+1. **Options**: Arguments that take a value
+2. **Flags**: An argument that does not take a value (ie. like a switch it is either "on" or "off")
+
+The "ls" command has several arguments, many of which are very, very useful! Here's a short list of some of the many useful "ls" arguments and what they do:
+
+| Argument | Type  | Description  |
+|:---------|:------|:------------ |
+|-a        | Flag  | Shows hidden files|
+|-l        | Flag  | Displays files in list format |
+|--format=long| Option | The same as "-l" |
+|-t        | Flag  | Sorts files by time of creation |
+|-h -a -l  | Flag  | A Combination of -a and -l, but make the file sizes human-readable |
+|-hal      | Flag  | The same as the previous command! Just shorter! (I'm sorry Dave, I'm afraid I can't do that) |
+
+#### Getting the help you need
+
+Now, the novice reader is likely to be somewhat bewildered at this point. "How are we supposed to memorize this stuff," you may ask? Well, you don't have to! The Unix command line comes with some built-in help functions. In order to get the help menus for built-in Unix commands, you can usually just type in the **man** command (short for manual; not the male Homo sapien):
+
+```bash
+man ls		# You can navigate the man page using the arrow keys on your keyboard!
+			  # the "q" key exits the man page
+```
+
+Most commands are installed with a man page (the output of the man command), even the man command itself!
+
+```bash
+man man 	# avoid the urge to sing the theme song to "Two and a Half Men"
+```
+
+Even if your command doesn't have a man page, you can usually get a usage or help statement by doing one of the following tricks:
+
+* Run the command without arguments
+* Run the command with -h
+* Run the command with --help
+* Post a hashtag of the command on twitter (#ls)
+
+#### Final lessons on orientation
+
+Now that you're getting the help you need (poor thing), let's finish up this section by talking about moving around in Unix folders and getting your bearings. We already talked about "pwd" to get your current directory and "ls" for listing file contents, but how do you actually go to a different folder? How do you even MAKE a new folder? What IS a folder? Let's ignore that last question and move ahead by talking about the **cd** (**c**hange **d**irectory) command:
+
+```bash
+cd folder				# changes your current directory to the folder
+cd /path/to/folder		# Just like the the above, but links to the full path
+cd ..					# Changes your current directory to the folder directly above this one 
+cd .					# Changes your current directory to... the current directory! 
+```
+
+That last command illustrates an interesting point: Unix has some short cut **aliases** (or synonyms) for common directories that you may use. Here are the common shortcuts that you will use frequently to maneuver around the command line:
+
+| Shortcut | Description |
+|:---------|:------------|
+|**.**		   |The same folder. Useful when you need to run a script or command that is present in your current directory! |
+|**..**	       |The previous folder. Very helpful to go back a step! |
+|**~**	   |Your home folder |
