@@ -147,3 +147,29 @@ That last command illustrates an interesting point: Unix has some short cut **al
 |**.**		   |The same folder. Useful when you need to run a script or command that is present in your current directory! |
 |**..**	       |The previous folder. Very helpful to go back a step! |
 |**~**	   |Your home folder |
+
+Please note that Unix is **case-sensitive!** Unix is also sensitive to spaces, so please be careful when naming your folders! This is the reason why you are likely to see more underscores ("_") in file and folder names while working with Unix. 
+
+Finally, I have a tip to share that will stop you from developing carpal tunnel, improve your relationships and make you lots of money: use the [TAB] key! Unix allows you to auto-complete entries using [TAB] so long as you match enough characters in a file. Here's an example:
+
+```bash
+# You run an ls in the following directory and here are the files:
+ls
+	directory	file1	file2
+
+# To change to the directory, you can use tab completion! Type the following:
+cd dir[TAB]
+# Unix will automatically fill the word to read:
+cd directory/
+# Handy, huh? That saved you 1 calorie!
+```
+
+## Assessing and viewing text files
+
+In this section, we will talk about several common Unix commands that can help you view text files. If you remember from my rant above, Unix treats everything as a file. There are three distinct files on Unix systems that you need to concern yourself with at this point:
+
+1. Directories
+2. Binary files (you can't read these with text editors easily!)
+3. Text files
+
+The later type of file is 
