@@ -202,7 +202,7 @@ cat i_am_printed_first.txt i_am_printed_second.txt i_am_printed_last.txt
 
 #### NOTE: Stopping any long-running process on the terminal:
 ---
-Important note, if you accidentally "cat" a very long file, you could be staring a text scrolling by the screen for quite a while! Unlike in the Matrix, you won't be able to pick out people's haircolor from the scrolling text, so you'll be twiddling your thumbs for no good reason! If you get in this scenario, Unix gives you a special command to escape: **[control]-C**.
+Important note, if you accidentally "cat" a very long file, you could be staring a text scrolling by the screen for quite a while! Unlike in the movie, "the Matrix," you won't be able to pick out people's haircolor from the scrolling text, so you'll be twiddling your thumbs for no good reason! If you get in this scenario, Unix gives you a special command to escape: **[control]-C**.
 
 Just hold down the [control] key and press the "c" key (it does not need to be capital case!). That will terminate the running task on your current terminal session. 
 
@@ -235,7 +235,7 @@ nano wannabe_secret_accounts.tab
 
 To save your text, hold [control] and hit the "w" key. Nano will ask you if you want to save the file as the same name, to which you press "enter" to confirm. To exit the Nano editor, hold [control] and hit the "x" key. All of these commands are actually written for you at the bottom of the text editor window! How handy! The commands above are listed as "^W" and "^X", respectively, with the "^" being a proxy for the control key!
 
-We've covered allot of ground with the text editting functions, so here's a handy table to keep them all straight:
+We've covered allot of ground with the text editing functions, so here's a handy table to keep them all straight:
 
 #### Common text viewing options on Unix
 
@@ -250,5 +250,218 @@ We've covered allot of ground with the text editting functions, so here's a hand
 
 ## File permissions and tasks
 
+Ever want to dig up dirt on your colleagues and see exactly what secret projects they're working on? It's ok to admit it, we're all a bit nosy at times. Unfortunately, Unix offers a way for your archrivals to cover their tracks by limiting access to files and folders! Let's take a look at file permissions and standards by using our favorite tool, "ls", with the '-hal' flags:
 
-## Miscellaneous commands
+```bash
+# ls, -h = human readable, -a = all files (including hidden), -l = in list format (shows file permissions)
+ls -hal
+total 178G
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly 680K Nov 25 14:20 slurm-1355758.out
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:18 slurm-1347452.out
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:12 slurm-1347448.out
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:11 slurm-1347447.out
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  319 Nov 25 14:10 slurm-1347444.out
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:10 slurm-1347446.out
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:04 slurm-1347438.out
+drwxrwsr-x. 20 derek.bickharhth proj-rumen_longread_metagenome_assembly  776 Nov 25 13:41 .
+# 1.		2.		3.				4.									5.		6.			7.
+```
+
+See the last comment line in the command above for the numbers to the columns below:
+
+1. The file permissions! These are listed in groups of four as noted below:
+	1. The first character (1) is whether or not it is a directory "d"
+	2. The next three characters (2-4) are for read (r) write (w) and execute (x) access by the owner
+	3. The following three (5-7) are for "r", "w" and "x" access by the group (see major #4 below)
+	4. The last three (8-10) are for "r", "w" and "x" access by everyone.
+2. The number of directories inside this directory (1 if its just a file)
+3. The owner of the file (It happens to be me in this case!)
+4. The group that can access this file (see the permissions for group access!)
+5. The file size in human readable format (ls -h)
+6. The date of the last file modification
+7. The name of the file
+
+If we take one example file from above, we can determine quite a bit about its properties:
+
+```bash
+-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly 680K Nov 25 14:20 slurm-1355758.out
+```
+
+This file can be read by everyone (3 "r's") but can only be overwritten by the file owner (ME!!) or the file's group (proj-rumen_longread_metagenome_assembly). This file cannot be executed by anyone (no "x's") and it takes up 680 kilobytes of space on the drive. Finally, the file was last overwritten on 11/25 at 2:20. 
+
+Now, the major confusing part about this whole situation may be the concept of a **group**. What is a group, how do you join one and are all the cool kids doing it? In order to see the groups that you currently are a member of, you type the **groups** command:
+
+```bash
+# for your own gruops
+groups
+
+# To check on jane.doe's groups. Don't be jealous if someone is in more groups than you!
+groups jane.doe
+```
+
+Typically your system administrator adds you to a bunch of groups once your login is created. If you have administrator access, you can add yourself (or other users) to groups later.
+
+Groups are a simple way to regulate access to specific files. If your group needs to be able to read and write to specific files, you can add both types of access only to them! Similarly, you can remove read access from everyone else (the last three permissions), preventing anyone else from seeing your sinister plans! Muwahaha!
+
+But how do you actually modify the permissions for files? With **chmod**, of course! There are many ways to use chmod, but I will try to cover the most important ones here.
+
+```bash
+# Change a file to be executable for you (the most frequent use of chmod for your purposes!)
+chmod +x file
+
+# Remove the file's executable properties
+chmod -x file
+
+# Now, change read and write permissions for a file, respectively
+chmod +r file
+chmod +w file
+
+# There is a more complex way to set permissions for "user", "group" and "others"
+chmod u=rwx,g=rw,o=r file
+
+# There is an even more complex way to set permissions using even less characters! This is called octal notation
+chmod 754 file
+```
+
+Just to be exhaustive, the octal notation is in a set of three, corresponding to "user", "group" and "others" specifications (just like above!) and the notation is a simple addition exercise using a set of three integers:
+
+| Value  | Setting |
+| :----- | :-----  |
+| 4      | Read    |
+| 2      | Write   |
+| 1      | Execute |
+
+So, 4 + 2 + 1 = 7, which is all three, whereas 4 + 1 = 5 which is read and execute only. Make sense? And you didn't believe your grade school math teacher who said that you'd use addition in adult life! 
+
+#### Executing commands
+
+In order to run a file as an executable command, it must have the "execution" permission (+x, or u=x or 1, as above) set with chmod. Here's how the whole process would go if you needed to do this:
+
+```bash
+# Make the file executable
+chmod +x a_perl_script.pl
+
+# run the file. Note the "./" to indicate that the file is found in your current directory!
+./a_perl_script.pl
+```
+
+Let's say that this is a long-running file and you need to go home for nap-time. There's a way for you to suspend the job and run it in the background! In order to do this, you type: **[control]-z**. This will suspend your job:
+
+```bash
+# this unix sleep command rests for 5 hours!
+sleep 5h
+
+# Now we zap it to suspend it!
+#[control]-z
+	^Z
+	[1]+  Stopped                 sleep 5h
+
+# Now, to run it in the background with bg!
+bg 1
+	[1]+ sleep 5h &
+
+# If you wanted to bring the job back to the foreground, use fg instead:
+fg 1
+
+# Finally, if you want a job to run in the background and you couldn't be bothered to suspend it with [control]-z, then use the ampersand like this:
+sleep 5h &
+
+# note that it looks exactly the same as the output from the "bg" command above!
+```
+
+Our job will sleep happily in the background. To see it running, use the **top** command. Top runs a refreshing screen of tasks that takes up your whole terminal window. To exit, you can use [control]-C just like with any other runaway job to exit. You'll see job **PID** (**P**rocess **ID**) numbers on the side of top, and these are important for interacting with jobs! To kill a job PID, you need to use the **kill** command. You terminator, you!
+
+```bash
+# Note: this was probably a bad example, because the sleep command doesn't use any cpus, so top doesn't display it properly!
+# You'll only see tasks that use up cpu time, but I cheated and found the job by sorting the job list for this example
+top
+12566 dbickha+  20   0  113648    692    620 S   0.0  0.0   0:00.00 sleep
+
+# And to euthanize my sleep command:
+kill 12566
+
+# Alternatively, you could use the "%1" shortcut to kill the last running process like this as well:
+kill %1
+```
+
+## Miscellaneous commands and resource management
+
+I want to close off the lesson by giving you a few more commands that are frequently used in Unix sessions. These commands will be very useful to find out how much space you have and to store files.
+
+#### Careful with these! File management
+
+First, I would be remiss to not talk about file copying, movement and deleting! These are managed by the **cp** (copy), **mv** (move), and **rm** (remove) commands, respectively. You should ALWAYS make double sure what you're doing with these, because they will NOT prompt you to ask if you're, "really sure," you want to use them! 
+
+All three of these commands can and will overwrite files, so double check the destinations if possible! Unix ain't playing around!
+
+Still, it's useful to know how to move files, copy them and delete them to save space. You can use each as follows:
+
+```bash
+# Copy file A to location B, keep the same name, but overwrite any file named "fileA" at the destination
+cp fileA /path/to/location/ 
+# Copy file A and rename as file2:
+cp fileA /path/to/location/file2
+
+# Move file A to location B and overwrite any file named "fileA" at the destination
+mv fileA /path/to/location/
+# Rename file A to file2 in the same directory (a handy use of "mv")
+mv fileA file2
+
+# Delete file A
+rm fileA
+# Delete a folder with multiple files
+rm -r folderA/
+```
+
+Again, use caution when using these files! Many a grad student has lost everything to a careless use of one of these commands!
+
+#### Space management
+
+Usually, you will be using a server with a storage quota. To make sure that you're not eating up too much of the hard disk space, you can use the **du** (disk usage) and **df** (disk format(?)) commands to check on the storage space used in each location and how much free space is available. 
+
+```bash
+# Check how much space is left. Woohoo! Almost 50% for us to use!
+df
+	Filesystem                            1K-blocks          Used    Available Use% Mounted on
+	beegfs_nodev                      1913492639744 1032381169664 881111470080  54% /project
+
+# Check how much space a file takes up:
+du uniprot_ref_proteomes.taxids
+	1371533 uniprot_ref_proteomes.taxids
+
+# Now, do that in human readable format:
+du -h uniprot_ref_proteomes.taxids
+	1.4G    uniprot_ref_proteomes.taxids
+
+# Finally, get a summary number of disk usage for a directory, in human readable format
+du -sch Viruses
+	385M    Viruses
+	385M    total
+
+# That's allot of viruses!
+```
+
+To save space, it's usually better to compress your files. Unix has an app for that! Most Unix/Linux distributions have **gzip** and **tar** commands that are useful for packaging files.
+
+```bash
+# To compress text files:
+gzip my_text.txt
+
+# To decompress them:
+gunzip my_test.txt.gz
+
+``` 
+
+Pretty easy, huh? The space savings depend on the file contents, but for repetitive text files (ie. fasta or fastq files), it tends to compress the file to 1/3rd or 1/4th the normal size. The gzip and gunzip commands consume the original file. Here's what I mean by this: they will delete the original file and replace it with the (un)compressed version.
+
+In order to package folders into an archive, you can use the **tar** command. Tar has "gzip" (or **zlib** ) compression capabilities, so you can gzip text files within the tar archive at the same time. This results in a ".tar.gz" extension to the file, which is affectionately referred to as a "**tarball**" by noone in particular. To create a tarball of your own, you run the following steps:
+
+```bash
+# To package a folder into a tar.gz:
+tar -czvf archive.tar.gz my_folder/
+
+# To unpack the archive
+tar -xvf archive.tar.gz
+```
+
+Note that unlike the gzip command, the tar command does NOT consume the file! You'll be left with the original directory and its compressed tarball by default!
