@@ -4,8 +4,23 @@ Instructor: 	Derek M. Bickhart
 Contact: 		derek **(dot)** bickhart **(at)** usda **(dot)** gov
 
 ## Table of Contents
+* [What is Unix? What am I doing here? Help?](#Unix)
+* [Connecting to the command line terminal](#connect)
+* [Navigating the command line](#navigating)
+	* [Anatomy of a command](#anatomy)
+	* [Getting the help you need](#help)
+	* [Final lessons on orientation](#final)
+* [Assessing and viewing text files](#accessing)
+	* [Exploratory text viewing](#exploratory)
+	* [NOTE: Stopping any long-running process on the terminal](#note1)
+	* [Common text viewing options on Unix](#common)
+* [File permissions and tasks](#file)
+	* [Executing commands](#executing)
+* [Miscellaneous commands and resource management](#misc)
+	* [Careful with these! File management](#careful)
+	* [Space management](#space)
 
-
+<a name="Unix"></a>
 ## What is Unix? What am I doing here? Help?
 
 The term, "Unix," refers to a family of operating systems that all have the same basic elements:
@@ -16,19 +31,21 @@ The term, "Unix," refers to a family of operating systems that all have the same
 
 There are more standards, but these are likely to be the most important for now! You can find Unix-based operating systems silently working underneath your Mac OS and your favorite flavor of Linux. Because Unix comes with many very useful (and open source) commands for analysis, programming and file management, it is the preferred operating system for many scientific computing tasks.
 
-You've been used to using a graphical user interface (**GUI**) if you have been working on Windows or Mac PCs, but now we're going to run things on the **command line**! While GUIs are very useful for singular tasks, they tend to fail when you need to run lots of repetitive tasks or deal with huge data files! This is where knowing how to use the command line is very useful!
+You've been used to using a graphical user interface (**GUI**) if you have been working on Windows or Mac PCs, but now we're going to run things on the **command line**! While GUIs are very useful for singular tasks, they tend to fail when you need to run lots of repetitive tasks or deal with huge data files! This is where knowing how to use the command line is very useful.
 
 My goal in this lecture is to get you familiar with basic Unix commands and how to navigate the command line. I will try to **"bold"** computer science concepts and commands throughout this text for your reference. In order to reinforce these lessons, I tell jokes and force you to type commands in the command line. I have been told that I have a very strange sense of humor -- you've been warned!
 
+<a name="connect"></a>
 ## Connecting to the command line terminal
 
-If you are working on a Windows, Mac or Unix PC, you will first need to open a compatible terminal window. On Windows, you can now use the [Windows Powershell](https://docs.microsoft.com/en-us/powershell/scripting/getting-started/getting-started-with-windows-powershell?view=powershell-6). For Mac and Linux machines, you need to hit the hotkeys for the [Mac terminal](https://www.idownloadblog.com/2019/04/19/ways-open-terminal-mac/) or **Control-T** for most Linux distributions. You should be greeted by a happy dollar sign: **"$"**. You're in the money! 
+If you are working on a Windows, Mac or Unix PC, you will first need to open a compatible terminal window. On Windows, you can now use the [Windows Powershell](https://docs.microsoft.com/en-us/powershell/scripting/getting-started/getting-started-with-windows-powershell?view=powershell-6) to connect to a unix-based server. 
 
-If you're on Mac or Linux, you should have access to the entire panoply of Unix command already! Congratulations! But before you blow up your laptop, it may make sense to connect to another server. To do this, you use the **ssh** command (replace values in the parentheses with your assigned username and server ip address!):
+For Mac and Linux machines, you need to hit the hotkeys for the [Mac terminal](https://www.idownloadblog.com/2019/04/19/ways-open-terminal-mac/) or **Control-T** for most Linux distributions. You should be greeted by a happy dollar sign: **"$"**. You're in the money! If you're on Mac or Linux, you should have access to the entire panoply of Unix command already! Congratulations! But before you blow up your laptop, it may make sense to connect to another server. To do this, you use the **ssh** command (replace values in the parentheses with your assigned username and server ip address!):
 
 ```bash
 ssh (your username)@(the server ip address)
 ```
+Note that you can use ssh on windows powershell as well! Most of the other unix commands have analogs on the windows powershell, but they are named differently. For the sake of space (and my sanity!), I will not list these analogs in this document. 
 
 Just to keep things clear, I will use **comments** to explain concepts on the command line and to antagonize you. Comments are any line prefaced by a '#' sign, and you can type these into the command line as well!
 
@@ -44,7 +61,7 @@ To exit the command line (preferably to make your hasty retreat after you just d
 exit
 ```
 
-
+<a name="navigating"></a>
 ## Navigating the command line
 
 One of the issues with the command line is that you're probably used to nice windows and graphical icons to help you navigate your computer's file systems. Well, navigating the command line is a different paradigm, as you don't have any graphical boxes to check! You should think of navigating the command line as being similar to feeling your way around in a dark room -- you have to constantly feel objects around you to get your bearings. Once you get the hang of things, it will come naturally to you!
@@ -83,6 +100,7 @@ ls ../  # This prints the directory immediately above the present one
 
 In order to get different views of the files in your directories, we're going to have to talk about adding special options to "ls" and other commands.
 
+<a name="anatomy"></a>
 #### Anatomy of a command
 
 Unix has a pretty straightforward "grammar" for commands (aka: **syntax**). You can think of each "sentence" of a Unix command being as follows:
@@ -107,6 +125,7 @@ The "ls" command has several arguments, many of which are very, very useful! Her
 |-h -a -l  | Flag  | A Combination of -a and -l, but make the file sizes human-readable |
 |-hal      | Flag  | The same as the previous command! Just shorter! (I'm sorry Dave, I'm afraid I can't do that) |
 
+<a name="help"></a>
 #### Getting the help you need
 
 Now, the novice reader is likely to be somewhat bewildered at this point. "How are we supposed to memorize this stuff," you may ask? Well, you don't have to! The Unix command line comes with some built-in help functions. In order to get the help menus for built-in Unix commands, you can usually just type in the **man** command (short for manual; not the male of the Homo sapiens species):
@@ -129,6 +148,7 @@ Even if your command doesn't have a man page, you can usually get a usage or hel
 * Run the command with --help
 * Post a hashtag of the command on twitter (#ls)
 
+<a name="final"></a>
 #### Final lessons on orientation
 
 Now that you're getting the help you need (poor thing), let's finish up this section by talking about moving around in Unix folders and getting your bearings. We already talked about "pwd" to get your current directory and "ls" for listing file contents, but how do you actually go to a different folder? How do you even MAKE a new folder? What IS a folder? Let's ignore that last question and move ahead by talking about the **cd** (**c**hange **d**irectory) command:
@@ -150,7 +170,7 @@ That last command illustrates an interesting point: Unix has some short cut **al
 
 Please note that Unix is **case-sensitive!** Unix is also sensitive to spaces, so please be careful when naming your folders! This is the reason why you are likely to see more underscores ("_") in file and folder names while working with Unix. 
 
-Finally, I have a tip to share that will stop you from developing carpal tunnel, improve your relationships and make you lots of money: use the [TAB] key! Unix allows you to auto-complete entries using [TAB] so long as you match enough characters in a file. Here's an example:
+Also, I have a tip to share that will stop you from developing carpal tunnel, improve your relationships and make you lots of money: use the [TAB] key! Unix allows you to auto-complete entries using [TAB] so long as you match enough characters in a file. Here's an example:
 
 ```bash
 # You run an ls in the following directory and here are the files:
@@ -164,6 +184,19 @@ cd directory/
 # Handy, huh? That saved you 1 calorie!
 ```
 
+Finally, I have a final set of tips to share that will allow you to save even more time and effort. Unix keeps track of your command line commands in a "**history**" that you can access with the same aforementioned command!
+
+```bash
+# This gets up to 1000-ish of your last commands:
+history
+
+# If you use the up or down arrows on your keyboard, you can cycle through your last commands on the command line!
+# This allows you to pull up the last task you ran, edit it and run it again!
+```
+
+Pretty handy, huh? 
+
+<a name="accessing"></a>
 ## Assessing and viewing text files
 
 In this section, we will talk about several common Unix commands that can help you view text files. If you remember from my rant above, Unix treats everything as a file. There are three distinct files on Unix systems that you need to concern yourself with at this point:
@@ -174,6 +207,7 @@ In this section, we will talk about several common Unix commands that can help y
 
 The later type of file is going to be the main workhorse of most of your analysis! Finding, viewing and manipulating huge batches of large text files is going to be your bread-and-butter task on Unix systems. Thankfully, Unix comes with many, many tools that are useful for text file manipulation!
 
+<a name="exploratory"></a>
 #### Exploratory text viewing
 
 There are several commands that allow you to view portions of text files. Sometimes your text files will be millions of lines long! Microsoft Word can no longer help you with this! To view portions of a text file without blowing up your terminal session, you can use two very useful commands, **head** and **tail**:
@@ -199,7 +233,7 @@ cat my_text_file.txt
 # Note, the following command takes as many txt files as you can hand it! It will print them in the order they are listed
 cat i_am_printed_first.txt i_am_printed_second.txt i_am_printed_last.txt
 ```
-
+<a name="note1"></a>
 #### NOTE: Stopping any long-running process on the terminal:
 ---
 Important note, if you accidentally "cat" a very long file, you could be staring a text scrolling by the screen for quite a while! Unlike in the movie, "the Matrix," you won't be able to pick out people's haircolor from the scrolling text, so you'll be twiddling your thumbs for no good reason! If you get in this scenario, Unix gives you a special command to escape: **[control]-C**.
@@ -237,6 +271,7 @@ To save your text, hold [control] and hit the "w" key. Nano will ask you if you 
 
 We've covered allot of ground with the text editing functions, so here's a handy table to keep them all straight:
 
+<a name="common"></a>
 #### Common text viewing options on Unix
 
 | Command  | Common Uses  |
@@ -247,7 +282,7 @@ We've covered allot of ground with the text editing functions, so here's a handy
 | more     | To scroll through a file's text using enter |
 | less     | To scroll through a file's text, but with more control (and with arrow keys!) |
 
-
+<a name="file"></a>
 ## File permissions and tasks
 
 Ever want to dig up dirt on your colleagues and see exactly what secret projects they're working on? It's ok to admit it, we're all a bit nosy at times. Unfortunately, Unix offers a way for your archrivals to cover their tracks by limiting access to files and folders! Let's take a look at file permissions and standards by using our favorite tool, "ls", with the '-hal' flags:
@@ -255,16 +290,16 @@ Ever want to dig up dirt on your colleagues and see exactly what secret projects
 ```bash
 # ls, -h = human readable, -a = all files (including hidden), -l = in list format (shows file permissions)
 ls -hal
-total 178G
--rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly 680K Nov 25 14:20 slurm-1355758.out
--rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:18 slurm-1347452.out
--rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:12 slurm-1347448.out
--rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:11 slurm-1347447.out
--rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  319 Nov 25 14:10 slurm-1347444.out
--rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:10 slurm-1347446.out
--rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:04 slurm-1347438.out
-drwxrwsr-x. 20 derek.bickharhth proj-rumen_longread_metagenome_assembly  776 Nov 25 13:41 .
-# 1.		2.		3.				4.									5.		6.			7.
+	total 178G
+	-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly 680K Nov 25 14:20 slurm-1355758.out
+	-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:18 slurm-1347452.out
+	-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:12 slurm-1347448.out
+	-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:11 slurm-1347447.out
+	-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  319 Nov 25 14:10 slurm-1347444.out
+	-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:10 slurm-1347446.out
+	-rw-rw-r--.  1 derek.bickharhth proj-rumen_longread_metagenome_assembly  322 Nov 25 14:04 slurm-1347438.out
+	drwxrwsr-x. 20 derek.bickharhth proj-rumen_longread_metagenome_assembly  776 Nov 25 13:41 .
+	# 1.		2.		3.				4.									5.		6.			7.
 ```
 
 See the last comment line in the command above for the numbers to the columns below:
@@ -333,6 +368,7 @@ Just to be exhaustive, the octal notation is in a set of three, corresponding to
 
 So, 4 + 2 + 1 = 7, which is all three, whereas 4 + 1 = 5 which is read and execute only. Make sense? And you didn't believe your grade school math teacher who said that you'd use addition in adult life! 
 
+<a name="executing"></a>
 #### Executing commands
 
 In order to run a file as an executable command, it must have the "execution" permission (+x, or u=x or 1, as above) set with chmod. Here's how the whole process would go if you needed to do this:
@@ -372,10 +408,10 @@ sleep 5h &
 Our job will sleep happily in the background. To see it running, use the **top** command. Top runs a refreshing screen of tasks that takes up your whole terminal window. To exit, you can use [control]-C just like with any other runaway job to exit. You'll see job **PID** (**P**rocess **ID**) numbers on the side of top, and these are important for interacting with jobs! To kill a job PID, you need to use the **kill** command. You terminator, you!
 
 ```bash
-# Note: this was probably a bad example, because the sleep command doesn't use any cpus, so top doesn't display it properly!
+# Note: this was probably a bad example, because the sleep command doesn't use any cpus, so top doesn't display it at the top of the list!
 # You'll only see tasks that use up cpu time, but I cheated and found the job by sorting the job list for this example
 top
-12566 dbickha+  20   0  113648    692    620 S   0.0  0.0   0:00.00 sleep
+	12566 dbickha+  20   0  113648    692    620 S   0.0  0.0   0:00.00 sleep
 
 # And to euthanize my sleep command:
 kill 12566
@@ -383,11 +419,12 @@ kill 12566
 # Alternatively, you could use the "%1" shortcut to kill the last running process like this as well:
 kill %1
 ```
-
+<a name="misc"></a>
 ## Miscellaneous commands and resource management
 
 I want to close off the lesson by giving you a few more commands that are frequently used in Unix sessions. These commands will be very useful to find out how much space you have and to store files.
 
+<a name="careful"></a>
 #### Careful with these! File management
 
 First, I would be remiss to not talk about file copying, movement and deleting! These are managed by the **cp** (copy), **mv** (move), and **rm** (remove) commands, respectively. You should ALWAYS make double sure what you're doing with these, because they will NOT prompt you to ask if you're, "really sure," you want to use them! 
@@ -415,6 +452,7 @@ rm -r folderA/
 
 Again, use caution when using these files! Many a grad student has lost everything to a careless use of one of these commands!
 
+<a name="space"></a>
 #### Space management
 
 Usually, you will be using a server with a storage quota. To make sure that you're not eating up too much of the hard disk space, you can use the **du** (disk usage) and **df** (disk format(?)) commands to check on the storage space used in each location and how much free space is available. 
