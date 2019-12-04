@@ -21,7 +21,7 @@ Contact: 		derek **(dot)** bickhart **(at)** usda **(dot)** gov
 	* [Space management](#space)
 
 <a name="Unix"></a>
-## What is Unix? What am I doing here? Help?
+## What is Unix? What am I doing here?
 
 The term, "Unix," refers to a family of operating systems that all have the same basic elements:
 
