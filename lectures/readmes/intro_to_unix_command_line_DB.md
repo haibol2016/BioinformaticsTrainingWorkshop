@@ -4,7 +4,7 @@ Instructor: 	Derek M. Bickhart
 Contact: 		derek **(dot)** bickhart **(at)** usda **(dot)** gov
 
 ## Table of Contents
-* [What is Unix? What am I doing here? Help?](#Unix)
+* [What is Unix? What am I doing here?](#Unix)
 * [Connecting to the command line terminal](#connect)
 * [Navigating the command line](#navigating)
 	* [Anatomy of a command](#anatomy)
@@ -281,6 +281,7 @@ We've covered allot of ground with the text editing functions, so here's a handy
 | cat      | To combine two (or more!) files or to print one or more of them all out to the terminal |
 | more     | To scroll through a file's text using enter |
 | less     | To scroll through a file's text, but with more control (and with arrow keys!) |
+| wc       | To count the lines, words and characters (in that order) in a file |
 
 <a name="file"></a>
 ## File permissions and tasks
