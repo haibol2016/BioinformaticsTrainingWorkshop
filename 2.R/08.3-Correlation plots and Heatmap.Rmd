@@ -1,0 +1,137 @@
+---
+title: "Correlation plots and heatmaps"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Correlograms
+Correlograms help us visualize the data in correlation matrices. For details, see Corrgrams: Exploratory displays for correlation matrices.
+
+A great package for correlation plots is **corrplot**. See more examples [here](http://www.sthda.com/english/wiki/visualize-correlation-matrix-using-correlogram). 
+
+```{r}
+if (!require("corrplot"))
+{
+  install.packages("corrplot")
+}
+library("corrplot")
+
+m <- cor(mtcars)
+corrplot(m, method = "circle")
+
+corrplot(m, method = "number", number.cex = 0.8
+)
+```
+
+## Heatmaps
+A few useful R packages has the functions to create heatmaps showing high dimension data.  
+
+### R base heatmaps: heatmap()
+
+```{r}
+df <- as.matrix(scale(mtcars))
+heatmap(df, scale = "none", col = bluered(100))
+
+# Use RColorBrewer color palette names
+library("RColorBrewer")
+
+heatmap(df, scale = "none", col = bluered(100), 
+        RowSideColors = rep(c("blue", "pink"), each = 16),
+        ColSideColors = c(rep("purple", 5), rep("orange", 6)))
+```
+
+### Enhanced heatmaps: heatmap.2()
+The function heatmap.2() in the gplots package provides many extensions to the standard R heatmap() function presented in the previous section.
+
+```{r}
+# install.packages("gplots")
+library("gplots")
+heatmap.2(df, scale = "none", 
+          trace = "none", density.info = "none", 
+          col = bluered(100))
+```
+
+### Pretty heatmaps: pheatmap()
+
+```{r}
+library("pheatmap")
+pheatmap(df, cutree_rows = 4, color = bluered(100))
+```
+
+### Interactive heatmaps: d3heatmap()
+The d3heatmap() function makes it possible to interactively explore the high dimension data.  
+
+* Put the mouse on a heatmap cell of interest to view the row and the column names as well as the corresponding value.  
+* Select an area for zooming. After zooming, click on the heatmap again to go back to the previous display.  
+
+```{r}
+if (!require(d3heatmap)) {install.packages("d3heatmap")}
+library("d3heatmap")
+d3heatmap(scale(mtcars), colors = bluered(100),
+          k_row = 4, # Number of groups in rows
+          k_col = 2 # Number of groups in columns
+          )
+```
+
+5. Enhancing heatmaps using the dendextend package  
+The package dendextend can be used to enhance functions from other packages. The mtcars data is used in the following sections. We'll start by defining the order and the appearance for rows and columns using dendextend. These results are used in others functions from others packages.
+
+The order and the appearance for rows and columns can be defined as follow:
+```{r}
+library(dendextend)
+# order for rows
+Rowv  <- mtcars %>% scale %>% dist %>% hclust %>% as.dendrogram %>%
+   set("branches_k_color", k = 3) %>% set("branches_lwd", 1.2) %>%
+   ladderize
+
+# Order for columns: We must transpose the data
+Colv  <- mtcars %>% scale %>% t %>% dist %>% hclust %>% as.dendrogram %>%
+   set("branches_k_color", k = 2, value = c("orange", "blue")) %>%
+   set("branches_lwd", 1.2) %>% ladderize
+```
+
+The arguments above can be used in the functions below:
+
+```{r}
+heatmap(scale(mtcars), Rowv = Rowv, 
+        col = bluered(100),
+        Colv = Colv, scale = "none")
+
+library(gplots)
+heatmap.2(scale(mtcars), scale = "none", col = bluered(100), 
+          Rowv = Rowv, Colv = Colv,
+          trace = "none", density.info = "none")
+
+
+library("d3heatmap")
+d3heatmap(scale(mtcars), colors = bluered(100),
+          Rowv = Rowv, Colv = Colv)
+```
+
+6. Complex heatmaps
+ComplexHeatmap is an R/Bioconductor package, developed by Zuguang Gu, which provides a flexible solution to arrange and annotate multiple heatmaps. It allows also to visualize the association between different data from different sources.
+
+It can be installed as follow:
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")}
+
+if (!requireNamespace("ComplexHeatmap", quietly = TRUE)) { BiocManager::install("ComplexHeatmap")}
+library(ComplexHeatmap)
+
+Heatmap(df, 
+        col = bluered(100), 
+        name = "mtcars", #title of legend
+        column_title = "Variables", row_title = "Samples",
+        row_names_gp = gpar(fontsize = 7) # Text size for row names
+        )
+```
+For more complex complexheatmap examples, see [this page](https://www.datanovia.com/en/lessons/heatmap-in-r-static-and-interactive-visualization/) and a [complete reference to ComplexHeatmap](https://jokergoo.github.io/ComplexHeatmap-reference/book/).
+
+Other packages for interactive heatmaps: [heatmaply](https://cran.r-project.org/web/packages/heatmaply/index.html) and [iheatmapr](https://github.com/ropensci/iheatmapr).

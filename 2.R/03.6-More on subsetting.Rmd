@@ -1,0 +1,322 @@
+---
+title: "Summary of subsetting"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+> Subsetting operators in R are powerful and fast. Mastery of subsetting allows you to succinctly express complex operatins in a way that few other languages can match.  
+> --Hardly Wickham  
+
+In this section, we will comprehensively study:  
+
+* Six type data can be used used for subsetting.  
+* Important differences in behaviors for different objects (vectors, lists, factors, matrices, and data frames, etc).  
+* Three subsetting operators: $, [ ], [[ ]].  
+* The use of subsetting in conjuction with assignment.  
+* Missing/out of bonds indices.  
+
+
+## Subsetting atomic vectors
+1. **Postive integers** returns elemetns at the specified positions.
+```{r}
+x <- 1:10
+
+# re-arrange order of values
+x[c(3, 1)]
+
+# duplicate values
+x[c(1,1)]
+```
+2. **Negative integers** omit elements at the specified positions. 
+```{r}
+x[-c(3, 1)]
+
+# Don't mix positive and negative integers in a single subset
+# error
+try({x[c(-1, 2)]})
+```
+3. **logical vectors** select elements where the corresponding logical value is TRUE.
+```{r}
+# subsetting indices with length equal to the vector to subset
+x[x > 5]
+
+# if not, recycle the subsetting indices
+x[c(TRUE, FALSE, TRUE)]
+```
+
+4. **Nothing** return the orginal data.
+```{r}
+x[]
+```
+5. **zero** returns a zero-length vector.
+```{r}
+x[0]
+```
+
+6. **character vectors** return elements with exactly matching names if a vector is named.
+```{r}
+y <- 1:10
+names(y) <- letters[1:10]
+y[c("a", "b", "c")]
+```
+
+## Subsetting lists
+Subsetting a list works in the same way as subsetting an atomic vector.  
+Attention: [ ] will always return a list; [[ ]] and $ return the object stored in a list element.  
+
+## Subsetting matrices and arrays
+You can subset higher-diemensional structures in three ways:  
+1. Use **multiple vectors**, with one for each dimension
+```{r}
+a <- matrix(1:9, nrow = 3)
+colnames(a) <- LETTERS[1:3]
+a
+
+# blank subsetting return all rows or all columns
+a[1:2, ]  # equivant to a[1:2, 1:3]
+
+# each dimension uses a different type of subsetting data
+
+a[c(TRUE, FALSE, TRUE), c("B", "A")]
+
+# zero index for subsetting get column names only
+a[0, -2]
+```
+
+2. **A single vector** can be used for subsetting matrices because matrices/arrays are implemented as vectors with special attributes. Keep in mind, values in matrices/arrays are stored in a column-major order.
+
+```{r}
+a <- matrix(1:9, nrow = 3)
+a
+
+a[c(3,6)]
+```
+3. **A matrix** can be used to subset a matrices.
+```{r}
+a <- matrix(1:36, nrow = 6)
+a
+b <- matrix(c(1,1,
+              2,3,  # element at row 2, col 3
+              4,6), ncol = 2, byrow = TRUE)
+a[b]
+```
+**By default, [ ] will simplfy the results to the lowest possible dimensionality**.
+
+```{r}
+a <- matrix(1:36, nrow = 6)
+a[1, ]
+```
+
+## Subsetting data frames
+Data frames possess the characteristics of both lists and matrices. If you subset them with one single vector, they behave like lists; if you subset with two vectors, they behave like matrics.
+```{r}
+df <- data.frame(x = 1:3, y = letters[1:3], z = c(TRUE, FALSE, TRUE))
+
+# matrix-like
+df[df$x < 3, ]
+df[c(1,3), ]
+df[, c("x", "z")]
+
+df[, "x", drop = FALSE]  # matrix subsetting simplifies resulting data structure by default
+
+# list-like
+df[c(1,3)]
+df[c("x", "z")]
+df["x"]                  # But list subsetting does not.
+```
+
+## S3 objects: atomic vectors, lists, arrays, data frames and data frame-like.
+Use the above subsetting methods.
+
+## S4 objects
+How to create S4 objects are specified in the R package **methods**. Many Bioconductor packages implement S4 objects.  
+In S4 objects, data are stored in slots.  
+
+Using @, equivalent to \$ for S3 objects and the _slot()_ function, equivalent to [[]]. @ is more restrictive than $. It returns an error if a slot does not 
+
+```{r}
+library(methods)
+
+# create a class Person
+setClass("Person", representation(name = "character", age = "numeric"))
+
+# create an object of class Person
+peter <- new("Person", name = "Peter", age = 31)
+
+# get Peters's age
+peter@age
+```
+
+## Susetting operators for S3 objects  
+* **[ ]**, can return one or more values.  
+* **[[ ]]**, similar to [ ], but it can only return a single object.  
+* **$**, a shorthand for [[ ]] combined with character subsetting, returns only a single object stored at the next level of a list, or a column of a data frame as a vector.  
+
+**Attention**: differences between **$** and **[[ ]]**  
+
+* \$ allows partial matcing of names/colnames. x$y is equivalent to x[["y", exact = FALSE]].  
+* If you store the name of column in a variable, you can't use **$** with the variable to access the column.
+
+```{r}
+list_x <- list(abc = 1)
+list_x$a
+
+# Return NULL
+list_x[["a"]]
+
+# OK
+list_x[["a", exact = FALSE]]
+
+df <- data.frame(q = 1:2, b = letters[1:2])
+x <- "q"
+# OK
+df$q
+
+# return NULL
+df$x
+```
+
+```{r}
+x <- list(a = 1, b = 3, c = 4)
+x[[1]]
+x[["a"]]
+x$a
+
+# Error-subscript out of bounds
+try({x[[c("a", "b")]]})
+
+# a multi-value vector can index recursively for nested lists
+y <- list(a = list(b = list(c = list(d = 2))))
+y[[c("a", "b", "c", "d")]] 
+
+# same as
+y[["a"]][["b"]][["c"]][["d"]]  # more explicitly, I prefer this way.
+```
+Data frames are special lists, so We can use [[ ]] and $ to subset them. They are also sort of more generalized matrices, wo we can using [ ] to subset them.
+
+## Simplifying versus preserving subsetting
+**Simplifying subsetting** returns the simplest possible data structure that can represent the output.
+
+**Preserving subsetting** keep the structure of the output the same as the input. .
+
+Attention: Subsetting matrices and data frames without drop = FALSE potentially leads to simplifying subsetting, thus potential programming errors.
+
+When you should use **simplifying** or **preserving** subsetting? This dependends on your purpose of data manipulation. The following table provides a good summary.
+
+| |simplifying|Preserving|
+|-|----------|----------|
+|Vector|x[[1]]|x[1]|
+|List|x[[1]]|x[1]|
+|Factor|x[1:4, drop = TRUE]|x[1:4]|
+|Array|x[1, ] or x[, 1]|x[1, , drop = FALSE] or x[, 1, drop = FALSE]|
+|Data frame|x[, 1] or x[[1]]|x[, 1, drop = FALSE] or x[1]|
+
+* Atomic vectors: remove names if it is named
+```{r}
+x <- c( a= 1, b = 2, c = 3)
+x[1]
+x[[1]]
+```
+* List: return the object inside the list, not a singl element list.
+```{r}
+y <- list(a = 1, b = 2)
+str(y[1])
+str(y[[1]])
+```
+
+* Factor: drop any unused levels
+```{r}
+z <- factor(c("a", "b"))
+z[1]
+z[1, drop = TRUE]
+```
+* Matrix or array: if any of the dimensions has length of 1, drop that dimension.
+```{r}
+a <- matrix(1:4, nrow = 2)
+a[1, ]
+a[1, , drop = FALSE]
+```
+* Data frame: if outpur is a singl column, returns a vector instead of a data frame.
+```{r}
+df <- data.frame(a = 1:2, b = letters[1:2])
+str(df[1])
+str(df[[1]])
+str(df[, "a", drop = FALSE])
+str(df[, "a"])
+```
+
+## Subsetting and assignment
+All subsetting operators can be combined with assignment to modify selected values of the input data. WE have seen some of these operation before.
+
+```{r}
+x <- 1:5
+x[1:2] <- 2:3
+x
+
+# The length of the replacement must be the same as the part to be replaced
+# OR the length of the replacement must be one
+x[-1] <- 4:1
+x
+
+# You can't combine integer indices with NA
+# Error
+try({x[c(1, NA)] <- 1:2})
+
+# But you can combine logical indices with NA, which is coerced to FALSE as indices
+x[c(TRUE, FALSE, NA)] <- 1
+x
+
+# When compare NA to anything, you get NA
+df <- data.frame(a = c(1, 10, NA))
+df$a[df$a < 5] <- 0
+df$a
+
+# Subsetting with nothing can be useful in conjuction with assignment, because it preserve the original object class and structure.
+# compare the following two statements
+mtcars[] <- lapply(mtcars, as.integer)
+str(mtcars)
+
+mtcars_1 <- lapply(mtcars, as.integer)
+str(mtcars_1)
+
+# Subsetting + assignment for list
+# remove a list element
+
+x <- list(a = 1, b = 2)
+x[["b"]] <- NULL
+str(x)
+
+y <- list(a = 1)
+
+# pay attention to how to subset a non-existing list element
+y["b"] <- list(NULL)
+str(y)
+# What will you get if you do as follows?
+y <- list(a = 1)
+y$b <- NULL
+
+str(y)
+
+y[["b"]] <- NULL
+str(y)
+
+y[["b"]] <- list(NULL)
+
+str(y)
+```
+
+## Exercise  
+Fix each of the following common data frame subsetting errors:
+```{r eval = FALSE}
+str(mtcars)
+mtcars[mtcars$cyl = 4, ]
+mtcars[-1:4, ]
+mtcars[mtcars$cyl <= 5]
+mtcars[mtcars$cyl == 4 | 6, ]
+```

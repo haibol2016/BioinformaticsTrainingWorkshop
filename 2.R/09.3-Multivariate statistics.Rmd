@@ -1,0 +1,355 @@
+---
+title: "Multivariate statistics"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Principal component analysis (PCA)
+PCA allows you to see the overall "shape" of the data, identifying which samples are similar to one another and which are very different. This can enable us to identify groups of samples that are similar and work out which variables make one group different from another. 
+
+PCA is a type of linear transformation on a given data set that has values for a certain number of variables (coordinates) for a certain amount of spaces. This linear transformation fits this dataset to a new coordinate system in such a way that the most significant variance is found on the first coordinate, and each subsequent coordinate is orthogonal to the last and has a lesser variance. In this way, you transform a set of x correlated variables over y samples to a set of p uncorrelated principal components over the same samples.
+
+Principal Components are the underlying structure in the data. They are the directions where there is the most variance, the directions where the data is most spread out. 
+
+You can perform a Principal Component Analysis (PCA) using the built-in R functions prcomp() and princomp(). The function princomp() uses the **spectral decomposition** approach. The functions prcomp() and PCA()[FactoMineR] use the **singular value decomposition (SVD)**. For differences between the two functions, see this [blog](http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/118-principal-component-analysis-in-r-prcomp-vs-princomp/).  
+
+According to the R help, SVD has slightly better numerical accuracy. Therefore, the function prcomp() is preferred compared to princomp(). To perform PCA on gene expression data, use the **prcomp()** function because of small sample size (n << p).  
+
+PCA is applied on a data set with numeric variables. If different features have very different scales, standardize the data (Center and scale) first.
+
+You can plot PCA/clustering results using ggplot2 and ggfortify by referring to [this Blog](http://rpubs.com/sinhrks/plot_pca), You can make animated 3D PCA plots by refering to [this blog](https://2-bitbio.com/2017/04/animated-3d-pca-plots-in-r.html).  
+
+```{r}
+# for visualization of PCA results
+if (!require("factoextra")) install.packages("factoextra") 
+library(factoextra)
+
+fit <- prcomp(mtcars, retx = TRUE, center = TRUE, scale. = TRUE)
+summary(fit) # print variance accounted for
+
+# visualization of Eigenvalues (variance)
+fviz_eig(fit)
+
+# biplot
+fviz_pca_biplot(fit, repel = TRUE,
+        col.var = "#2E9FDF", # Variables color
+        col.ind = "#696969") # Individuals color
+```
+```{r include = FALSE}
+fit$rotation # pc loadings
+fit$x # the principal components
+
+# Access PCA results
+# Eigenvalues
+eig.val <- get_eigenvalue(fit)
+eig.val
+ 
+# Results for Variables
+res.var <- get_pca_var(fit)
+res.var$coord     # Coordinates
+res.var$contrib    # Contributions to the PCs
+res.var$cos2      # Quality of representation 
+# Results for individuals
+res.ind <- get_pca_ind(fit)
+res.ind$coord     # Coordinates
+res.ind$contrib    # Contributions to the PCs
+res.ind$cos2      # Quality of representation 
+```
+Determining the Number of Factors to Extract
+A crucial decision in exploratory factor analysis is how many factors to extract. The nFactors package offer a suite of functions to aid in this decision. Details on this methodology can be found in a PowerPoint presentation by Raiche, Riopel, and Blais. Of course, any factor solution must be interpretable to be useful.
+```{r}
+# Determine Number of Factors to Extract
+if (!(require("nFactors"))) install.packages("nFactors")
+library(nFactors)
+ev <- eigen(cor(mtcars)) # get eigenvalues
+ap <- parallel(subject = nrow(mtcars),var = ncol(mtcars),
+ rep = 100,cent = .05)
+nS <- nScree(x = ev$values, aparallel = ap$eigen$qevpea)
+plotnScree(nS)
+```
+
+Going Further
+The FactoMineR package offers a large number of additional functions for exploratory factor analysis. This includes the use of both quantitative and qualitative variables, as well as the inclusion of supplementary variables and observations. Here is an example of the types of graphs that you can create with this package.
+```{r}
+# PCA Variable Factor Map
+library(FactoMineR)
+result <- PCA(mtcars) # graphs generated automatically
+```
+
+## Correspondence Analysis (CA)
+Correspondence analysis provides a graphic method of exploring the relationship between variables in a contingency table. There are many options for correspondence analysis in R. I recommend the **ca** package by Nenadic and Greenacre because it supports supplementary points, subset analyses, and comprehensive graphics. You can obtain the package here.
+
+The package **ca** can perform multiple correspondence analysis (more than two categorical variables), for details, see the package documentation.
+
+Simple Correspondence Analysis
+In the following example, A and B are categorical factors.
+```{r}
+# Correspondence Analysis
+if (!require("ca")) install.packages("ca")
+library("ca")
+library("gplots")
+library("factoextra")
+data(housetasks)
+
+# 1. convert the data as a table
+dt <- as.table(as.matrix(housetasks))
+# 2. Graph
+balloonplot(t(dt), main = "housetasks", xlab = "", ylab = "",
+      label = FALSE, show.margins = FALSE)
+
+fit <- ca(dt)
+summary(fit) # extended results
+plot(fit, mass = TRUE, contrib = "absolute", 
+   map = "rowgreen", arrows = c(FALSE, TRUE)) # asymmetric map
+```
+## Multidimensional Scaling
+Multidimensional Scaling (MDS), is a set of multivariate data analysis methods that are used to analyze similarities or dissimilarities in data. One of the nice features of MDS is that it allows us to represent the (dis)similarities among pairs of objects as distances between points in a low-dimensional space. Put another way, MDS allows us to visualize the (dis)similarities in a low-dimensional space for exploration and inspection purposes.
+
+The general approach behind MDS consists of calculating a (dis)similarity matrix among pairs of objects (i.e. observations, individuals, samples, etc), and then apply one of the several MDS "models" to obtain the low-dimensional representation. The MDS model to be applied depends on the type of data, and consequently, the type of (dis)similarity measurement that the analyst decides to use.
+
+Functions can be used for metric MDS analysis are discussed in this [blog](http://www.gastonsanchez.com/visually-enforced/how-to/2013/01/23/MDS-in-R/). 
+
+Here we, perform a classical MDS using the cmdscale( ) function.
+```{r}
+# Classical MDS
+# N rows (objects) x p columns (variables)
+# each row identified by a unique row name
+euromat <- as.matrix(eurodist)
+
+d <- dist(euromat) # euclidean distances between the rows
+fit <- cmdscale(d,eig = TRUE, k = 2) # k is the number of dim
+fit # view results
+
+# plot solution
+x <- fit$points[,1]
+y <- fit$points[,2]
+plot(x, y, type = "n", xlab = "Coordinate 1", ylab = "Coordinate 2",
+ main = "Metric MDS")
+text(x, y, labels = row.names(euromat), cex = .7)
+```
+Nonmetric MDS is performed using the isoMDS( ) function in the MASS package. 
+
+## Cluster Analysis
+R has an amazing variety of functions for cluster analysis. In this section, three of the many approaches is touched: hierarchical agglomerative, partitioning, and model based. While there are no best solutions for the problem of determining the number of clusters to extract, several approaches are given below.
+
+1. Data Preparation 
+Prior to clustering data, you may want to remove or estimate missing data and rescale variables for comparability using the tidyr package.
+
+2. Partitioning
+K-means clustering is the most popular partitioning method. It requires the analyst to specify the number of clusters to extract. A plot of the within groups sum of squares by number of clusters extracted can help determine the appropriate number of clusters. The analyst looks for a bend in the plot similar to a scree test in factor analysis. See Everitt & Hothorn (pg. 251).
+```{r}
+library(datasets)
+iris <- datasets::iris
+iris_new <- iris[,c(1,2,3,4)]
+iris_class <- iris[,"Species"]
+
+# Normalization
+normalize <- function(x){
+ (x - min(x))/(max(x) - min(x))
+}
+
+iris_new$Sepal.Length <- normalize(iris_new$Sepal.Length)
+iris_new$Sepal.Width <- normalize(iris_new$Sepal.Width)
+iris_new$Petal.Length <- normalize(iris_new$Petal.Length)
+iris_new$Petal.Width <- normalize(iris_new$Petal.Width)
+head(iris_new)
+
+library(colorspace) # get nice colors
+species_col <- rev(rainbow_hcl(3))[as.numeric(iris_class)]
+
+# Plot a SPLOM:
+pairs(iris_new, col = species_col,
+   lower.panel = NULL,
+    cex.labels = 1, pch = 19, cex = 1)
+
+# Add a legend
+par(xpd = TRUE)
+legend(x = 0.05, y = 0.5, cex = 1,
+  legend = as.character(levels(iris_class)),
+  fill = unique(species_col))
+par(xpd = NA)
+
+# Determine number of clusters
+if (!require("NbClust")) install.packages("NbClust")
+library(NbClust)
+devAskNewPage(ask = FALSE)
+nc <- NbClust(iris_new, distance = "euclidean",
+min.nc = 2, max.nc = 15, method = "average")
+
+table(nc$Best.n[1,])
+
+barplot(table(nc$Best.n[1,]), xlab = "Number of Clusters",
+    ylab = "Number of Criteria",
+    main = "Number of Clusters Chosen by 26 Criteria")   
+
+#aplly k-means algorithm with no. of centroids(k) = 3
+result<- kmeans(iris_new,3) 
+
+# gives no. of records in each cluster
+result$size 
+
+# gives value of cluster center datapoint value(3 centers for k = 3)
+result$centers 
+
+#gives cluster vector showing the custer where each record falls
+result$cluster 
+
+# verify clusters
+op <- par(mfrow = c(2,2), mar = c(5,4,2,2))
+plot(iris_new[c(1,2)], col = result$cluster)# Plot to see how Sepal.Length and Sepal.Width data points have been distributed in clusters
+plot(iris_new[c(1,2)], col = iris_class)# Plot to see how Sepal.Length and Sepal.Width data points have been distributed originally as per "class" attribute in dataset
+plot(iris_new[c(3,4)], col = result$cluster)# Plot to see how Petal.Length and Petal.Width data points have been distributed in clusters
+plot(iris_new[c(3,4)], col = iris_class)
+par(op)
+```
+A robust version of K-means based on mediods can be invoked by using pam( ) instead of kmeans( ). The function pamk( ) in the fpc package is a wrapper for pam that also prints the suggested number of clusters based on optimum average silhouette width.
+
+3. Hierarchical Agglomerative
+There are a wide range of hierarchical clustering approaches.Gene expression data clustering works well with Ward's method described below.
+```{r}
+op <- par(mfrow = c(1,1))
+# Ward Hierarchical Clustering
+d <- dist(iris_new, method = "euclidean") # distance matrix
+fit <- hclust(d, method = "ward.D2")
+plot(fit, cex = 0.3) # display dendogram
+groups <- cutree(fit, k = 3) # cut tree into 5 clusters
+# draw dendogram with red borders around the 5 clusters
+rect.hclust(fit, k = 3, border = "red")
+par(op)
+```
+The pvclust( ) function in the pvclust package provides p-values for hierarchical clustering based on multiscale bootstrap resampling. Clusters that are highly supported by the data will have large p values. Interpretation details are provided Suzuki. Be aware that pvclust clusters columns, not rows. Transpose your data before using.
+```{r}
+# Ward Hierarchical Clustering with Bootstrapped p values
+if (!require("pvclust")) install.packages("pvclust")
+library(pvclust)
+fit <- pvclust(iris_new, method.hclust = "ward.D2",
+  method.dist = "euclidean")
+plot(fit) # dendogram with p values
+# add rectangles around groups highly supported by the data
+pvrect(fit, alpha = .95)
+```
+
+4. Model Based Clustering
+Model based approaches assume a variety of data models and apply maximum likelihood estimation and Bayes criteria to identify the most likely model and number of clusters. Specifically, the Mclust( ) function in the mclust package selects the optimal model according to BIC for EM initialized by hierarchical clustering for parameterized Gaussian mixture models. (phew!). One chooses the model and number of clusters with the largest BIC. See help(mclustModelNames) to details on the model chosen as best.
+
+```{r eval = FALSE}
+# Model Based Clustering
+library(mclust)
+fit <- Mclust(iris_new)
+plot(fit) # plot results
+summary(fit) # display the best model
+```
+
+5. Plotting Cluster Solutions
+It is always a good idea to look at the cluster results.
+```{r}
+# K-Means Clustering with 3 clusters
+fit <- kmeans(iris_new, 3)
+
+# Cluster Plot against 1st 2 principal components
+
+# vary parameters for most readable graph
+library(cluster)
+clusplot(iris_new, fit$cluster, color = TRUE, shade = TRUE,
+  labels = 2, lines = 0)
+
+# Centroid Plot against 1st 2 discriminant functions
+if (!require("fpc")) install.packages("fpc")
+library(fpc)
+plotcluster(iris_new, fit$cluster)
+```
+
+6. Validating cluster solutions
+The function cluster.stats() in the fpc package provides a mechanism for comparing the similarity of two cluster solutions using a variety of validation criteria (Hubert's gamma coefficient, the Dunn index and the corrected rand index)
+```{r eval = FALSE}
+# comparing 2 cluster solutions
+
+library(fpc)
+cluster.stats(d, fit1$cluster, fit2$cluster)
+```
+where d is a distance matrix among objects, and **fit1$cluster and fit$cluster** are integer vectors containing classification results from two different clustering of the same data.
+
+One way to assess whether a cluster represents true structure is to see if the cluster holds up under plausible variations in the dataset. The fpc package has a function called clusterboot()that uses bootstrap resampling to evaluate how stable a given cluster is. See this [page](http://www.win-vector.com/blog/2015/09/bootstrap-evaluation-of-clusters/)
+
+to demo, we use this [dataset](https://github.com/WinVector/zmPDSwR/blob/master/Protein/protein.txt). 
+```{r}
+protein <- read.table("protein.txt", sep = "\t", header = TRUE)
+summary(protein)
+vars.to.use <- colnames(protein)[-1]     
+
+# Scale the data columns to be zero mean 
+# and unit variance.
+# The output of scale() is a matricx.
+pmatrix <- scale(protein[,vars.to.use])   
+
+# optionally, store the centers and 
+# standard deviations of the original data,
+# so you can "unscale" it later.
+pcenter <- attr(pmatrix, "scaled:center") 
+pscale <- attr(pmatrix, "scaled:scale")
+
+#  Create the distance matrix.
+d <- dist(pmatrix, method = "euclidean") 
+  
+#  Do the clustering. 
+pfit <- hclust(d, method = "ward.D2")  
+
+#  Plot the dendrogram.
+plot(pfit, labels = protein$Country)  
+
+rect.hclust(pfit, k = 5)
+# A convenience function for printing out the countries in each cluster, along with the values for red meat, fish, and fruit/vegetable consumption. 
+print_clusters <- function(labels, k) {       
+ for(i in 1:k) {
+  print(paste("cluster", i))
+  print(protein[labels == i,c("Country","RedMeat","Fish","Fr.Veg")])
+ }
+}
+
+# get the cluster labels
+groups <- cutree(pfit, k = 5)
+
+# load the fpc package
+library(fpc)  
+
+# set the desired number of clusters                
+kbest.p <- 5    
+                        
+#  Run clusterboot() with hclust 
+#  ('clustermethod = hclustCBI') using Ward's method 
+#  ('method = "ward"') and kbest.p clusters 
+#  ('k = kbest.p'). Return the results in an object 
+#  called cboot.hclust.
+cboot.hclust <- clusterboot(pmatrix, 
+                            clustermethod = hclustCBI, 
+                            count = FALSE, 
+                            method = "ward.D2", k = kbest.p)
+
+#  The results of the clustering are in 
+#  cboot.hclust$result. The output of the hclust() 
+#  function is in cboot.hclust$result$result. 
+#
+#  cboot.hclust$result$partition returns a 
+#  vector of clusterlabels. 
+groups <- cboot.hclust$result$partition 
+
+# The vector of cluster stabilities. 
+# Values close to 1 indicate stable clusters
+cboot.hclust$bootmean                  
+
+# The count of how many times each cluster was 
+# dissolved. By default clusterboot() runs 100 
+# bootstrap iterations. 
+# Clusters that are dissolved often are unstable. 
+cboot.hclust$bootbrd 
+```
+
+## Classification
+A hot topic in machine/statistical learning. We will not go into it here. If you are interested, please familiarize yourself by reading this [page](https://data-flair.training/blogs/classification-in-r/). 
+

@@ -1,0 +1,105 @@
+---
+title: "Outline of the R session"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Topics
+R topics we will cover in this workshop are lsit below.     
+
+* Outlines  
+* Basics of P programming  
+  + About R  
+  + Installation of R and Rstudio  
+  + R objects  
+  + Names and values  
+  + R object housekeeping  
+  + Recommended R programming style  
+  + Getting help with R  
+  + R package management  
+  + R Workspace  
+* Data structures  
+  + Vectors
+  + Lists
+  + Factors
+  + Matrices and arrays
+  + Data frames and the like
+  + More on subsetting
+* Functions
+  + Overview of functions 
+  + Create functions
+  + Invoking/calling function
+  + Lexical scoping
+  + Lazy evaluation
+  + ... arguments
+  + Exiting a function
+  + Argument matching rules for function calls
+  + Common functions
+* Control flow
+  + Choices (if-else, switch, ifelse)
+  + Loops (for, while, repeat)
+* I/O
+  + Input
+  + Output
+  + Viewing data
+  + Handling missing values
+* Data manipulation
+  + Operators
+  + Tidy data with tidyr
+  + Data manipulation with dplyr
+  + Data structure and type conversion
+* Data visualization
+  + Overview of R graphics systems
+  + ggplot2 and the like
+* Statistical analysis
+  + Univariate statistics
+  + Multivariate statistics
+* Running R in batch mode
+  + Rscript
+  + Passing arguments
+  + R shell scripting
+* Recommendation for further learning
+  + Awesome R packages
+  + Awesome R books
+  + Further learning recommendations
+
+
+## Install packages to be used in the workshop  
+BiocManager::install() can be used to install packages from CRAN and Bioconductor sites.
+
+```{r}
+packages_list <- c("aplpack", "bootstrap", "broom", "ca", "car", "cluster", "colorspace", "ComplexHeatmap", "corrplot", "d3heatmap", "DAAG", "datasets", "dendextend", "devtools", "doBy", "downloader", "dplyr", "factoextra", "FactoMineR", "fpc", "gclus", "ggforce", "ggm", "ggthemes", "gplots", "grDevices", "grid", "gvlma", "hexbin", "Hmisc", "lattice", "leaps", "MASS", "mclust", "methods", "multcomp", "NbClust", "nFactors", "openxlsx", "pastecs", "pheatmap", "polycor", "psych", "pvclust", "Rcmdr", "RColorBrewer", "readxl", "relaimpo", "rgl", "rmarkdown", "scatterplot3d", "sm", "tibble", "tidyverse", "vcd", "vioplot", "XLConnect")
+
+if (!require("BiocManager")) {install.packages("BiocManager")}
+
+for (pkg in packages_list)
+{
+   if (!pkg %in% installed.packages())
+   {
+      BiocManager::install(pkg, dependencies = TRUE)
+   }
+}
+```
+
+To use devtools, you have to install devtools along with a working development environment.  
+* Windows: Install **Rtools**.  
+* Mac: Install Xcode from the Mac App Store.  
+* Linux: Install a compiler and various development libraries (details vary across differnet flavors of Linux).  
+
+
+## References  
+1. _R in Action, Second Edition: Data analysis and graphics with R_  
+By **Robert I. Kabacoff**, May 2015, ISBN 9781617291388.
+Website: https://www.manning.com/books/r-in-action-second-edition
+
+2. _Advanced R, First and Second Editions_  
+By **Hadley Wickham**
+Website: http://adv-r.had.co.nz/, and https://adv-r.hadley.nz/
+
+3. Many R blogs, webpages and tutorials. For time reason, I couldn't appropriately cite them. Sorry about that.

@@ -1,0 +1,193 @@
+---
+title: "Running R in Batch Mode"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+So far we have run R using Rstudio IDE in an interactive way. Many times we need to run R non-interactively (aka, Batch mode) if the process is long and computing-intensive. To see how to run R in batch mode, check the R manual.
+```bash
+R --help
+``` 
+R can be run in non-interactive mode in several ways. All of them involve
+working from the command line or some terminal emulator. In Mac systems,
+you use the __terminal__. In Windows systems you use the __command prompt__,
+or _PowerShell_, or any other shell alternative (e.g. GitBash, Cygwin).
+
+Assuming that you have an R script file `myscript.R` that will 
+be executed non-interactively, you can use one of the following options:
+
+```bash
+# Using 'R CMD BATCH' 
+R CMD BATCH myscript.R
+# Using 'Rscript'
+Rscript myscript.R
+# Using input redirection
+R < myscript.R
+# Running a shell script
+./myscript.R
+```
+
+## Using R CMD BATCH or Rscript  
+This is modified from a [R blog](https://www.r-bloggers.com/passing-arguments-to-an-r-script-from-command-lines/) and a [GitHub document](https://github.com/gastonstat/tutorial-R-noninteractive/blob/master/03-rscript.Rmd)
+
+- `Rscript` is the alternative front-end of `R CMD BATCH`
+- output goes to standard output (_stdout_) by default
+- `Rscript` has default options `--slave --no-restore`
+
+The usage of `Rscript` has the following form:
+```bash
+Rscript [options] [-e expr [-e expr2 ...] | file] [args]
+```
+- `options` are options beginning with double dash `--`. These can be any of 
+the standard `R` front-end.
+- `expr` (further expressions `expr2 ...`) refers to any R expression, and must be properly quoted.
+- `file` is the name of the input file containing R commands
+- `args` are arguments to be passed to the script in `file`
+
+You can run more than one expression using as many `-e` flags as
+expressions to be executed (make sure to properly quote them)
+```bash
+Rscript -e '2 + 3' -e '2 * 3' -e '2 ^ 3'
+```
+
+You can also execute a compound expression with multiple commands 
+separated with semicolons `;`
+```bash
+Rscript -e '2 + 3; 2 * 3; 2 ^ 3'
+```
+
+Here's one example of how to render an `.Rmd` (R markdown) file from the
+command line (again, be careful with the quotes):
+
+```bash
+Rscript -e 'library(rmarkdown); render("document.Rmd")'
+```
+
+### Passing arguments to R script
+
+The common way to pass arguments to R scripts from command lines is using _Rscript_ or _R CMD BATCH_ with **trailing** arguments. For example, 
+
+```bash
+Rscript --vanilla toyScript.R geneList.txt out.txt
+```
+
+The common way to extract arguments passed to R scripts from command lines is to use the _commandArgs()_ function. See its [documentation](https://www.rdocumentation.org/packages/R.utils/versions/2.9.0/topics/commandArg). 
+
+For example, let create a toy example R script name _toyScript.R_
+```{r eval = FALSE}
+#!/usr/bin/env Rscript
+
+## the first element of args is the first argument, instead of the name of the file containing the R script itself.
+args <- commandArgs(trailingOnly = TRUE)   
+
+# test if there is at least one argument: if not, return an error
+if (length(args) == 0) {
+  stop("At least one argument must be supplied (input file).n", call. = FALSE)
+} else if (length(args) == 1) {
+  # default output file
+  args[2] <- "out.txt"
+}
+
+df = read.table(args[1], header = TRUE)
+num_vars = which(sapply(df, class) == "numeric")
+df_out = df[, num_vars]
+write.table(df_out, file = args[2], row.names = FALSE)
+```
+
+Make _toyScript.R_ executable by changing its permission as follows: 
+```bash
+chmod +x toyScript.R
+```
+Then run it as follows:  
+```bash
+toyScript.R input.data.frame.txt output.data.frame.txt
+```
+
+
+Another example:  
+Save the first code snippet as "normal-vector.R".  
+
+```bash
+#!/usr/bin/env Rscript
+# Generates a random vector following a normal distribution.
+# Values for 'n', 'mean', 'sd' are expected (in that order).
+# reading arguments ('n', 'mean', 'sd')
+args <- commandArgs(trailingOnly = TRUE)
+n <- as.numeric(args[1])
+mean <- as.numeric(args[2])
+sd <- as.numeric(args[3])
+x <- rnorm(n, mean, sd)
+cat(x, '\n')
+```
+Assuming that you change the file permissions (chmod +x normal-vector.R), you can run it as:
+```bash
+./normal-vector.txt 10 5 1
+```
+
+Another way is to use _--args_ option of the R command
+You can also pass arguments with the `--args` options of the `R` command:
+
+```bash
+R --vanilla --args 10 5 2 < normal-vector.R
+```
+
+## R Shell Script  
+In this case we use a `bash` shell that instead of using the command `Rscript` to interpret the script, it uses the `R` command. The file is `bash-example.sh`
+
+```bash
+#!/bin/bash
+# creates a csv file with log-transformed
+# variable 'mpg' and 'hp' from data set 'mtcars'
+R --slave <<EOF
+log_mtcars <- function()
+{
+	log_mpg <- log(mtcars$mpg)
+	log_hp <- log(mtcars$hp)
+	logdata <- data.frame(log_mpg, log_hp)
+	write.csv(logdata, "log-mtcars.csv")
+}
+log_mtcars()
+EOF
+```
+Now, make this file executable by
+```bash
+chmod +x bash-example.sh
+```
+To run the R function included in this file type
+```bash
+./bash-example.sh
+```
+
+Another way to execute R scripts in the command line is with 
+the `R` command and the redirection operator `<`.
+
+Consider the file `myscript1.R`, which generates two random vectors, fit a regression line, and generates two plots:
+```{r regression, eval = FALSE}
+# Regression analysis of two random vectors
+# random data
+x <- rnorm(20)
+y <- x + rnorm(20)
+# regression line
+reg <- lm(y ~ x)
+# scatter diagram with fitted regression line
+png('scatterplot.png')
+plot(x, y, las = 1, pch = 19, col = "#555555")
+abline(reg, col = "#0000DD59", lwd = 2)
+dev.off()
+# residuals plot
+png('residuals_plot.png')
+plot(x, reg$residuals, las = 1, pch = 19, col = "#606060")
+abline(h = 0)
+dev.off()
+```
+Here's how to execute this script in the command line with a redirection 
+operator:  
+
+```bash
+R --vanilla < myscript1.R
+```

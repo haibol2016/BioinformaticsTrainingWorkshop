@@ -1,0 +1,200 @@
+---
+title: "Data frames and the like"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Data frames
+
+A data frame is the most common way of storing data in R, making data analysis easier.  
+It has properties of both a list and a matrix:  
+
+* It is a list of vectors of the same length.  
+* It likes a matrix, but different columns have different types.
+
+### Create a data frame using _data.frame()_
+
+```{r eval = FALSE}
+
+data.frame(..., row.names = NULL, check.rows = FALSE,
+           check.names = TRUE, fix.empty.names = TRUE,
+           stringsAsFactors = default.stringsAsFactors())
+
+# retrun TRUE
+default.stringsAsFactors()
+```
+
+```{r eval = FALSE}
+# By default, strings are turned into factors
+df <- data.frame(x = 1:3, y = letters[1:3], z = c(TRUE, FALSE, TRUE))
+df
+str(df)
+
+# suppress data.frame()'s default behavior
+df <- data.frame(x = 1:3, 
+                 y = letters[1:3], 
+                 z = c(TRUE, FALSE, TRUE), 
+                 stringsAsFactors = FALSE)
+df
+str(df)
+```
+
+### Testing and coercion
+
+```{r eval = FALSE}
+df <- data.frame(x = 1:3, 
+                 y = letters[1:3], 
+                 z = c(TRUE, FALSE, TRUE), 
+                 stringsAsFactors = FALSE)
+# check type of a data frame
+typeof(df)
+
+# check its class
+class(df)
+
+# Check if an object is a data frame
+is.data.frame(df)
+
+# Coercion of other data structures into data frames
+
+# a vector will become a one-colun data frame
+a <- 1:10
+as.data.frame(a)
+
+# A list will become a data frame, with each element as an column if each list element has the same length; otherwise R throws an error
+list_1 <- list(x = 1:3, 
+               y = letters[1:3], 
+               z = c(TRUE, FALSE, TRUE))
+as.data.frame(list_1)
+
+
+list_2 <- list(x = 1:3, 
+               y = letters[1:3], 
+               z = c(TRUE, FALSE, TRUE))
+as.data.frame(list_2)
+
+# A matrix will become a data frame with the same dimensions.
+mat <- matrix(1:10, nrow = 5)
+as.data.frame(mat)
+```
+
+### Attributes of a data frame
+A data frame has attributes, such as names (same as col.names), row.names, and class.
+
+Attention!!!: row.names and col.names are attributes, but rownames() and col.names() are functions.
+
+```{r eval = FALSE}
+df <- data.frame(x = 1:3, 
+                 y = letters[1:3], 
+                 z = c(TRUE, FALSE, TRUE), 
+                 stringsAsFactors = FALSE)
+# get attributes
+attributes(df)
+
+# get names, which is also column names
+names(df)
+colnames(df)
+
+# get row names
+rownames(df)
+
+# get both row and column names
+dimnames(df)
+
+# get dimensions for a data frame 
+nrow(df)
+ncol(df)  # same as length(df)
+dim(df)
+```
+### Subset, index and modify a data frame
+subsetting, indexing and modifying a data frame can be done in both a matrix way or a list way.
+Attention: subsetting will simplify the resulting data structure from a data frame to a vector if only one resulting column. 
+
+```{r eval = FALSE}
+df <- data.frame(x = 1:3, 
+                 y = letters[1:3], 
+                 z = c(TRUE, FALSE, TRUE), 
+                 stringsAsFactors = FALSE)
+# in matrix ways
+df[1, ]
+
+# see the difference with or without drop = FALSE
+df[, 1, drop = FALSE]  # data frame
+df[, 1]                 # vector
+
+df[1:2, 1:2]
+
+# in list ways
+df$x
+df[[1]]
+df[["x"]]
+df[2]
+
+# remove a column
+df[, 2] <- NULL
+```
+
+## Tibble
+Tibbles are also extended and enhanced data frames, implemented by the R package **Tibble**. They tweak some older behaviors to make life a little easier. A data structure adopted by the tidyverse packages.
+
+Key differences between tibbles and data frames are printing, subsetting, and recycling rules.  
+
+*Column data is not coerced. A character vector is not turned into a factor. List-columns are expressly anticipated and do not require special tricks. Read more in tibble().  
+
+Recycling only happens for a length 1 input.  
+
+* Column names are not munged, although missing names are auto-populated. Empty and duplicated column names are strongly discouraged, but the user must indicate how to resolve. Read more in name-repair.  
+
+* Row names are not added and are strongly discouraged, in favor of storing that info as a column. Read about in rownames.  
+
+* df[, j] returns a tibble; it does not automatically extract the column inside. df[, j, drop = FALSE] is the default. Read more in subsetting.  
+
+* There is no partial matching when $ is used to index by name. df$name for a nonexistent name generates a warning. Read more in subsetting.  
+
+* Printing and inspection are a very high priority. The goal is to convey as much information as possible, in a concise way, even for large and complex tibbles. Read more in formatting.  
+```{r eval = FALSE}
+options(tibble.print_max = n, tibble.print_min = m, tibble.width = Inf)
+```
+
+* View full dataset with _View()_ of _glimpse()_. 
+
+For more details, see its [vignette](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html).
+
+### Construct a Tibble  
+```{r}
+library("tibble")
+# construct by columns
+tb <- tibble(x = 1:3, y = letters[1:3])
+
+# construct by rows
+tb <- tribble(~x, ~y, 
+        1, "a",
+        2, "b",
+        3, "c")
+```
+### Coercion between tibbles and data frames
+```{r}
+# conver tibbles to data frames
+df <- as.data.frame(tb)  
+
+# data frames to tibbles
+tb <- as_tibble(df)
+
+# convert named vectors to tibbles
+x <- 1:3
+names(x) <- letters[1:3]
+x <- enframe(x)
+```
+### Testing tibble
+```{r}
+is_tibble(tb)
+```
+## Recommendations  
+
+* For better performance, use tibbles, especially in case of large data.  
+* In case some functions may not work with tibbles, convert tibbles to data frames using the _as.data.frame().  

@@ -1,0 +1,120 @@
+---
+title: "Commonly used R functions"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Built-in functions
+Almost everything in R is done through functions. Numerous functions have been implemented in many R packages distributed in the CRAN, Bioconductor, GitHub and other sources. Here are some built-in functions in R base operating on numeric and character data that are commonly used in creating or recoding variables.
+
+### Functions working on numeric data
+|Function|Description|
+|--------|-----------|
+|abs(x)|absolute value|
+|sqrt(x)|square root|
+|ceiling(x)|ceiling(3.475) is 4|
+|floor(x)|floor(3.475) is 3|
+|trunc(x)|trunc(5.99) is 5|
+|round(x, digits=n)|round(3.475, digits=2) is 3.48|
+|signif(x, digits=n)|signif(3.475, digits=2) is 3.5|
+|cos(x), sin(x), tan(x), acos(x), cosh(x), acosh(x), etc.|Trigonometric functions|
+|log(x)|natural logarithm|
+|log10(x)|common logarithm|
+|exp(x)|exponential function|
+|pow(x, n)|power function|
+
+### Functions working on character data
+For better performance, use functions from the **stringr** package. See the [stringr cheat sheet](http://edrub.in/CheatSheets/cheatSheetStringr.pdf).
+
+The following are built-in functions for handling strings.
+
+|Function|Description|
+|--------|-----------|
+|substr(x, start=n1, stop=n2)|Extract or replace substrings in a character vector. x <- "abcdef"; substr(x, 2, 4) is "bcd"; substr(x, 2, 4) <- "22222" is "a222ef"|
+|grep(pattern, x , ignore.case=FALSE, fixed=FALSE)|Search for pattern in x. If fixed =FALSE then pattern is a regular expression. If fixed=TRUE then pattern is a text string. Returns matching indices. grep("A", c("b","A","c"), fixed=TRUE) returns 2|
+|sub(pattern, replacement, x, ignore.case =FALSE, fixed=FALSE)|Find the first occurrence of pattern in x and replace it with replacement text. If fixed=FALSE then pattern is a regular expression.If fixed = T then pattern is a text string. sub("\\s",".","Hello There") returns "Hello.There"|
+|gsub(pattern, replacement, x, ignore.case =FALSE, fixed=FALSE)|Find every occurrences of pattern in x and replace each with replacement text.| 
+|strsplit(x, split)|Split the elements of character vector x at split. strsplit("abc", "") returns 3 element vector "a","b","c"|
+|paste(..., sep="")|Concatenate strings after using sep string to separate them. paste("x",1:3,sep="") returns c("x1","x2" "x3"); paste("x",1:3,sep="M") returns c("xM1","xM2" "xM3"); paste("Today is", date())|
+|paste0|similar to paste(), with sep = ""|
+|toupper(x)|Uppercase|
+|tolower(x)|Lowercase|
+
+## Statistical probability functions
+The following table describes functions related to probability distributions. For random number generators below, you can use set.seed(1234) or some other integer to create reproducible pseudo-random numbers.
+
+|Function|Description|
+|--------|-----------|
+|dnorm(x)|normal density function (by default m=0 sd=1)|# plot standard normal curve
+x <- pretty(c(-3,3), 30); y <- dnorm(x); plot(x, y, type='l', xlab="Normal Deviate", ylab="Density", yaxs="i")|
+|pnorm(q)|cumulative normal probability for q(area under the normal curve to the left of q); pnorm(1.96) is 0.975|
+|qnorm(p)|normal quantile value at the p percentile of normal distribution. qnorm(.9) is 1.28 # 90th percentile|
+|rnorm(n, m=0,sd=1)|n random normal deviates with mean m and standard deviation sd. #50 random normal variable with mean=50, sd=10; x <- rnorm(50, m=50, sd=10)
+**Notes**: Similar functions are there for other distributions to calculate qunatile, probability, density and generate random number from the specified distribution.
+
+
+## Other statistical functions
+Other useful statistical functions are provided in the following table. Each has the option na.rm to strip missing values before calculations. Otherwise the presence of missing values will lead to a missing result. Object can be a numeric vector or data frame.
+
+|Function|Description|
+|--------|-----------|
+|mean(x, trim=0, na.rm=FALSE)|mean of object x. # trimmed mean, removing any missing values and 5 percent of highest and lowest scores: mx <- mean(x,trim=.05,na.rm=TRUE)|
+|sd(x)|standard deviation of object(x). also look at var(x) for variance and mad(x) for median absolute deviation.|
+|median(x)|median|
+|quantile(x, probs)|quantiles where x is the numeric vector whose quantiles are desired and probs is a numeric vector with probabilities in [0,1]. # 30th and 84th percentiles of x: y <- quantile(x, c(.3,.84))|
+|range(x)|range|
+|sum(x)|sum|
+|rowSums(matrix)||
+|colSums(matrix)||
+|diff(x, lag=1)|lagged differences, with lag indicating which lag to use|
+|min(x)|minimum|
+|max(x)|maximum|
+|pmin(), pmax()||
+|scale(x, center=TRUE, scale=TRUE)|column center or standardize a matrix.|
+
+
+## Functions for R debugging and robust programming
+|Function|Description|
+|--------|-----------|
+|traceback()|Get and Print Call Stacks|
+|browser()|interrupt the execution of an expression and allow the inspection of the environment where browser was called from|
+|recover()|This function allows the user to browse directly on any of the currently active function calls, and is suitable as an error option. The expression options(error = recover) will make this the error option.|
+|options(error = "...")||
+|stop()|stop stops execution of the current expression and executes an error action.|
+|warning()|Generates a warning message that corresponds to its argument(s) and (optionally) the expression or function from which it was called.|
+|message()|Generate a diagnostic message from its arguments|
+|tryCatch|These functions provide a mechanism for handling unusual conditions, including errors and warnings.|
+|try| a wrapper to run an expression that might fail and allow the user's code to handle error-recovery.|
+
+## Functions for input and output
+|Function|Description|
+|--------|-----------|
+|print||
+|cat||
+|format||
+|sink||
+|read.table||
+|load, save||
+|readRDS, saveRDS||
+|data||
+|dir, list.files|list files in a diectory|
+|basename, dirname, tools::file_ext|handle file paths|
+|file.path|Construct the path to a file from components in a platform-independent way.|
+|path.expand, normalizePath||
+|file.choose|Choose a file interactively.|
+|file.copy, file.create, file.remove, file.rename||
+|dir.create|create a directory|
+|file.exists, dir.exists|test if a file or directory exists|
+|tempdir, tempfile|create temporary directory and files|
+|download.file||
+|system|invoke a system command|
+
+**Notes**: For downloading file, check functions in library(downloader).
+
+For more commonly used functions, please refer to [R Reference Card 2.0](https://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf) and the book [Advanced R, 1st ed.](http://adv-r.had.co.nz/Vocabulary.html). We will cover some in our course.
