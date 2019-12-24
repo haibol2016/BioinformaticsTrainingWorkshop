@@ -4,10 +4,13 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
 
 ## Awesome R packages
@@ -96,7 +99,7 @@ For more awesome books, see [this page](https://github.com/RomanTsegelskyi/rbook
 
 3. Learn packages by reading their vignettes and reference manuals.  
 
-4. Learn by reviewing others source code.  
+4. Learn by reviewing otherPkgs source code.  
 It can be instructive to look at the code of functions in R base and other famous packages. In R, you can view a function's code by typing the function name without the ( ). If this method fails, look at the following [GitHub document](https://github.com/jennybc/access-r-source) for hints on viewing function source code. Ultimately, you can download the package source code in XXXX.tar.gz from CRAN or Bioconductor, or just  from the GitHub/other source code depositories, and read it.  
 
 5. Practice and practice!

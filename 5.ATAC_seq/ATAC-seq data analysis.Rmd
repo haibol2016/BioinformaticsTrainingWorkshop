@@ -1,0 +1,660 @@
+---
+title: "ATAC-seq data analysis"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+    css: style.css
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
+```
+
+
+The following are representative commands and scripts used for the ATAC-seq case study
+using HPC with a bash shell and a LSF job management system for all 
+steps except taking IGV snapshots
+
+## Download ATAC-seq data from GEO using ascp  
+Please download and install Aspera Connect by following [this link](https://www.ncbi.nlm.nih.gov/books/NBK242625/). I installed the Linux version, with the ascp executable located in "~/.aspera/connect/bin/" and the public key in "~/.aspera/connect/etc/asperaweb_id_dsa.openssh".
+
+If you are inereested in download ATAC-seq data from NCBI Sequence Read Archive (SRA), find the location of the SRA files by search [the SRA database](https://www.ncbi.nlm.nih.gov/sra) and save the search results by clicking the **send to** link on the top, then "File", then format "Runinfo". Then open the resulting file and get the download path from the column 10: **download_path**. I am interested in the ATAC-seq data from Greenleaf lab under accession number: SRR5720369. I download it as follows.
+
+```bash
+out=data
+mkdir -p $out
+~/.aspera/connect/bin/ascp -T -l 100M -m 50M -k 1  -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh \
+    anonftp@ftp.ncbi.nlm.nih.gov:/sra/sra-instant/reads/ByExp/sra/SRX/SRX293/SRX2937358/SRR5720369/SRR5720369.sra   ./$out
+```
+Another way is to use SRA Toolkit and Aspera simultaneously. See [this blog](https://reneshbedre.github.io/blog/fqutil.html). This way you only need to know the SRA accession number.
+
+
+## Convert reads from the sra format to the fastq format using the RA Toolkit  
+```bash
+out=data
+fastq-dump  --split-files  -B -F  --gzip --outdir $out $out/SRR5720369.sra
+```
+## Check quality of the raw sequencing data using FASTQC
+```bash
+in=data
+out=results/fastqc.out
+fastqc -o $out -t 4 --extract $in/SRR5720369_R1.fastq.gz  $in/SRR5720369_R2.fastq.gz 
+```
+
+## Build index for the human reference genome GRCh38 (hg38) for DNA aligner **bwa**
+Download human reference genome sequencing from UCSC gebome browser and decompress it.
+```bash
+out=genome
+mkdir -p $out
+cd $out
+wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+
+gunzip hg38.fa.gz
+
+fasta=hg38.fa
+bwa index  $fasta
+cd ../
+```
+
+## Align reads to the human reference genome using bwa-mem and convert SAM to BAM using samtools using piping
+```bash
+genome=genome
+fastq=data
+
+out=results/bwa.out
+mkdir -p $out
+
+fasta=$genome/hg38.fa
+
+bwa mem -t 8 -M  $fasta $data/SRR5720369_R1.fastq.gz  $data/SRR5720369_R2.fastq.gz  | \
+        samtools view -b -h  -o  $out/SRR5720369.bam  -@ 8  -1  -
+```
+
+## Preprocessing the alignment file
+If you have more than one assay, please use job arrays to parallel the analysis, by changing **#BSUB -J "bwamem[1]"**  to **#BSUB -J "bwamem[1-n]"** , where n is the number of ATAC-seq assays in the following LSF job script.
+
+```bash
+#!/bin/bash
+
+#BSUB -n 8 # minmal numbers of processors required for a parallel job
+#BSUB -R rusage[mem=16000] # ask for memory 16G
+#BSUB -W 12:00 #limit the job to be finished in 12 hours
+#BSUB -J "bwamem[1]"
+#BSUB -q long # which queue we want to run in
+#BSUB -o logs/out.%J.%I.txt # log
+#BSUB -e logs/err.%J.%I.txt # error
+#BSUB -R "span[hosts=1]" # All hosts on the same chassis"
+
+module load samtools/1.4.1
+i=$(($LSB_JOBINDEX - 1))
+
+in_bam=results/bwa.out
+genome=genome
+bams=(`ls ${in_bam}/*.bam `)
+names=(`ls ${in_bam}/*.bam| perl -p -e 's{.+/(.+?).bam}{$1}'`)
+out=results/samtools.out
+
+## "human.nuclear.genome.txt" is a file containing a list of all human chromosomes and unplaced scaffolds
+samtools view -H  ${in_bam}/SRR5720369.bam | grep '^@SQ'  | \
+         cut -f2 | perl -n -e 's/SN://; print if !/chrM/'  > $genome/human.nuclear.genome.txt
+
+chromosomes=(`cat  $genome/human.nuclear.genome.txt`)
+
+## sort BAM by coordinate
+samtools sort -l 9 -m 8G  -o  $out/${names[$i]}.sorted.bam  -O BAM -@ 8  ${bams[$i]}
+samtools index  -@ 1  $out/${names[$i]}.sorted.bam
+
+## get statistics of read alignments
+samtools flagstat -@ 8  $out/${names[$i]}.sorted.bam  > $out/${names[$i]}.prefilter.stat
+
+## extract mitochondrial reads and summarize their mapping statistics
+samtools view  -h   $out/${names[$i]}.sorted.bam  'chrM' > $out/${names[$i]}.MT.bam
+samtools flagstat -@ 8  $out/${names[$i]}.MT.bam > $out/${names[$i]}.MT.bam.stat
+
+## filtering BAM files to remove
+## 1. mitochondrial reads
+## 2. discordantly aligned reads
+## 3. inferred fragments not in the range of 38 to 2000 bps
+## 4. Mapping quality < 20
+samtools view  -h -O SAM  $out/${names[$i]}.sorted.bam   ${chromosomes[@]} | \
+    awk  'BEGIN{FS=OFS="\t"} function abs(v) {return v < 0 ? -v : v}; /^@/ || ($7 == "="  \
+    && ($2 == 81 || $2 == 161|| $2 == 97 || $2 == 145 || $2 ==99 || \
+    $2 == 147 || $2 == 83 || $2 ==163) && abs($9) <= 2000 && abs($9) >= 38 && $5 >=20 ) {print}' | \
+    samtools view  -h  -b -o $out/${names[$i]}.chr.filtered.bam  - 
+
+## sort and index the resulting BAM files
+samtools sort -l 9 -m 8G  -o  $out/${names[$i]}.chr.filtered.sorted.bam  -O BAM -@ 8  $out/${names[$i]}.chr.filtered.bam
+samtools index  -@ 1 $out/${names[$i]}.chr.filtered.sorted.bam 
+
+## summary statistics of BAM files after filtering
+samtools flagstat -@ 8 $out/${names[$i]}.chr.filtered.sorted.bam  > $out/${names[$i]}.chr.filtered.sorted.bam.stat
+	
+## remove duplicates from filtered BAM files
+samtools rmdup $out/${names[$i]}.chr.filtered.sorted.bam \
+         $out/${names[$i]}.chr.filtered.sorted.rmdup.bam
+
+## index BAM files
+samtools index  -@ 1 $out/${names[$i]}.chr.filtered.sorted.rmdup.bam
+```
+
+## Perform in silico QC using the ATACseqQC package
+### Get human chromosome size information
+```bash
+genome=genome
+samtools view -H SRR5720369.sorted.bam | grep -P 'SN:' | cut -f2,3  | \
+        perl -p -e 's/[SL]N://g' | \
+        awk 'BEGIN{FS=OFS="\t"} {print $1, 1, $2, "hg38"}' > $genome/human.auto.x.chrom.size.txt
+```
+
+### Creating ATACseqQC R scripts: ATACseqQC.R 
+```bash
+#!/usr/bin/env Rscript
+
+## This script accept one preprocessed BAM file for QC analysis. An index file per BAM file must be included in the same directory.
+
+## Loading all required packages
+library(motifStack)
+library(ATACseqQC)
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+library(BSgenome.Hsapiens.UCSC.hg38)
+library(MotifDb)
+library(ChIPpeakAnno)
+
+## Getting the BAM file name and sample ID
+args <- commandArgs(trailingOnly = TRUE)
+bamfile <- args[1]
+bamfile.sample.ID <- gsub(".bam", "", basename(bamfile))
+
+outPath <- file.path("results", "ATACseqQC.out",
+                     paste0(bamfile.sample.ID, ".splited.bam"))
+if (!dir.exists(outPath)) {
+    dir.create(outPath, recursive = TRUE)
+}
+
+## Plotting size distribution of ATAC-seq library insert (Figure 1G)
+pdf(file.path(
+    outPath,
+    paste0(bamfile.sample.ID, ".fragment.size.distribution.pdf")
+),
+width = 10,
+height = 8)
+fragSize <- fragSizeDist(bamFiles = bamfile, 
+                         bamFiles.labels = bamfile.sample.ID)
+dev.off()
+
+
+## BAM file tags to be included when read in by the Rsamtools
+tags <- c("AS", "NM", "MD")
+
+## Build GRangs for the human genome hg38 excluding unplaced scaffoldsand chrY
+human.genome <- read.delim("genome/human.auto.x.chrom.size.txt", header = F)
+
+seqlev <- as.character(human.genome[, 1])
+gr <- GRanges(as.character(human.genome[, 1]),
+              IRanges(human.genome[, 2], human.genome[, 3]))
+
+## For QC, read alginments from chromosomes 1 and 2 are representatitive enough
+which <- gr[seqnames(gr) %in% c("chr1", "chr2")]
+
+## Reading in paired end read alignments
+gal <- readBamFile(bamfile,
+                   tag = tags,
+                   which = which,
+                   asMates = TRUE)
+
+## Shifting the coordinates of 5' ends of the aligned reads in the bam file, +4 for reads mapping
+## to the positive strand, -5 for reads mapping to the negative strand
+gal1 <- shiftGAlignmentsList(gal)
+shiftedBamfile <- file.path(outPath, paste0(bamfile, ".shifted.bam"))
+
+## Outputting the shifted BAM file
+export(gal1, shiftedBamfile)
+
+## Getting information of known transcripts from UCSC genome browser database
+txs <- transcripts(TxDb.Hsapiens.UCSC.hg38.knownGene)
+
+## Classifying reads into nucleosome-free, mono-, di- and tri-nucleosome
+## bins based on their fragment sizes. Don't use the machine learning option. TOO SLOW.
+genome <- Hsapiens
+objs <- splitGAlignmentsByCut(gal1, txs = txs)
+
+## output split BAM files
+null <- writeListOfGAlignments(objs, outPath)
+
+## Heatmap and coverage curve for nucleosome-free amd mono-, di- and tri-nucleosome occupied regions
+
+bamfiles <- file.path(
+    outPath,
+    c(
+        "NucleosomeFree.bam",
+        "mononucleosome.bam",
+        "dinucleosome.bam",
+        "trinucleosome.bam"
+    )
+)
+
+## Extracting TSSs coordinates
+TSS <- promoters(txs, upstream = 0, downstream = 1)
+TSS <- unique(TSS)
+
+## Estimating the library size for normalization
+librarySize <- estLibSize(bamfiles)
+
+## Calculating the signals around TSSs.
+NTILE <- 101
+dws <- ups <- 1010
+
+sigs <- enrichedFragments(
+    bamfiles,
+    TSS = TSS,
+    librarySize = librarySize,
+    seqlev = seqlev,
+    TSS.filter = 0.5,
+    n.tile = NTILE,
+    upstream = ups,
+    downstream = dws
+)
+
+
+## log2 transformed signals
+names(sigs) <- gsub(".bam", "", basename(names(sigs)))
+sigs.log2 <- lapply(sigs, function(.ele)
+    log2(.ele + 1))
+
+## Plotting heatmap showing signals  for nucleosome-free and oligonucleosome-bound
+## regions around TSSs.  (Figure 1 H and 1I)
+pdf(file = file.pathe(outPath, paste0(bamfile.sample.ID, 
+                                      ".heatmap and averaged coverage.pdf")))
+featureAlignedHeatmap(sigs.log2,
+                      reCenterPeaks(TSS, width = ups + dws),
+                      zeroAt = .5,
+                      n.tile = NTILE)
+
+out <- featureAlignedDistribution(
+    sigs,
+    reCenterPeaks(TSS, width = ups + dws),
+    zeroAt = .5,
+    n.tile = NTILE,
+    type = "l",
+    ylab = "Averaged coverage"
+)
+dev.off()
+
+
+## Plotting CTCF footprints. (Figure 2C)
+CTCF <- query(MotifDb, c("CTCF"))
+CTCF <- as.list(CTCF)
+print(CTCF[[1]], digits = 2)
+seqlev <- c("chr1", "chr2")
+
+nucleosome_free_bamfile <- file.path(outPath, "NucleosomeFree.bam")
+
+pdf(file = file.path(outPath, paste0(bamfile.sample.ID, ".CTCF.footprint.pdf")))
+factorFootprints(
+    nucleosome_free_bamfile,
+    pfm = CTCF[[1]],
+    genome = genome,
+    min.score = "95%",
+    seqlev = seqlev,
+    upstream = 100,
+    downstream = 100
+)
+dev.off()
+```
+
+### Run ATACseqQC.R with a preprocessed BAM file as the argument
+```bash
+chmod +x  ATACseqQC.R
+```
+
+```bash
+#!/bin/bash
+
+#BSUB -n 1 # minmal numbers of processors required for a parallel job
+#BSUB -R rusage[mem=32000] # ask for memory 32G
+#BSUB -W 72:00 #limit the job to be finished in 72 hours
+#BSUB -J "ATACseqQC[1-4]"
+#BSUB -q long # which queue we want to run in
+#BSUB -o logs/out.%J.%I.txt # log
+#BSUB -e logs/err.%J.%I.txt # error
+#BSUB -R "span[hosts=1]" # All hosts on the same chassis"
+
+i=$(($LSB_JOBINDEX -1))
+
+mkdir -p logs
+module load R/3.4.0
+
+in=results/samtools.out
+bams=(`ls $in/*.chr.filtered.sorted.rmdup.bam`)
+
+./ATACseqQC.R  ${bams[$i]}
+```
+
+## Downsampling for sequencing depth analysis and testing dependency of some diagnostic plots on sequencing depth
+
+### Creating shell scripts for downsampling BAM files: downsampling.sh
+
+```bash
+#!/bin/sh
+
+# Author: Haibo Liu              
+# script_name: downsampling.sh
+# Usage: sh downsampling.sh  /path/to/BAM_file  suffix  out_dir a_sequence_of_fractions_between_0_and_1 
+# Example:  sh downsampling.sh  SRR5720369.chr.filtered.sorted.rmdup.bam  .chr.filtered.sorted.rmdup.bam  downsample.out 0.1 0.2 0.3 0.4 0.5  0.6  0.7  0.8  0.9
+
+USAGE="Usage: sh $0 /path/to/BAM_file BAM_file_suffix out_dir a_sequence_of_fractions_between_0_and_1"
+
+## check number of command-line arguments
+if [ $# -lt 4 ]; then
+    echo "At least three arguments are needed!"
+	echo "$USAGE"
+	exit 1
+fi
+
+## get the basename of a bam file
+base=`basename $1 $2`
+
+## get output directory
+out_dir=$3
+mkdir -p ${out_dir}
+
+## all arguments from $4 to ${N}, holding subsampling percentage
+percentage=("${@:4}")
+
+## randomization of alignments by sorting by read names
+samtools sort -l 9 -m 8G  -o  ${out_dir}/${base}.name.sorted.sam  -O SAM  -n -@ 8  $1
+
+## get SAM header
+grep  -P '^@(HD|SQ|PG)'  ${out_dir}/${base}.name.sorted.sam > ${out_dir}/${base}.name.sorted.sam.header
+
+## convert paired read alignment to a single line representing a fragment alignment
+grep -v -P '^@(HD|SQ|PG)'  ${out_dir}/${base}.name.sorted.sam | awk 'BEGIN{FS=OFS="\t"; ORS="\t"; i =1} \
+        {if (i==1) {print $0; a=$1; i=i+1} else if ($1==a) {print $0; i= i+1} else if ($1 !=a) \
+        {print "\n"; print $0; i= i+1; a= $1}}'| perl -p -e 's/^\t//; s/\t$//' >  ${out_dir}/${base}.name.sorted.oneliner.sam
+
+## subsample using shuf
+total=`wc -l ${out_dir}/${base}.name.sorted.oneliner.sam | awk  '{print $1}' `
+while (($#)); do
+   subsample_size+=( `echo "${total} * ${1} " |bc | perl -p -e 's/\.\d+//'` )
+   shift
+done
+
+echo "${subsample_size[@]}"
+
+## number of subsamples
+num_subsamples=${#subsample_size[@]}
+
+for (( i=0; i<${num_subsamples}; i++ ));
+
+do
+	
+	file=${out_dir}/${base}.name.sorted.${percentage[$i]}.sam 
+	cp ${out_dir}/${base}.name.sorted.sam.header   $file
+	shuf -n  ${subsample_size[$i]} ${out_dir}/${base}.name.sorted.oneliner.sam  >>  $file
+	
+	base1=`basename $file .sam`
+	
+	# The following line should be changed based on the actual fastq identifiers
+    perl -p -e 's/(HWI.+?)\s+(HWI.+)/$1\n$2/' $file | samtools view -b -h  -@ 8 - | \
+    samtools sort  -l 9 -m 8G  -o  ${out_dir}/${base1}.coord.sorted.bam  -O BAM -@ 8 -
+    samtools index  -@ 1  ${out_dir}/${base1}.coord.sorted.bam
+done
+```
+
+### Downsample from SRR5720369
+```bash
+#!/bin/bash
+
+#BSUB -n 8 # minmal numbers of processors required for a parallel job
+#BSUB -R rusage[mem=8000] # ask for memory 8G
+#BSUB -W 72:00 #limit the job to be finished in 12 hours
+#BSUB -J "subsample"
+#BSUB -q long # which queue we want to run in
+#BSUB -o logs/out.%J.%I.txt # log
+#BSUB -e logs/err.%J.%I.txt # error
+#BSUB -R "span[hosts=1]" # All hosts on the same chassis"
+
+mkdir -p logs
+module load samtools/1.4.1
+in=results/samtools.out
+
+sh downsampling.sh  $in/SRR5720369.chr.filtered.sorted.rmdup.bam  .chr.filtered.sorted.rmdup.bam results/downsample.out 0.1 0.2 0.25 0.3 0.4 0.5  0.6  0.7 0.75 0.8 0.9
+```
+
+## call peaks based on the subsamples (10%, 20%, ..., 90% of fragment alignments in SRR891270.chr.filtered.sorted.rmdup.bam)
+
+```bash
+#!/bin/bash
+
+#BSUB -n 1 # minmal numbers of processors required for a parallel job
+#BSUB -R rusage[mem=16000] # ask for memory 32G
+#BSUB -W 72:00 #limit the job to be finished in 72 hours
+#BSUB -J "MACS2[1]"
+#BSUB -q long # which queue we want to run in
+#BSUB -o logs/out.%J.%I.txt # log
+#BSUB -e logs/err.%J.%I.txt # error
+#BSUB -R "span[hosts=1]" # All hosts on the same chassis"
+
+mkdir -p logs
+
+module load python/2.7.9
+module load python/2.7.9_packages/numpy/1.9.2
+module load MACS/2.1.0
+
+i=$(($LSB_JOBINDEX - 1))
+in=results/downsample.out
+bam=(`ls $in/*0.[1-9].coord.sorted.bam`)
+peak_dir=MACS2.subsampling.peaks
+mkdir -p ${peak_dir}
+
+macs2 callpeak  --treatment  ${bam[$i]}  -f BAMPE  -g hs  --keep-dup 1  \
+                --outdir  ${peak_dir} \
+                --name  ${bam[$i]} \
+                --bdg  --trackline \
+                --SPMR  \
+                --shift  0 \
+                --tempdir ./ 
+```
+## Plot saturation curves  (Figure 4A and 4B)
+
+```{r eval = FALSE}
+peakFiles <- dir("./", "narrowPeak$")
+total_frags <- 13396741
+subsamplingSizes <- seq(0.1, 1, by = 0.1) * total_frags
+names(subsamplingSizes) <- peakFiles
+
+peakStat <-
+    saturationPlot(
+        subsamplingPeakFiles = peakFiles,
+        subsamplingSizes = subsamplingSizes,
+        sep = "\t",
+        header = FALSE,
+        fdr = 0.05,
+        fdrCol = 9,
+        startCol = 2,
+        endCol = 3,
+        skipLines = 1,
+        peakCaller = "MACS2",
+        outPrefix = "SRR891270"
+    )
+
+
+library(ggplot2)
+pdf("Saturation curve for SRR891270.pdf", width = 8, height = 8)
+## total peak number-based curve
+p1 <- ggplot(data = peakStat, aes(x = subsamplingSizes / 10 ^ 6, 
+                                 y = numPeaks / 10 ^ 3)) + 
+    geom_point(shape = 16, size = 3) + 
+    geom_smooth()
+
+p1 + expand_limits(y = 0) + 
+    theme(text = element_text(size = 10)) + 
+    xlab(expression(Effective ~ fragments ~ x ~ 10 ^ 6)) + 
+    ylab(expression(Peaks ~ x ~ 10 ^ 3))
+
+## total peak width-based
+p2 <- ggplot(data = peakStat, aes(x = subsamplingSizes / 10 ^ 6, 
+                                 y = breadth / 10 ^ 6)) + 
+    geom_point(shape = 16, size = 3) + 
+    geom_smooth()
+
+p2 + expand_limits(y = 0) + 
+    theme(text = element_text(size = 10)) + 
+    xlab(expression(Effective ~ fragments ~ x ~ 10 ^ 6)) + 
+    ylab(expression(Total ~ peaks ~ width ~ (Mb)))
+dev.off()
+```
+
+## Library complexity analysis using mitochondrial alignment-free, duplicates-containing BAM files:
+### Creating R scripts for library complexity analysis: libComplexity.R 
+```bash
+args <- commandArgs(trailingOnly = TRUE)
+bamFile <- args[1]
+out_dir <- args[2]
+if (!dir.exists(out_dir)) {
+    dir.create(out_dir)
+}
+
+histFile <- readsDupFreq(bamFile = bamFile, index = bamFile)
+
+pdf(file.path(out_dir, paste0(bamFile, ".library.complexity.pdf")),
+    width = 8, height = 5)
+complexity <- estimateLibComplexity(
+    histFile = histFile,
+    times = 100,
+    interpolate.sample.sizes = seq(0.1, 1, by = 0.1),
+    extrapolate.sample.sizes = seq(5, 20, by = 5)
+)
+dev.off()
+
+write.table(
+    complexity,
+    fil.path(out_dir, paste0(bamFile, ".complexity.txt")),
+    sep = "\t",
+    quote = F,
+    row.names = FALSE
+)
+```
+### Library complexity analysis
+```bash
+#!/bin/bash
+
+#BSUB -n 1 # minmal numbers of processors required for a parallel job
+#BSUB -R rusage[mem=32000] # ask for memory 5G
+#BSUB -W 72:00 #limit the job to be finished in 12 hours
+#BSUB -J "libCompMTfree[1-5]"
+#BSUB -q long # which queue we want to run in
+#BSUB -o logs/out.%J.%I.txt # log
+#BSUB -e logs/err.%J.%I.txt # error
+#BSUB -R "span[hosts=1]" # All hosts on the same chassis"
+
+mkdir -p logs
+i=$(($LSB_JOBINDEX - 1))
+
+module load samtools/1.4.1
+module load R/3.4.0
+in=results/samtools.out
+
+bams=(`ls $in/SRR[0-9]*[0-9].sorted.bam`)
+chromosomes=(`cat genome/human.nuclear.genome.txt`)
+
+## Removing MT alignments
+samtools view  -h -b  ${bams[$i]}  ${chromosomes[@]} > MT-free.${bams[$i]}
+samtools index MT-free.${bams[$i]}
+
+Rscript libComplexity.R  MT-free.${bams[$i]} 
+```
+
+### plot the results of library complexity analysis using R (Figure 4C)
+```{r eval = FALSE}
+files <- dir("./", "MT-free+.txt$")
+distinct <- lapply(files, read.delim, header = T)
+
+names(distinct) <-
+    gsub("MT-free.|.sorted.bam.complexity.txt", "", files)
+names(distinct) <-
+    paste(names(distinct), c(rep("50K", 3), rep("500", 2)), sep = "-")
+
+for (i in seq_along(distinct))
+{
+    distinct[[i]]$Sample <- names(distinct)[i]
+}
+
+distinct.reads <- do.call(rbind, distinct)
+str(distinct.reads)
+distinct.reads$Sample <- as.factor(distinct.reads$Sample)
+distinct.reads$relative.size <- distinct.reads$relative.size / 10 ^ 6
+distinct.reads$values <- distinct.reads$values / 10 ^ 6
+
+library(ggplot2)
+
+pdf("Greenleaf's replicates Library complexity estimated on the basis of MT-free reads.pdf", 
+    width = 8, height = 4)
+
+p <- ggplot(data = distinct.reads,
+           aes(x = relative.size, y = values, group = Sample, col = Sample)) + 
+    geom_point(shape = 16, size = 3) +
+    geom_line(size = 1)
+
+p + expand_limits(y = 0) + 
+    theme(text = element_text(size = 10)) + 
+    xlab("Putative sequenced fragments (Million)") + 
+    ylab("Distinct fragments (Million)")
+dev.off()
+```
+
+## Take IGV snapshots for genomic regions contain housekeeping genes (Figure 2)
+Please do this on a computer with GUI so you can start IGV. And not spaces are allowed in the path and file name of th BAM files.
+
+```{r eval = FALSE}
+## To access the function IGVSnapshot()
+source(system.file("extdata", "IGVSnapshot.R", package = "ATACseqQC"))
+
+IGVSnapshot (
+    maxMem = 'mm',
+    genomeBuild = "hg38",
+    bamFileFullPathOrURLs = c("SRR891270.chr.filtered.sorted.rmdup.bam",
+                              "SRR3295017.chr.filtered.sorted.rmdup.bam",
+                              "SRR5920369.chr.filtered.sorted.rmdup.bam",
+                              "SRR580802.chr.filtered.sorted.rmdup.bam"),
+    geneNames = c(
+        "GAPDH",
+        "ACTB",
+        "C1orf43",
+        "CHMP2A",
+        "EMC7",
+        "GPI",
+        "PSMB2",
+        "PSMB4",
+        "RAB7A",
+        "REEP5",
+        "VCP",
+        "VPS29"
+    ),
+    sessionFile = "ATAC-seq.session",
+    outDir = getwd()
+)
+```
+
+## Further reading
+You can also refer to a few useful tutorials:  
+
+1. [ATAC-seq Guidelines](https://informatics.fas.harvard.edu/atac-seq-guidelines.html)  
+2. [ATAC-seq data analysis: from FASTQ to peaks](https://yiweiniu.github.io/blog/2019/03/ATAC-seq-data-analysis-from-FASTQ-to-peaks/)  
+3. [ATAC-Seq data analysis](https://galaxyproject.github.io/training-material/topics/epigenetics/tutorials/atac-seq/tutorial.html)  
+4. Ou J, Liu H, Yu J, Kelliher MA, Castilla LH, Lawson ND, Zhu LJ. ATACseqQC: a
+Bioconductor package for post-alignment quality assessment of ATAC-seq data. BMC 
+Genomics. 2018 Mar 1;19(1):169. doi: 10.1186/s12864-018-4559-3. PubMed PMID:
+29490630; PubMed Central PMCID: PMC5831847.  
+5. Wei Z, Zhang W, Fang H, Li Y, Wang X. esATAC: an easy-to-use systematic
+pipeline for ATAC-seq data analysis. Bioinformatics. 2018 Aug 1;34(15):2664-2665.
+doi: 10.1093/bioinformatics/bty141. PubMed PMID: 29522192; PubMed Central PMCID: 
+PMC6061683.  
+6. Shaopeng Liu, Daofeng Li, Cheng Lyu, Paul Gontarz, Benpeng Miao, Pamela Madden, Ting Wang, Bo Zhang Improving ATAC-seq Data Analysis with AIAP, a Quality Control and Integrative Analysis Package. bioRxiv 686808; doi: https://doi.org/10.1101/686808  
+7. Divate M, Cheung E. GUAVA: A Graphical User Interface for the Analysis and
+Visualization of ATAC-seq Data. Front Genet. 2018 Jul 17;9:250. doi:
+10.3389/fgene.2018.00250. eCollection 2018. PubMed PMID: 30065749; PubMed Central
+PMCID: PMC6056626.

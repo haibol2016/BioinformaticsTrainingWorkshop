@@ -4,10 +4,13 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
 
 For more details about hypothesis testing, please refer to [R in Action: Data analysis and graphics with R, 2nd ed.](http://kek.ksu.ru/eos/DataMining/1379968983.pdf).  
@@ -97,7 +100,7 @@ fit <- aov(y~(W1*W2*B1*B2)+Error(Subject/(W1*W2))+(B1*B2),
 
 2. Look at Diagnostic Plots  
 Diagnostic plots provide checks for heteroscedasticity, normality, and influential observations. For details on the evaluation of test requirements, see (M)ANOVA Assumptions.  
-```{r eval = FASLE}
+```{r eval = FALSE}
 layout(matrix(c(1,2,3,4),2,2)) # optional layout
 plot(fit) # diagnostic plots
 ```
@@ -230,7 +233,7 @@ step$anova # display results
 ```
 Alternatively, you can perform all-subsets regression using the leaps( ) function from the leaps package. In the following code nbest indicates the number of subsets of each size to report. Here, the ten best models will be reported for each subset size (1 predictor, 2 predictors, etc.).
 
-```{r eval = FASLE}
+```{r eval = FALSE}
 # All Subsets Regression
 library(leaps)
 attach(mydata)
@@ -339,6 +342,7 @@ sqrt(vif(fit)) > 2 # problem?
 # Evaluate Nonlinearity
 # component + residual plot
 crPlots(fit)
+
 # Ceres plots
 ceresPlots(fit)
 ```
@@ -404,4 +408,3 @@ head(augment(fit))
 # glance() computes per-model statistics, such as $R^2$, AIC, and BIC:
 glance(fit)
 ```
-

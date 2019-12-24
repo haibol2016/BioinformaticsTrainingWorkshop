@@ -4,7 +4,12 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
+
+```{r setup, include=FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ## Overview of R graphics systems
 R has two graphics systems implemented in the R base package **graphics** and the **grid** package. See [An Introduction to R Graphics] (https://www.stat.auckland.ac.nz/~paul/RGraphics/chapter1.pdf). **ggplot2** is the most popular package for data visualization.  
@@ -52,7 +57,7 @@ You can specify fonts, colors, line styles, axes, reference lines, etc, by speci
 
 
 ## Base Graphics System
-### Histograms and Density Plots
+### Histograms and Density Plots  
 1. Histograms  
 You can create histograms with the function hist(x) where x is a numeric vector of values to be plotted. The option freq = FALSE plots probability densities instead of frequencies. The option breaks =  controls the number of bins.
 
@@ -135,8 +140,7 @@ dotchart(x$mpg,labels = row.names(x),cex = .7,groups =  x$cyl,
 Advanced dotplots can be created with the dotplot2( ) function in the Hmisc package and with the panel.dotplot( ) function in the lattice package.
 
 ### Bar Plots
-Create barplots with the barplot(height) function, where height is a vector or matrix. If height is a vector, the values determine the heights of the bars in the plot. If height is a matrix and the option beside = FALSE then each bar of the plot corresponds to a column of height, with the values in the column giving the heights of stacked sub-bars. If height is a matrix and beside = TRUE, then the values in each column are juxtaposed rather than stacked. Include option names.arg = (character vector) to label the bars. The option horiz = TRUE to create a horizontal barplot.
-
+Create barplots with the barplot(height) function, where height is a vector or matrix. If height is a vector, the values determine the heights of the bars in the plot. If height is a matrix and the option beside = FALSE then each bar of the plot corresponds to a column of height, with the values in the column giving the heights of stacked sub-bars. If height is a matrix and beside = TRUE, then the values in each column are juxtaposed rather than stacked. Include option names.arg = (character vector) to label the bars. The option horiz = TRUE to create a horizontal barplot.  
 
 1. Simple bar plot
 ```{r}
@@ -160,7 +164,7 @@ barplot(counts, main = "Car Distribution by Gears and VS",
   legend = rownames(counts))
 ```
 
-3. Grouped Bar Plot
+3. Grouped Bar Plots
 ```{r}
 # Grouped Bar Plot
 counts <- table(mtcars$vs, mtcars$gear)
@@ -248,10 +252,10 @@ boxplot(len~supp*dose, data =  ToothGrowth, notch = TRUE,
 ```
 In the notched boxplot, if two boxes' notches do not overlap this is strong evidence their medians differ (Chambers et al., 1983, p. 62).
 
-Other Options
+Other Options  
 The boxplot.matrix( ) function in the sfsmisc package draws a boxplot for each column (row) in a matrix. The boxplot.n( ) function in the gplots package annotates each boxplot with its sample size. The bplot( ) function in the Rlab package offers many more options controlling the positioning and labeling of boxes in the output.
 
-Violin Plots
+Violin Plots  
 A violin plot is a combination of a boxplot and a kernel density plot. They can be created using the vioplot( ) function from vioplot package.
 ```{r}
 # Violin Plots
@@ -265,7 +269,7 @@ vioplot(x1, x2, x3, names = c("4 cyl", "6 cyl", "8 cyl"),
 title("Violin Plots of Miles Per Gallon")
 ```
 
-Bagplot - A 2D Boxplot Extension
+Bagplot - A 2D Boxplot Extension  
 The bagplot(x, y) function in the aplpack package provides a bivariate version of the univariate boxplot. The bag contains 50% of all points. The bivariate median is approximated. The fence separates points in the fence from points outside. Outliers are displayed.
 
 ```{r}
@@ -277,7 +281,8 @@ bagplot(wt,mpg, xlab = "Car Weight",
         main = "Bagplot Example")
 ```
 
-### Scatterplots
+### Scatterplots  
+
 1. Simple Scatterplot  
 There are many ways to create a scatterplot in R. The basic function is plot(x, y), where x and y are numeric vectors denoting the (x,y) points to plot.
 ```{r}
@@ -415,23 +420,16 @@ fit <- lm(mpg ~ wt+disp)
 s3d$plane3d(fit)
 ```
 
-5. Spinning 3D Scatterplots
+5. Spinning 3D Scatterplots  
 You can also create an interactive 3D scatterplot using the plot3D(x, y, z) function in the rgl package. It creates a spinning 3D scatterplot that can be rotated with the mouse. The first three arguments are the x, y, and z numeric vectors representing points. col =  and size =  control the color and size of the points respectively.
 ```{r}
 # Spinning 3d Scatterplot
 library(rgl)
 plot3d(wt, disp, mpg, col = "red", size = 3)
-
-# You can perform a similar function with the scatter3d(x, y, z) in the Rcmdr package.
-# Another Spinning 3d Scatterplot
-if (!require("Rcmdr")) {install.packages("Rcmdr")}
-library(Rcmdr)
-
-scatter3d(wt, disp, mpg)
 ```
 
 ## Graphical Parameters
-You can customize many features of your graphs (fonts, colors, axes, titles) through graphic options. See a ![cheat sheet](par_cheatsheet.png).  
+You can customize many features of your graphs (fonts, colors, axes, titles) through graphic options. See a ![cheat sheet](image/par_cheatsheet.png).  
 
 One way is to specify these options in through the par( ) function. If you set parameter values here, the changes will be in effect for the rest of the session or until you change them again. The format is par(optionname=value, optionname=value, ...). 
 
@@ -512,8 +510,7 @@ You can easily set font size and style, but font family is a bit more complicate
 
 |Option|Description|
 |------|-----------|
-|font|Integer specifying font to use for text.
-1=plain, 2=bold, 3=italic, 4=bold italic, 5=symbol|
+|font|Integer specifying font to use for text. 1=plain, 2=bold, 3=italic, 4=bold italic, 5=symbol|
 |font.axis|font for axis annotation|
 |font.lab|font for x and y labels|
 |font.main|font for titles|
@@ -653,10 +650,8 @@ where
 |------|-----------|
 |side|an integer indicating the side of the graph to draw the axis (1=bottom, 2=left, 3=top, 4=right)|
 |at|a numeric vector indicating where tic marks should be drawn|
-|labels|a character vector of labels to be placed at the tickmarks
-(if NULL, the at values will be used)|
-|pos|the coordinate at which the axis line is to be drawn.
-(i.e., the value on the other axis where it crosses)|
+|labels|a character vector of labels to be placed at the tickmarks (if NULL, the at values will be used)|
+|pos|the coordinate at which the axis line is to be drawn. (i.e., the value on the other axis where it crosses)|
 |lty|line type|
 |col|the line and tick mark color|
 |las|labels are parallel (=0) or perpendicular(=2) to axis|
@@ -750,7 +745,7 @@ ny does the same for the y-axis. tick.ratio is the size of the minor tick mark r
 
 #### Reference Lines
 Add reference lines to a graph using the abline( ) function.
-```{r eval = FASLE}
+```{r eval = FALSE}
 # not run
 abline(h = yvalues, v = xvalues)
 ```
@@ -834,7 +829,7 @@ hist(mpg)
 hist(disp)
 ```
 
-Optionally, you can include widths= and heights= options in the layout( ) function to control the size of each figure more precisely. These options have the form
+Optionally, you can include widths= and heights= options in the layout( ) function to control the size of each figure more precisely. These options have the form:  
 widths: a vector of values for the widths of columns
 heights:a vector of values for the heights of rows.
 
@@ -871,4 +866,3 @@ mtext(
   line = -3
 )
 ```
-

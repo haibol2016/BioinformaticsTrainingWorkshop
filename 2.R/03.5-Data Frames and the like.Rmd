@@ -4,11 +4,15 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
+
 ## Data frames
 
 A data frame is the most common way of storing data in R, making data analysis easier.  
@@ -29,7 +33,7 @@ data.frame(..., row.names = NULL, check.rows = FALSE,
 default.stringsAsFactors()
 ```
 
-```{r eval = FALSE}
+```{r}
 # By default, strings are turned into factors
 df <- data.frame(x = 1:3, y = letters[1:3], z = c(TRUE, FALSE, TRUE))
 df
@@ -197,4 +201,5 @@ is_tibble(tb)
 ## Recommendations  
 
 * For better performance, use tibbles, especially in case of large data.  
-* In case some functions may not work with tibbles, convert tibbles to data frames using the _as.data.frame().  
+* In case some functions may not work with tibbles, convert tibbles to data frames using the _as.data.frame(). 
+

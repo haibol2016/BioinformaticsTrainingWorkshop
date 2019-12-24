@@ -4,11 +4,15 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
+
 A function is a block of organized, reusable code that is used to perform a single, related action. Functions are a fundamental building blocks of R. And R functions are also objects. 
 A function should be written to  
 

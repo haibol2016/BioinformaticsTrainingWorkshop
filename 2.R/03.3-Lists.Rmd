@@ -4,10 +4,13 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
 
 Lists are also call recursive vectors because a list can contain other list. Their elements can be of any type of R object, including lists.  

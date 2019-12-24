@@ -4,10 +4,13 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eva = TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
 
 ## Principal component analysis (PCA)
@@ -41,7 +44,7 @@ fviz_pca_biplot(fit, repel = TRUE,
         col.var = "#2E9FDF", # Variables color
         col.ind = "#696969") # Individuals color
 ```
-```{r include = FALSE}
+```{r}
 fit$rotation # pc loadings
 fit$x # the principal components
 
@@ -279,7 +282,7 @@ One way to assess whether a cluster represents true structure is to see if the c
 
 to demo, we use this [dataset](https://github.com/WinVector/zmPDSwR/blob/master/Protein/protein.txt). 
 ```{r}
-protein <- read.table("protein.txt", sep = "\t", header = TRUE)
+protein <- read.table("data/protein.txt", sep = "\t", header = TRUE)
 summary(protein)
 vars.to.use <- colnames(protein)[-1]     
 
@@ -352,4 +355,3 @@ cboot.hclust$bootbrd
 
 ## Classification
 A hot topic in machine/statistical learning. We will not go into it here. If you are interested, please familiarize yourself by reading this [page](https://data-flair.training/blogs/classification-in-r/). 
-

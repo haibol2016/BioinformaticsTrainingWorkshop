@@ -4,11 +4,15 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
+
 ## Descriptive statistics for numeric data  
 Here will cover measures of central tendency, variability, and distribution shape for continuous variables.
 
@@ -36,19 +40,20 @@ Besides the R base package, a few other packages contain functions for descripti
 ```{r include = FALSE}
 if (!require("Hmisc")) {install.packages("Hmisc")}
 library(Hmisc)
-describe(mtcars)
 # n, nmiss, unique, mean, 5,10,25,50,75,90,95th percentiles
 # 5 lowest and 5 highest scores
+# Hmisc::describe(mtcars)
 
 library(pastecs)
-stat.desc(mtcars)
 # nbr.val, nbr.null, nbr.na, min max, range, sum,
 # median, mean, SE.mean, CI.mean, var, std.dev, coef.var
+stat.desc(mtcars)
+
 if (!require("psych")) {install.packages("psych", dependencies = TRUE)}
 library(psych)
-describe(mtcars)
 # item name ,item number, nvalid, mean, sd,
 # median, mad, min, max, skew, kurtosis, se
+# psych::describe(mtcars)
 ```
 
 ### Summary Statistics by Group
@@ -129,6 +134,7 @@ vcd package to calculate the association: the phi coefficient, contingency coeff
 library(vcd)
 mytable <- xtabs( ~ Treatment + Improved, data = Arthritis)
 assocstats(mytable)
+detach(Arthritis)
 ```
 
 ### Visualizing results
@@ -189,9 +195,6 @@ The rcorr( ) function in the Hmisc package produces correlations/covariances and
 # Correlations with significance levels
 library(Hmisc)
 rcorr(as.matrix(mtcars), type = "pearson") # type can be pearson or spearman
-
-#mtcars is a data frame
-rcorr(as.matrix(mtcars))
 ```
 ### Other Types of Correlations  
 ```{r eval = FALSE}
@@ -218,4 +221,3 @@ pcor(c(1,5,2,3,6), cov(states))
 
 ### Visualizing Correlations
 Use the pairs() or splom() to create scatterplot matrices. Use corrgram() or corrplot() to plot correlograms. We have covered this in last section.  
-

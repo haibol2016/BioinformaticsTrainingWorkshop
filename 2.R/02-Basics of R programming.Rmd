@@ -7,8 +7,11 @@ output:
     css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
+
 ```
 
 ![](image/R logo.png)  
@@ -104,6 +107,7 @@ It was first defined in the **magrittr** package, and widely used by tidyverse p
 |%>%|pipe operator used in the tidyverse package|
 
 ```{r}
+library("tidyverse")
 # You take the Iris data, then you subset the data and then you aggregate the data
 iris %>%
   subset(Sepal.Length > 5) %>%
@@ -667,7 +671,7 @@ Data frames are lists of vectors, so copy-on-modify has important consequences w
 d1 <- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))
 ```
 ![](image/dataframe-1.png)  
-If you modify a column, only that column needs to be modified; the others will still point to their original references:  
+If you modify a column, only that column needs to be modified; the otherPkgs will still point to their original references:  
 
 ```{r}
 d2 <- d1
@@ -726,8 +730,6 @@ The garbage collector (GC)frees up memory by deleting R objects that are no long
 The GC runs automatically whenever R needs more memory to create a new object. Looking from the outside, it's basically impossible to predict when the GC will run.
 
 You can force garbage collection by calling _gc()_. The only reasons you might want to call _gc()_ is to ask R to return memory to your operating system so other programs can use it, or for the side-effect that tells you how much memory is currently being used.
-
-
 
 
 

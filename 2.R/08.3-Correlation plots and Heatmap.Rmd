@@ -4,10 +4,13 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
 
 ## Correlograms
@@ -35,6 +38,8 @@ A few useful R packages has the functions to create heatmaps showing high dimens
 ### R base heatmaps: heatmap()
 
 ```{r}
+library("RColorBrewer")
+library("gplots")
 df <- as.matrix(scale(mtcars))
 heatmap(df, scale = "none", col = bluered(100))
 
@@ -80,11 +85,12 @@ d3heatmap(scale(mtcars), colors = bluered(100),
 ```
 
 5. Enhancing heatmaps using the dendextend package  
-The package dendextend can be used to enhance functions from other packages. The mtcars data is used in the following sections. We'll start by defining the order and the appearance for rows and columns using dendextend. These results are used in others functions from others packages.
+The package dendextend can be used to enhance functions from other packages. The mtcars data is used in the following sections. We'll start by defining the order and the appearance for rows and columns using dendextend. These results are used in otherPkgs functions from others packages.
 
 The order and the appearance for rows and columns can be defined as follow:
 ```{r}
 library(dendextend)
+library(tidyverse)
 # order for rows
 Rowv  <- mtcars %>% scale %>% dist %>% hclust %>% as.dendrogram %>%
    set("branches_k_color", k = 3) %>% set("branches_lwd", 1.2) %>%

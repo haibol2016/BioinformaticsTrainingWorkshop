@@ -4,6 +4,7 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
 ```{r include = FALSE}
@@ -31,9 +32,9 @@ Good references for learning and using ggplot2:
 * ggplot2 reference site: https://ggplot2.tidyverse.org/reference/ and a [in-progress ggplot2 book, v3](https://ggplot2-book.org/).  
 
 * The Grammar of Graphics (Statistics and Computing) 2nd Edition, by Leland Wilkinson.  
-```{r, out.width='10%', fig.align='center', echo = FALSE}
-knitr::include_graphics("Grammar of graphics.png")
-```
+
+![](image/Grammar of graphics.png)
+
 
 A nice [ggplot2 cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf) is provided here.  
 
@@ -432,7 +433,7 @@ theme_ms <- function(base_size = 12, base_family = "Helvetica") {
 The data for the exercises is available from [here](https://github.com/IQSS/dss-workshops/blob/master/R/Rgraphics/dataSets/EconomistData.csv). Read it in with
 ```{r}
 library(readr)
-dat <- read_csv(file = "EconomistData.csv", quote = "\"")
+dat <- read_csv(file = "data/EconomistData.csv", quote = "\"")
 ```
 These data consist of Human Development Index and Corruption Perception Index scores for several countries. Please try to  
 

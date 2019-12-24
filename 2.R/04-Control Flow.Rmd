@@ -4,45 +4,15 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
 
-## Differences between expression versus statement  
-In programming language terminology, an expression is a combination of values and functions that are combined and interpreted by the compiler to create a new value, as opposed to a statement which is just a standalone unit of execution and doesn't return anything. One way to think of this is that the purpose of an expression is to create a value (with some possible side-effects), while the sole purpose of a statement is to have side-effects.
-
-A general rule of thumb: If you can print it, or assign it to a variable, it's an expression. If you can't, it's a statement.
-
-Here are some examples of expressions:
-```{r eval = FALSE}
-2 + 2
-3 * 7
-1 + 2 + 3 * (8 ** 9) - sqrt(4.0)
-min(2, 22)
-max(3, 94)
-round(81.5)
-"foo"
-"bar"
-NULL
-TRUE
-FALSE
-2
-3
-4.0
-```
-
-Here are some examples of statements:
-```{r eval = FALSE}
-if (CONDITION)
-else if (CONDITION)
-else
-for (VARIABLE in SEQUENCE)
-while (CONDITION)
-try
-return SOMETHING
-```
 ## Control flow  
 There are two primary tools of control flow: choices and loops. Choices, like **if** statements and **switch()** calls, allow you to run different code depending on the input. Loops, like **for** and **while**, allow you to repeatedly run code, typically with changing options . It is more efficient to use built-in functions rather than control structures whenever possible.
 

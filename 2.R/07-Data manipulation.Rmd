@@ -4,13 +4,13 @@ output:
   html_notebook:
     toc: true
     toc_float: true
+    css: style.css
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-```{r}
-suppressPackageStartupMessages(library(tidyverse))
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
 ```
 ## Overview of the tidyverse package  
 
@@ -19,8 +19,8 @@ Data manipulation is the core of data analysis. The **tidyverse** is an opiniona
 For a brief reference, see the [Cheat sheet](https://rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) and [tideverse](https://tidyverse.tidyverse.org/). For a comprehensive guide, read this book [R for Data Science] by Hadley Wickham. We will only briefly introduce some functions here and later.
 
 Install and load the complete tidyverse:
-```{}
-install.packages("tidyverse")
+```{r}
+if (!require("tidyverse")) {install.packages("tidyverse")}
 library("tidyverse")
 ```
 
@@ -35,7 +35,7 @@ Tidy data is a way to organize tabular data. It provides a consistent data struc
 ![](image/tidy data.png)  
 ### Reshape data
 #### transpose
-```{r include = FALSE}
+```{r eval = FALSE}
 # example using built-in dataset
 mtcars
 t(mtcars)
@@ -170,8 +170,8 @@ In this section we mainly talk about the dplyr package for data transformation. 
 ```{r}
 ## Loading data
 library("datasets")
-
-attach(iris)
+library("dplyr")
+# attach(iris)
 str(iris)
 ```
 
@@ -182,6 +182,7 @@ str(iris)
 
 1. _filter()_: extract rows meeting logical criteria. 
 ```{r}
+library("dplyr")
 ?filter
 
 # Select iris data of species "virginica"
@@ -223,7 +224,7 @@ iris %>% arrange(desc(Sepal.Length))
 # combine multiple dplyr verbs in a row with the pipe operator
 # Filter for species "virginica", then arrange in descending order of sepal length
 iris %>% 
-filter(Species=="virginica") %>% 
+filter(Species == "virginica") %>% 
 arrange(desc(Sepal.Length)) 
 ```
 #### Add cases
@@ -253,7 +254,8 @@ pull(iris, Sepal.Length)
 For usage, see [select helper's documentation](https://www.rdocumentation.org/packages/dplyr/versions/0.7.2/topics/select_helpers).  
 
 ```{r}
-iris <- tbl_df(iris) # so it prints a little nicer
+library("dplyr")
+iris <- as_tibble(iris) # so it prints a little nicer
 select(iris, Sepal.Length, Species)
 select(iris, starts_with("Petal"))
 select(iris, ends_with("Width"))
@@ -283,18 +285,18 @@ filter(Species=="Virginica") %>%
 mutate(SLMm=Sepal.Length*10) %>%
 arrange(desc(SLMm))
 ```
-2. transmute(): Computer new columns and drop others.
+2. transmute(): Computer new columns and drop otherPkgs.
 ```{r}
 transmute(mtcars, gpm = 1/mpg)
 ```
 3. mutate_all() and mutate_if(): apply functions to every column or some columns meeting logical criteria.
 ```{r}
-mutate_all(faithful, funs(log(.), log2(.)))
-mutate_if(iris, is.numeric, funs(log(.)))
+mutate_all(faithful, list(log, log2))
+mutate_if(iris, is.numeric, list(log))
 ```
 4. mutate_at(): Apply functions to specific columns.
 ```{r}
-mutate_at(iris, vars(-Species), funs(log(.)))
+mutate_at(iris, vars(-Species), list(log))
 ```
 5. add_column(): Add new column(s).
 ```{r}
@@ -313,32 +315,32 @@ variants:
 ```{r}
 # Summarize to find the median sepal length
 iris %>% 
-summarize(medianSL=median(Sepal.Length)) 
+summarize(medianSL = median(Sepal.Length)) 
 
 # Filter for virginica then summarize the median sepal length
-iris %>% 
-filter(Species=="virginica") %>% 
-summarize(medianSL=median(Sepal.Length)) 
+iris %>%
+  filter(Species == "virginica") %>%
+  summarize(medianSL = median(Sepal.Length))
 
 # Summarize multiple varibles at once
 iris %>%
-filter(Species=="virginica") %>%
-summarize(medianSL=median(Sepal.Length),
-          maxSL=max(Sepal.Length))
+  filter(Species == "virginica") %>%
+  summarize(medianSL = median(Sepal.Length),
+            maxSL = max(Sepal.Length))
 
 # Summarize within groups
 # Find median and max sepal length of each species
 iris %>% 
-group_by(Species) %>% 
-summarize(medianSL=median(Sepal.Length),
-maxSL=max(Sepal.Length))
+  group_by(Species) %>%
+  summarize(medianSL = median(Sepal.Length),
+            maxSL = max(Sepal.Length))
 
 # Find median and max petal length of each species with sepal length > 6
-iris %>% 
-filter(Sepal.Length > 6) %>% 
-group_by(Species) %>% 
-summarize(medianPL=median(Petal.Length), 
-maxPL=max(Petal.Length))
+iris %>%
+  filter(Sepal.Length > 6) %>%
+  group_by(Species) %>%
+  summarize(medianPL = median(Petal.Length),
+            maxPL = max(Petal.Length))
 ```
 2. _count()_: Count  number of rows in each group defined by the variables in ...
 ```{r}
@@ -480,19 +482,6 @@ Task 8. Change column name from Time to weeks, then select only chicks with weig
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```{r}
 # -----------------------------------------------
 # Examples of using dplyr on the ChickWeight data
@@ -556,7 +545,7 @@ chick %>%                             # Start with chick data...
 chick %>%
   rename(weeks = Time) %>%            # Change column name
   filter(Chick > 10) %>%              # Only chicks with values larger than 10
-  group_by(week, arm) %>%             # Group by Time and arm
+  group_by(weeks, arm) %>%             # Group by Time and arm
   summarise(                          # Calculate summary statistics
     weight_g_median = median(weight_g),
     weight_g_sd = sd(weight_g),
