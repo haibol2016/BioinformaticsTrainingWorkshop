@@ -90,7 +90,7 @@ export FLIBS=-L/usr/local/gfortran/lib
 
 packages_list <- c("aplpack", "bootstrap", "broom", "ca", "car", "cluster", "colorspace", "ComplexHeatmap", "corrplot", "d3heatmap", "DAAG", "datasets", "dendextend", "devtools", "doBy", "downloader", "dplyr", "factoextra", "FactoMineR", "fpc", "gclus", "ggforce", "ggm", "ggthemes", "gplots", "grDevices", "grid", "gvlma", "hexbin", "Hmisc", "lattice", "leaps", "MASS", "mclust", "methods", "multcomp", "NbClust", "nFactors", "openxlsx", "pastecs", "pheatmap", "polycor", "psych", "pvclust", "Rcmdr", "RColorBrewer", "readxl", "relaimpo", "rgl", "rmarkdown", "scatterplot3d", "sm", "tibble", "tidyverse", "vcd", "vioplot", "XLConnect", "DESeq2", "edgeR", "pca3d", "sva", "limma", "genefilter", "WriteXLS", "DiffBind", "ChIPQC",  "ChIPseeker", "GenomicFeatures", "magick")
 
-if (!require("BiocManager")) {install.packages("BiocManager")}
+if (!require("BiocManager")) {install.packages("BiocManager", dependencies = TRUE)}
 
 for (pkg in packages_list)
 {
