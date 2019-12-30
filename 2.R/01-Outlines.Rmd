@@ -76,8 +76,19 @@ R topics we will cover in this workshop are lsit below.
 ## Install packages to be used in the workshop  
 BiocManager::install() can be used to install packages from CRAN and Bioconductor sites.
 
+```bash
+# on Linux, where gfortran is used for fortran-based R package installation, run the following code:
+module load r/
+export f77=gfortran
+export FC=gfortran
+export FLIBS=-L/usr/local/gfortran/lib
+```
+
 ```{r}
-packages_list <- c("aplpack", "bootstrap", "broom", "ca", "car", "cluster", "colorspace", "ComplexHeatmap", "corrplot", "d3heatmap", "DAAG", "datasets", "dendextend", "devtools", "doBy", "downloader", "dplyr", "factoextra", "FactoMineR", "fpc", "gclus", "ggforce", "ggm", "ggthemes", "gplots", "grDevices", "grid", "gvlma", "hexbin", "Hmisc", "lattice", "leaps", "MASS", "mclust", "methods", "multcomp", "NbClust", "nFactors", "openxlsx", "pastecs", "pheatmap", "polycor", "psych", "pvclust", "Rcmdr", "RColorBrewer", "readxl", "relaimpo", "rgl", "rmarkdown", "scatterplot3d", "sm", "tibble", "tidyverse", "vcd", "vioplot", "XLConnect")
+# Install all required packages for this R session, and later RNA-seq and ChIP-seq data analysis practice.
+
+
+packages_list <- c("aplpack", "bootstrap", "broom", "ca", "car", "cluster", "colorspace", "ComplexHeatmap", "corrplot", "d3heatmap", "DAAG", "datasets", "dendextend", "devtools", "doBy", "downloader", "dplyr", "factoextra", "FactoMineR", "fpc", "gclus", "ggforce", "ggm", "ggthemes", "gplots", "grDevices", "grid", "gvlma", "hexbin", "Hmisc", "lattice", "leaps", "MASS", "mclust", "methods", "multcomp", "NbClust", "nFactors", "openxlsx", "pastecs", "pheatmap", "polycor", "psych", "pvclust", "Rcmdr", "RColorBrewer", "readxl", "relaimpo", "rgl", "rmarkdown", "scatterplot3d", "sm", "tibble", "tidyverse", "vcd", "vioplot", "XLConnect", "DESeq2", "edgeR", "pca3d", "sva", "limma", "genefilter", "WriteXLS", "DiffBind", "ChIPQC",  "ChIPseeker", "GenomicFeatures", "magick")
 
 if (!require("BiocManager")) {install.packages("BiocManager")}
 
@@ -88,6 +99,16 @@ for (pkg in packages_list)
       BiocManager::install(pkg, dependencies = TRUE)
    }
 }
+
+# After finishing running the above code, to make sure all packages has been installed, please run the following code snippet. You should see nothing printed out.
+for (pkg in packages_list)
+{
+   if (!pkg %in% installed.packages())
+   {
+         print(pkg)
+    }
+}
+
 ```
 
 To use devtools, you have to install devtools along with a working development environment.  

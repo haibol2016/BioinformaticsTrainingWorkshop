@@ -17,17 +17,40 @@ The purpose of this lab is to get participants familiar with the typical workflo
 
 **Before the workshop:**
 
-Participants should pre-install the following software before they come to the workshop. **We won&#39;t have time to install these on the workshop day.**
+The following software except the R packages and IGV have been installed on the Condo HPC. You can access them by loading the module files or activate the conda virtual environment as instructed below. If you have installed the required R packages for the R session, you will have installed the R packages required here.
 
 - Fastqc([http://www.bioinformatics.babraham.ac.uk/projects/fastqc/](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+```bash
+module load fastqc
+```
 - MultiQC ([http://multiqc.info/](http://multiqc.info/))
+```bash
+source /home/haibol/miniconda3/bin/activate
+```
 - Bowtie2 ([http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml)).
+```bash
+module load bowtie2
+```
 - Deeptools ([https://deeptools.readthedocs.io/en/develop/](https://deeptools.readthedocs.io/en/develop/)
+```bash
+source /home/haibol/miniconda3/bin/activate
+```
 - Picard tools ([https://broadinstitute.github.io/picard/](https://broadinstitute.github.io/picard/)
+```bash
+module load picard
+```
 - MACS ([https://github.com/taoliu/MACS](https://github.com/taoliu/MACS/)).
+```bash
+source /home/haibol/miniconda3/bin/activate
+```
 - samtools  ([http://samtools.sourceforge.net](http://samtools.sourceforge.net)).
-- Integrated genome viewer ([https://software.broadinstitute.org/software/igv/](https://software.broadinstitute.org/software/igv/)).
-- R/Bioconductor package diffbind, ChipQC,  ChIPseeker, and GenomicFeatures  to install.
+```bash
+module load samtools
+```
+- Integrated genome viewer ([https://software.broadinstitute.org/software/igv/](https://software.broadinstitute.org/software/igv/)). **Please install  IGV in your own computer**
+
+
+- R/Bioconductor package DiffBind, ChIPQC,  ChIPseeker, and GenomicFeatures to install.
 
 ```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -55,9 +78,14 @@ We will use the following datasets.
 2. ChIP-seq data for histone D8\_K4 and D8\_K27, and control for D8 cell line. The files were processed to keep only reads aligned to chromosome 1(NC\_035077.1)
 3. If you could not finish a step, you can use the processed data in the tar file to continue to the next step.
 
-All data can be downloaded from xxx as a zip file.
+All data can be accessed from the Condo HPC directory: **/home/haibol/cktuggle-free/Bioinformatics.workshop/ChIP-seq/chipseq_project**. You can create a symbolic link to the directory as follows:
 
-
+```bash
+mkdir -p chipseq_project_demon
+cd chipseq_project_demon
+ln -s  /home/haibol/cktuggle-free/Bioinformatics.workshop/ChIP-seq/chipseq_project/*   ./
+cd ../
+```
 
 **Directory setup** (10 minutes)
 
@@ -76,9 +104,9 @@ cd chipseq_project
 
 
 ```
-mkdir –p data/fastq
+mkdir -p data/fastq
 
-mkdir –p data/map
+mkdir -p data/map
 
 mkdir peak
 
@@ -97,7 +125,7 @@ mv /path/to/data_fastq_file.tar .
 Use the following command to unzip the tar file
 
 ```
-tar –xzvf data_fastq_file.tar
+tar xzvf data_fastq_file.tar
 ```
 
 move the fastq files to your new fastq directory using the following command:
@@ -124,7 +152,7 @@ you can use ls command to verify if you copy the files into your directory
 ```
 cd data/fastq/
 ```
-- Run the following command (if you have a multi-core system you can add –t 4)
+- Run the following command (if you have a multi-core system you can add -t 4)
 ```
 fastqc *fastqc
 ```
@@ -220,7 +248,7 @@ Run the following command:
 
 
 ```
-samtools view –h -bS -o output_unsorted.bam input.sam
+samtools view -h -bS -o output_unsorted.bam input.sam
 ```
 
 
@@ -230,7 +258,7 @@ Run the following commands:
 
 
 ```
-samtools sort reads.bam –o reads.sorted
+samtools sort reads.bam -o reads.sorted
 
 samtools index reads.sorted.bam
 
@@ -334,7 +362,7 @@ Run the following command (change the name of replicate to the correct names):
 
 ```
 
-bedtools intersect  -a ../peak/replicate1 –b ../peak/replicate2 –wo > combin_replicate1_and_2
+bedtools intersect  -a ../peak/replicate1 -b ../peak/replicate2 -wo > combin_replicate1_and_2
 
 ```
 
@@ -508,4 +536,4 @@ K27_enrich = dplyr::filter(out, FDR < 0.05 & Fold < 0 )
 write.table(K27_enrich, file="results/K27_enriched.bed", sep="\t", quote=F, row.names=F, col.names=F)
 ```
 
-![diffBind](https://www.cs.mtsu.edu/~raltobasei/chiseq_image/diffBind_overlap.png)
+![DiffBind](https://www.cs.mtsu.edu/~raltobasei/chiseq_image/diffBind_overlap.png)

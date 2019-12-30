@@ -1,0 +1,698 @@
+---
+title: "RNA-seq data analysis-hands-on session"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
+```
+
+In this session we will analyze a RNA-seq data set from whole blood of pigs selected for high residue feed intake (RFI) and muscularlly injected with LPS.This data set was part of the data published recently (Liu et al., 2019) in [BMC Genomics](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-019-6127-x). For more details about the experimental design, RNA preparation, RNA-seq and data preprocessing, Please see below.
+
+
+## Introduction to RNA-seq data generation
+### Animals, Experimental design and sample collection
+The pigs were from Generation 8 of the Yorkshire pig lines selected for high RFI at ISU. Figure 1 shows the experimental design. A total of 7 gilts with an initial body weight (BW) of 63 ± 4 kg from the high-RFI lines  were randomly selected. Pigs were housed in randomly assigned individual metabolism crates, had ad libitum access to water, and were fed a corn-soy-based diet twice daily (8:00 am and 5:00 pm), with feed restriction (1.5 kg/day), as previously described. After a 9-day adaptation period, pigs within each line were randomly assigned to either a control (n = 3) or LPS treatment (n = 4) group. Pigs in the treatment group were then challenged with LPS using an established method via intramuscular injection of 30 μg/kg BW of LPS from E. coli O55:B5 (Sigma-Aldrich, St. Louis, MO, USA) dissolved in a endotoxin-free, sterile saline solution at baseline, 0 h post injection (hpi). Pigs in the control group were injected with an equivalent volume of endotoxin-free, sterile saline solution at the equivalent time. At 0, 2, 6, and 24 hpi, blood samples were collected from the jugular vein into Tempus Blood RNA tubes (Life Technologies, Grand Island, NY, USA) for long-term storage at -80 C,  Injection and blood collection followed the same order which was the predefined order of metabolism crates in the pen rooms.
+
+### RNA preparation
+Total RNA was extracted from the Tempus tube samples of the treatment groups by using preserved blood RNA purification kit I (Norgen Biotek Corp, Thorold, Ontario, CA) per the manufacturer's instructions. On-column DNA digestion was performed using DNase I (Qiagen, Valencia, CA, USA). Globin transcripts (HBB and HBA) were depleted by following an RNase H-mediated method. The quantity and integrity of the RNA were monitored by using Nanodrop 2000 (Thermo Scientific, Waltham, MA, USA) and Bioanalyzer 2100 (Agilent Technologies, Santa Clara, CA, USA) before and after globin depletion. The efficiency of globin depletion of each sample was checked by conventional RT-qPCR with ACTB and GAPDH as the internal controls. Globin depletion efficiencies for all RNA samples were above 85%. Metadata, including RNA integrity numbers (RINs) and concentration of RNA post globin depletion, CBC, and sequencing batches are available in the file: "metadata.txt".
+
+### RNA-sequencing (RNA-seq)
+Only RNA samples from the treatment group were used for RNA-seq. Library construction and sequencing were performed by the Beijing Genomics Institute (BGI, Hongkong, CN). Briefly, the RNA-seq libraries were constructed using the Illumina TruSeq RNA Sample Preparation Kit v2 (Illumina, San Diego, CA, USA) per the manufacturers instructions. Individual libraries were diluted to 2 nM and pooled in approximately equimolar amounts, with 8 libraries per pool. Paired-end sequencing (**2 X 50** bases) was run on an Illumina Hiseq 2000 platform with one pool per lane.
+
+
+## RNA-seq data analysis
+### Quality control, preprocessing and alignment of RNA-seq reads  
+Read quality was checked and filtered by BGI using their custom scripts. For a pair of reads, the whole pair was removed if either read met the following criteria: (1) either read had more than 50% of their bases aligned to the adapter sequences; (2) either read contained more than 10% of N bases; (3) either read had more than 40% of bases with PHRED+64 quality scores lower than 20. The kept reads were aligned to the pig reference genome Sscrofa 11.1 (version 90, Ensembl) using **2-pass rna-STAR** (version 2.5.3a) with the ENCODE standard option settings plus two explicit option settings: --outFilterMismatchNoverReadLmax 0.1 --outFilterIntronMotifs RemoveNoncanonical [40, 41]. The resulting BAM files were further processed by using **MMR** to assign multi-mapper reads to their most likely locations such that the variances of local basewise coverage were minimized. Read counts per gene per library were summarized by using **featureCounts** (version 1.5.3) with explicit settings -d 30 -M, with the pig genome GTF file (version 90, Ensembl) as the genomic annotation reference file. 
+
+For hands-on practice we will perform quality control on two fastq files from the same RNA-seq library:  
+
+* FCC6LRYACXX-HKRDPORdkdEBAGRABPEI-210_L7_1.fq.gz  
+* FCC6LRYACXX-HKRDPORdkdEBAGRABPEI-210_L7_2.fq.gz  
+
+The files are located in my work directory: /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/data/. Please make a symbolic link to access the data, but not to copy them to save time and storage space. See the code below.
+
+1. Get the raw data  
+```bash
+# login to the Condo cluster
+ssh <ISU NetID>@condo2017.its.iastate.edu
+
+# make directories
+mkdir -p RNA-seq
+cd RNA-seq
+mkdir -p data scripts results logs pig_genome
+
+# create a symbolic link to the fastq files
+cd data
+ln -s /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/data/*.fq.gz ./
+
+# Download the pig genome fasta file and the gtf filefrom Ensembl
+cd ../pig_genome
+
+# download SSC11.1 fasta file and uncompress the file
+wget ftp://ftp.ensembl.org/pub/release-98/fasta/sus_scrofa/dna/Sus_scrofa.Sscrofa11.1.dna.toplevel.fa.gz
+gunzip Sus_scrofa.Sscrofa11.1.dna.toplevel.fa.gz
+
+wget ftp://ftp.ensembl.org/pub/release-97/gtf/sus_scrofa/Sus_scrofa.Sscrofa11.1.97.gtf.gz
+gunzip Sus_scrofa.Sscrofa11.1.97.gtf.gz
+```
+
+2. create genome index for mapping using STAR. This step takes a long time (~2 hours). You don't need to run the script below because I have generate the genome index for you.  
+```bash
+#!/bin/bash
+
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=12:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --partition=freefat 
+#SBATCH --ntasks-per-node=1   # 36 processor core(s) per node 
+#SBATCH --mem=128G   # maximum memory per node
+#SBATCH --job-name="star"
+#SBATCH --array=1
+#SBATCH --output="logs/out.star.%A_%a.txt" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/err.star.%A_%a.txt" # job standard error file (%j replaced by job id)
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+i=$(($SLURM_ARRAY_TASK_ID - 1))
+
+module load star/2.5.3a-rdzqclb
+fasta=pig_genome/Sus_scrofa.Sscrofa11.1.dna.toplevel.fa
+gtf=pig_genome/Sus_scrofa.Sscrofa11.1.97.gtf
+mkdir -p  P.97.sjdboverhang49
+
+STAR  --runThreadN 4  \
+      --runMode  genomeGenerate \
+      --limitGenomeGenerateRAM  128000000000 \
+      --genomeDir  P.97.sjdboverhang49  \
+      --genomeFastaFiles  $fasta \
+      --sjdbGTFfile    $gtf \
+      --sjdbOverhang 49
+```
+
+To get acess to the genome index I have created, create symbolic links to the genome index directory.
+
+```bash
+   pwd  # you should in the pig_genome directory you just created
+   
+   ln -s /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/pig_genome/P.97.sjdboverhang49 ./
+```
+
+3. check quality of the sequencing data. This will only take a few minutes (< 5 min). Copy the following scripts to the folder **scripts** and save as **0.1.fastqc.sbatch**.
+
+```bash
+#!/bin/bash
+
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=1:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --ntasks-per-node=4   # 2 processor core(s) per node
+#SBATCH --mem=8G   # maximum memory per node
+#SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --array=1-2   # we only have two files
+#SBATCH --job-name="fastqc"
+#SBATCH --mail-user=haibol@iastate.edu   # email address
+#SBATCH --mail-type=FAIL
+#SBATCH --output="logs/fastqc-%j.out" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/fastqc-%j.err" # job standard error file (%j replaced by job id)
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+i=$(($SLURM_ARRAY_TASK_ID - 1))
+
+module load fastqc/0.11.7-d5mgqc7
+
+fastq=(`ls data/*.gz`)
+out=results/fastqc.out
+mkdir -p $out
+
+fastqc -o $out -t 4  --extract ${fastq[$i]}
+```
+
+Submit and check job running status:
+```bash
+# Submit the job by running the following code:
+sbatch 0.1.fastqc.sbatch
+
+# Chech job running status
+squeue -u  <ISU NetID>
+
+# cancle a job
+scancel <jobID>
+```
+4. synthesize a QC report using MultiQC (< 2 min)  
+
+```bash
+#!/bin/bash
+
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=1:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --ntasks-per-node=1   # 2 processor core(s) per node
+#SBATCH --mem=4G   # maximum memory per node
+#SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --array=1  
+#SBATCH --job-name="multiqc"
+#SBATCH --mail-user=haibol@iastate.edu   # email address
+#SBATCH --mail-type=FAIL
+#SBATCH --output="logs/multiqc-%j.out" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/multiqc-%j.err" # job standard error file (%j replaced by job id)
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+i=$(($SLURM_ARRAY_TASK_ID - 1))
+source /home/haibol/miniconda3/bin/activate
+out=results/MultiQC.out/
+mkdir -p $out
+
+multiqc --filename  LPS.HRFI.multiQC  --outdir  $out  results/fastqc.out
+```
+
+5. Alignment of reads to the reference genome. Please refer to the [STAR manual](https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf) for detailed explanation of the option setting. This step takes ~18 min.  
+
+```bash
+#!/bin/bash
+
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=2:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --ntasks-per-node=4  # 36 processor core(s) per node 
+#SBATCH --mem=32G   # maximum memory per node
+#SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --job-name="STAR"
+#SBATCH --array=1
+#SBATCH --output="logs/out.star.%A_%a.txt" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/err.star.%A_%a.txt" # job standard error file (%j replaced by job id)
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+module load star/2.5.3a-rdzqclb
+
+i=$(($SLURM_ARRAY_TASK_ID - 1))
+
+R1=(`ls data/*_1.fq.gz`)
+R2=(`ls data/*_2.fq.gz`)
+names=(`ls data/*_1.fq.gz | perl -p -e 's{.+/(.+?)_fq.gz}{$1}'`)
+
+genomeDir=pig_genome/P.97.sjdboverhang49
+gtf=pig_genome/Sus_scrofa.Sscrofa11.1.97.gtf
+
+out=results/STAR.out
+mkdir -p $out
+
+STAR  --runThreadN 4  \
+      --readFilesCommand  zcat  \
+      --outFileNamePrefix  ${out}/${names[${i}]}. \
+      --genomeDir  $genomeDir  \
+      --readFilesIn  ${R1[${i}]}   ${R2[${i}]}  \
+      --sjdbGTFfile  $gtf \
+      --alignSJoverhangMin 8  \
+      --alignSJDBoverhangMin 1  \
+      --outFilterIntronMotifs RemoveNoncanonical \
+      --outFilterMultimapNmax 10  \
+      --outFilterScoreMinOverLread  0.5  \
+      --outFilterMatchNminOverLread  0.5  \
+      --outFilterMismatchNmax 999  \
+      --outFilterMismatchNoverReadLmax 0.04 \
+      --seedSearchStartLmaxOverLread 0.5 \
+      --alignIntronMin 20  \
+      --alignIntronMax 1000000  \
+      --alignMatesGapMax 1000000  \
+      --outSAMstrandField intronMotif \
+      --limitSjdbInsertNsj  2000000 \
+      --outSAMtype BAM Unsorted \
+      --outReadsUnmapped Fastx
+```
+6. Get read count table per gene using featureCounts. This step takes ~ 6 min.  
+
+```bash
+#!/bin/bash
+
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=2:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --ntasks-per-node=2   # 36 processor core(s) per node 
+#SBATCH --mem=8G   # maximum memory per node
+#SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --job-name="featureCounts"
+#SBATCH --array=1
+#SBATCH --output="logs/out.featureCount.%A_%a.txt" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/err.featureCount.%A_%a.txt" # job standard error file (%j replaced by job id)
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+i=$(($SLURM_ARRAY_TASK_ID - 1))
+module load subread/1.6.0-ak6vxhs
+
+gtf=pig_genome/Sus_scrofa.Sscrofa11.1.97.gtf
+genome=pig_genome/Sus_scrofa.Sscrofa11.1.dna.toplevel.fa
+bam=(`ls results/STAR.out/*.bam`)
+
+out=results/featureCounts.out
+mkdir -p $out
+
+
+time featureCounts -a $gtf  -p -d 25 \
+                -F GTF -g gene_id -G $genome -s 0 \
+                -o ${out}/LPS_RNAseq.count.table.txt \
+                -t exon -T 2  ${bam[@]}
+# cut -f2-6 --complement ${out}/LPS_RNAseq.count.table.txt > ${out}/LPS_RNAseq.count.table.reformatted.txt
+
+```
+
+7. Post-alignment quality control using QoRT. 
+
+First, we need to sort the BAM file by coordinate using samtools. This step takes ~10 min.
+```bash
+#!/bin/bash
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=2:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --ntasks-per-node=4   # 36 processor core(s) per node 
+#SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --mem=16G   # maximum memory per node
+#SBATCH --job-name="samtools"
+#SBATCH --array=1
+#SBATCH --output="logs/out.samtools.%A_%a.txt" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/err.samtools.%A_%a.txt" # job standard error file (%j replaced by job id)
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+i=$(($SLURM_ARRAY_TASK_ID - 1))
+
+# sort the BAM file by coordinate
+module load samtools
+out=results/samtools.out
+mkdir -p $out
+
+bam=(`ls results/STAR.out/*.bam`)
+name=(`ls results/STAR.out/*.bam | perl -p -e 's{.+/(.+?).bam}{$1}'`)
+
+samtools sort  -l 5 -m 4G -o ${out}/${name[$i]}.srt.bam  -O BAM -@ 4  ${bam[$i]}
+samtools index  ${out}/${name[$i]}.srt.bam
+```
+
+Then we run the post-alignment QC using QoRTs. This step takes ~33 min.
+```bash
+#!/bin/bash
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=2:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --ntasks-per-node=1   # 36 processor core(s) per node 
+#SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --mem=8G   # maximum memory per node
+#SBATCH --job-name="QoRTs"
+#SBATCH --array=1
+#SBATCH --output="logs/out.QoRTs.%A_%a.txt" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/err.QoRTs.%A_%a.txt" # job standard error file (%j replaced by job id)
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+i=$(($SLURM_ARRAY_TASK_ID - 1))
+module load qorts/1.2.42-py2-r3.5-iszqbqi
+
+in=results/samtools.out
+bams=(`ls $in/*.srt.bam`)
+names=(`ls  $in/*.srt.bam | perl -p -e 's{.+/(.+?).srt.bam}{$1}'`)
+gtf=pig_genome/Sus_scrofa.Sscrofa11.1.97.gtf
+
+out_dir=results/QoRTs.out
+mkdir -p ${out_dir}
+
+
+## USAGE: java [Java Options] -jar QoRTs.jar QC [options] infile  gtffile.gtf qcDataDir
+QoRT  QC --RNA \
+        --keepMultiMapped \
+        --noGzipOutput  \
+        --generateMultiPlot \
+        --adjustPhredScore 31 \
+        --maxPhredScore  41  \
+        --checkForAlignmentBlocks \
+        --generatePdfReport \
+        --addFunctions writeDocs,makeJunctionBed \
+        --outfilePrefix  ${names[$i]} \
+        ${bams[$i]}  $gtf  ${out_dir}
+```
+
+For this practice, you don't need to run the following script. If you have multiple samples, you can generate a synthesized report by running the following script. For the format of the "sample.decoder.txt" file, see Page 6 of the [QoRTs tutorial](https://hartleys.github.io/QoRTs/doc/example-walkthrough.pdf).  
+```bash
+#!/bin/bash
+
+# Copy/paste this job script into a text file and submit with the command:
+#    sbatch thefilename
+
+#SBATCH --time=12:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --nodes=1   # number of nodes
+#SBATCH --ntasks-per-node=1   # 36 processor core(s) per node 
+#SBATCH --mem=24G   # maximum memory per node
+#SBATCH --job-name="markdup"
+#SBATCH --array=1
+#SBATCH --output="logs/out.markdup.%A_%a.txt" # job standard output file (%j replaced by job id)
+#SBATCH --error="logs/err.markdup.%A_%a.txt" # job standard error file (%j replaced by job id)
+#SBATCH --dependency=afterok:2669100
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+i=$(($SLURM_ARRAY_TASK_ID))
+module load r/3.6.0-py2-fupx2uq
+
+Rscript  ~/bin/QoRTs/scripts/qortsGenMultiQC.R  results/QoRTs_QC.out/  sample.decoder.txt   results/QoRTs_QC.out/
+```
+
+
+## Differential expression analysis
+Please download the full count table ("LPS.HRFI.count.table.txt"), along with the metadata("metadata.txt"), for RNA-seq of the 16 HRFI pigs from the GitHub folder, which are located in the folder: haibol2016/BioinformaticsTrainingWorkshop/3.RNA_seq/.
+
+Prior to differential expression analysis, please remove the **hemoglobin genes (HBA and HBB)** and genes with few reads from the count table, such that only genes with count per million (cpm) mapped reads greater than one in at least four samples were kept.
+
+```{r eval = FALSE}
+pkgs <- c("tidyverse", "DESeq2", "edgeR", "limma", "WriteXLS", "pheatmap",
+          "gplots", "RColorBrewer", "sva", "pca3d", "rgl", "magick")
+for (pkg in pkgs)
+{
+    library(pkg, character.only = TRUE)
+}
+
+## helper functions
+plot.3dPCA <- function(exp.data, meta.data, legend = FALSE) 
+{
+    defaultWindRect <- r3dDefaults$windowRect
+    r3dDefaults$windowRect <- c(0, 50, 600, 600)
+    on.exit({r3dDefaults$windowRect <- defaultWindRect})
+    
+    pc <- prcomp(t(exp.data), scale = TRUE, 
+                 center = TRUE, retx = TRUE)
+    
+    plot3d(pc$x[,1:3], col = as.integer(meta.data$groups), 
+           size = 10, aspect = TRUE)
+    
+    # plot3d(pc$x[,1:3], col=meta.data$col,size =10, aspect =T)
+    
+    if (legend)
+    {
+        pca3d( pc, components = 1:3, col = as.integer(meta.data$groups),
+               show.ellipses = TRUE, group = meta.data$groups, radius = 2, 
+               shape = "sphere", show.axes = TRUE, show.axe.titles = TRUE,
+               show.plane = FALSE, legend = "topright") 
+    }else{
+        pca3d( pc, components = 1:3, col = as.integer(meta.data$groups), 
+               show.ellipses = TRUE, group = meta.data$groups, radius = 2, 
+               shape = "sphere", show.axes = TRUE, show.axe.titles = TRUE,
+               show.plane = FALSE) 
+    }
+}
+
+
+## output file name should be space-free
+make.movie <- function(out.file = NULL)
+{
+    rgl.snapshot(filename = paste0(out.file,".png"), 
+                 fmt = "png", top = TRUE )
+    #Animate by spinning on Y & Z axes
+    play3d(spin3d(axis = c(0,0,1), rpm = 3), duration = 10)
+    movie3d(spin3d(axis = c(0,0,1), rpm = 3), duration = 10,
+            movie = out.file, dir = getwd())
+}
+
+
+## using sva to reduce hidden variations
+get.sva <- function(expr.data=NULL, meta.data=NULL, 
+                    full.model, reduced.model)
+{
+    mod <- full.model
+    mod0 <- reduced.model
+    
+    sva_out <- svaseq(as.matrix(expr.data), mod, mod0)
+    sv <- sva_out$sv
+    colnames(sv) <- paste0("sv",1:sva_out$n.sv)
+    meta.data.sva <- cbind(meta.data, sv ) 
+    meta.data.sva
+}
+
+## adjust expression for hidden variations for EDA plots
+get.adj <- function(expr.data=NULL, design=NULL, ncol.interest = NULL)
+{
+    ## adjusted expression using voom()
+    v <- voom(expr.data, design = design)
+    fit <- lmFit(v, design = design)
+    adj.exp <- v$E - fit$coefficients[, (ncol.interest + 1):ncol(design)] %*% t(design[, (ncol.interest + 1):ncol(design)])
+    adj.exp
+}
+
+#### Heatmap showing sample distances
+distancePlot <- function(sampleDists, sampleNames)
+{
+    sampleDistMatrix <- as.matrix(sampleDists)
+    rownames(sampleDistMatrix) <- sampleNames
+    colnames(sampleDistMatrix) <- sampleNames
+    colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
+    pheatmap(sampleDistMatrix,
+             clustering_distance_rows = sampleDists,
+             clustering_distance_cols = sampleDists,
+             col = colors)
+    sampleDistMatrix 
+}
+
+# set the directory containing the count table and metadata as current working directory. Please change it accordingly.
+# setwd("C:\\Users\\Haibo\\Desktop\\Bioinformatics Training workshop\\RNA-seq data Analysis\\hands-on session")
+
+# create output directory
+out <- "Jan092020.LPS.RNA-seq.DEseq2.out"
+if (!dir.exists(out))
+{
+    dir.create(out)
+}
+
+# import the metadata
+meta <- read_delim("metadata.txt", delim = "\t")
+meta <- meta %>% mutate(time.f = factor(Time, levels = c(0,2,6,24)),
+                        groups = factor(paste("T", Time, sep = ""), 
+                                        levels = c("T0", "T2", "T6", "T24")),
+                        Sample.ID = gsub("H_LPS_", "", Sample.ID),
+                        Ear.Tag = factor(Ear.Tag))
+# check the metadata
+str(meta)
+dim(meta)
+
+# import RNA-seq count table
+count <- read_delim("LPS.HRFI.count.table.txt", delim = "\t")
+head(count)
+dim(count)  ## 25880 genes
+
+# removing hemoglobin genes: HBB and HBA 
+count <- count %>% filter(!Geneid %in% c("ENSSSCG00000007978", "ENSSSCG00000014725"))
+dim(count)  ## 25878
+count <- as.data.frame(count)
+rownames(count) <- count[, 1]
+count <- count[, -1]
+
+#### plot raw  read count mapped to the transcriptome per sample
+pdf(file = file.path(out, "1.0 Number of reads assigened to gene features.pdf"), 
+    width = 6, height = 4)
+# par(mar=c(9.1,4.1,4.1,2.1))
+total_count <- as.data.frame(colSums(count)/1000000)
+colnames(total_count) <- "Total"
+total_count <- inner_join(rownames_to_column(total_count), meta, by = c("rowname" = "Library.Name"))
+total_count <- total_count %>% arrange(Time, Ear.Tag) %>% 
+  mutate(Sample.ID = factor(Sample.ID, levels = Sample.ID))
+
+ggplot(total_count, aes(x = Sample.ID, y = Total, fill = time.f)) + 
+  geom_bar(stat = "Identity") +
+  labs(x = "Sample ID", y = "Read counts (M)", fill = "Time (hpi)") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+dev.off()
+
+# filtering out genes with extremely low expression
+count <- count[rowMeans(count) > 8 & rowSums(count != 0) > 3, ]
+dim(count)             ## there are 12848 genes kept
+
+# make sure that the row of the metadat and the column of the count table are in the same order
+count <- count[, meta$Library.Name]
+stopifnot(all(meta$Library.Name == colnames(count)))
+colnames(count) <- meta$Sample.ID
+
+# Exploratory analysis
+dds <- DESeqDataSetFromMatrix(countData = count,
+                              colData = meta,
+                              design = ~ 0 + groups + Ear.Tag)
+
+dds <- estimateSizeFactors(dds) 
+dds <- estimateDispersions(dds)
+
+suffix  <- "no.SVA"
+use_sva <- FALSE
+
+if (use_sva)
+{
+  suffix <- "SVA"
+  dat <- counts(dds, normalized = TRUE)
+  all(colnames(dat) == meta$Sample.ID)
+  full_model <- model.matrix( ~ 0 + groups + Ear.Tag, data = meta)
+  reduced_model <- model.matrix( ~ Ear.Tag, data = meta)
+  meta_sva <- get.sva(expr.data = dat, meta.data = meta,
+                      full.model = full_model,
+                      reduced.model = reduced_model)
+  
+  # formula <- as.formula(paste("~ 0 + groups + Ear.Tag", paste(colnames(meta_sva)[grepl("sv\\d+", colnames(meta_sva))], collapse = "+"), sep = "+"), env = as.environment(meta_sva))
+  
+  dds <- DESeqDataSetFromMatrix(countData = count,
+                              colData = meta_sva,
+                              design = ~0 + groups + Ear.Tag + sv1 + sv2 + sv3)
+  dds <- estimateSizeFactors(dds) 
+  dds <- estimateDispersions(dds)
+}
+
+# exploratory analysis
+rld <- rlog(dds, blind = FALSE)
+sampleDists <- dist(t(assay(rld)))
+
+pdf(file = file.path(out, paste("Figure 1.1 Heatmap showing original sample distances", suffix, ".pdf")), width = 6, height = 5)
+    
+sampleDistMatrix <- distancePlot(sampleDists = sampleDists,
+                                 sampleNames = rld$Sample.ID)
+dev.off()
+
+# PCA plot showing sample relationship between and within groups
+pdf( file = file.path(out, paste("Figure 1.2.PCA plot showing sample relationahip", suffix, ".pdf")), width = 5, height = 6)
+plotPCA(rld, intgroup = c("time.f"))
+dev.off()
+
+# 3D PCA plot
+plot.3dPCA(exp.data = assay(rld), meta.data = meta, legend = TRUE)
+make.movie(paste0("1.3.raw.expression.3D-PCA.", suffix))
+
+# using adjusted values for plotting
+if (use_sva)
+{
+  design <- model.matrix(~ 0 + groups + Ear.Tag + sv1 + sv2 +sv3, 
+                         data = meta_sva)
+} else {
+  design <- model.matrix(~ 0 + groups + Ear.Tag, data = meta_sva)
+}
+adj_expr <- get.adj(expr.data = counts(dds, normalized = TRUE), design = design, ncol.interest = 4)
+
+write_delim(rownames_to_column(as.data.frame(adj_expr)), path = file.path(out, paste0("Adjusted.expression.value.logcpm.", suffix, ".txt")), 
+            delim = "\t", na = "NA")
+
+sampleDists <- dist(t(adj_expr))
+
+pdf(file = file.path(out, paste("Figure 1.4 Heatmap showing sample distances adjusted for nuisance parameters", suffix, ".pdf")), width = 6, height = 5)
+    
+sampleDistMatrix <- distancePlot(sampleDists = sampleDists,
+                                 sampleNames = meta_sva$Sample.ID)
+dev.off()
+
+# 3D PCA plot
+plot.3dPCA(exp.data = adj_expr, meta.data = meta_sva, legend = TRUE)
+make.movie(paste0("1.5.expression.adjusted.for.nuisance.parameters.3D-PCA.", suffix))
+
+# Find differentially expressed genes using sva 
+
+# define contrast to test
+if (use_sva)
+{
+  contrast.matrix <- matrix(c(-1,  1, rep(0, 8),      ## 2 hpi - baseline
+                            -1,  0, 1, rep(0, 7),     ## 6 hpi - baseline
+                            -1,  0, 0, 1,  rep(0, 6)    ## 24 hpi - baseline 
+                            ), nrow = 3, byrow = TRUE)
+} else {
+    contrast.matrix <- matrix(c(-1,  1, rep(0, 5),      ## 2 hpi - baseline
+                            -1,  0, 1, rep(0, 4),     ## 6 hpi - baseline
+                            -1,  0, 0, 1,  rep(0, 3)    ## 24 hpi - baseline 
+                            ), nrow = 3, byrow = TRUE)
+}
+
+
+rownames(contrast.matrix) <- c("2 hpi - baseline", 
+                               "6 hpi - baseline",
+                               "24 hpi - baseline")
+
+# DESeq2 differential expression analysis with or W/O using 4 SVA
+dds <- nbinomWaldTest(dds, modelMatrix = NULL,betaPrior=FALSE,
+                      maxit = 50000, useOptim = TRUE, quiet = FALSE, 
+                      useT = FALSE, useQR = TRUE)
+
+# Test models with 3 sva
+pig_gene_ID_maps <- read_delim("Susscrofa.11.1.V90.geneID-symbol.mapping.txt", delim = "\t")
+
+output_DESeq <- function(i, dds, contrast.matrix, threshold)
+{
+    print(i)
+    res <- results(dds, alpha = 0.01, contrast=contrast.matrix[i,], 
+                   lfcThreshold=log2(threshold), altHypothesis="greaterAbs")
+    res <- res[order(res$padj),]
+    res <- rownames_to_column(as.data.frame(res))
+    res <- left_join(res, pig_gene_ID_maps, by = c("rowname" = "GeneID"))
+    res
+}
+
+DESeq_out <- lapply(seq_len(nrow(contrast.matrix)), output_DESeq, dds = dds, 
+                    contrast.matrix = contrast.matrix, threshold = 1.5)
+save.image(file = file.path(out,paste("HRFI.LPS.", suffix,".RData")))
+
+file <- file.path(out, paste("DEGs.response.to.LPS.1.5FC.in.HFRI", suffix,".xlsx"))
+
+WriteXLS(x = DESeq_out, ExcelFileName = file,
+         row.names = FALSE, SheetNames = rownames(contrast.matrix))
+
+
+# use Heatmap to show all DEGs
+## union of DEGs
+
+common_degs <- unique(do.call(c, lapply(DESeq_out, function(.x){
+    .x$rowname[.x$padj <= 0.05]
+})))
+
+stopifnot(all(colnames(adj_expr) == meta_sva$Sample.ID))
+adj_exp_deg <- adj_expr[rownames(adj_expr) %in% common_degs, ]
+
+annotation_col <- data.frame(Time = meta_sva$time.f)
+rownames(annotation_col) <- meta_sva$Sample.ID
+
+annotation_colors <- list(Time = c("0" = "#FEE5D9", "2" = "#FCAE91",
+                                 "6" = "#FB6A4A", "24" = "#CB181D"))
+
+
+# colorRampPalette(brewer.pal(4, "Reds"))(4)
+pdf(file = file.path(out,paste("Figure 1.6 Heatmap showing DEGs", suffix, ".pdf")), height = 11, width = 4)
+heat <- pheatmap(
+  as.matrix(adj_exp_deg),
+  cluster_rows = TRUE,
+  cluster_cols = FALSE,
+  clustering_method = "ward.D2",
+  clustering_distance_rows = "correlation",
+  scale = "row",
+  border_color = NA,
+  annotation_col = annotation_col,
+  annotation_colors = annotation_colors,
+  color = rev(redgreen(75)),
+  show_colnames = FALSE,
+  show_rownames = FALSE,
+  fontsize = 10,
+  fontsize_row = 1,
+  fontsize_col = 3
+)
+print(heat)
+dev.off()
+```
+
+
