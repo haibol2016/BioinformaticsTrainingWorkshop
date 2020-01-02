@@ -127,3 +127,68 @@ By **Hadley Wickham**
 Website: http://adv-r.had.co.nz/, and https://adv-r.hadley.nz/
 
 3. Many R blogs, webpages and tutorials. For time reason, I couldn't appropriately cite them. Sorry about that.
+
+
+## use R and R packages in the condo cluster
+If you have problems in installing those R packages in your own computers, You can use the R and R packages I have installed on the condo HPC during the workshop, though you have to eventually get R and its packages installed in your own computer in the future if you need R for your work.
+
+To use that, please log in your account on <ISU NetID>@condo2017.its.iastate.edu. And use "vi" to open the shell configuration file  ".bash_profile" as follows:
+
+```bash
+vi .bash_profile
+```
+After open the file, hit the "I" key on your keyboard to get into "INSERT" mode and move the cursor to the end of the file and hit the "Enter" key. Then copy the following lines ( CTRL + C for Windows, and Command + C for Mac) and paste (SHIFT + insert for Windows, and Command + V for Mac) to the line where the cursor locates.
+
+```bash
+# User specific environment and startup programs
+export PATH=$PATH:/bin:/usr/bin/:/usr/local/bin:$HOME/bin/:./:~/.local/bin
+
+### alias to avoid mess up files
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ll='ls -l'
+set -o noclobber
+
+# R library path
+R_LIBS=${R_LIBS}:/home/haibol/R/x86_64-pc-linux-gnu-library/3.6
+
+### set colorful prompt
+export PS1="\[\e[31;40m\][\[\e[m\]\[\e[32;40m\]\u\[\e[m\]\[\e[31;40m\]@\[\e[m\]\[\e[32;40m\]\h\[\e[m\]\[\e[31;40m\]:\[\e[m\]\[\e[32;40m\]\w\[\e[m\]\[\e[31;40m\]]\[\e[m\]\[\e[31;40m\]\\$\[\e[m\] "
+```
+Then hit the "ESC", the ":" key and type "wq". The modified file will have been saved.
+
+To make the modification effective, run the following command:
+
+```bash
+source .bash_profile
+```
+No you can load the R and run R interactively, by running the following command.
+
+```bash
+#  log in a node for interactive job running
+salloc -N 1 -t 05:00:00
+
+# load R3.6.0 module
+module load r/3.6.0-py2-fupx2uq
+
+# start R
+R
+```
+
+## Use the storage space in /freetmp/cktuggle-free
+Large temporary space /freetmp is mounted on free nodes and on condodtn (it's not mounted on condo login node). Users should use /freetmp/cktuggle-free. To access that space and use it as working space. Please follow the instruction belows after logging in the head node (login node):
+
+```bash
+# you should be at your home directory
+pwd 
+
+# replace <your ISU NetID> with your real NetID
+mkdir -p /freetmp/cktuggle-free/<your ISU NetID>_work   
+
+# Create a symbolic link to your workspace
+ln -s /freetmp/cktuggle-free/<your ISU NetID>_work   ./
+
+# now you can start real work in this directory
+cd   <your ISU NetID>_work   
+```
