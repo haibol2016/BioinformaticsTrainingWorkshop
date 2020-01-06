@@ -1,0 +1,31 @@
+---
+title: "Create working space in the HPC-Condo2017"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+    css: style.css
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
+```
+
+## Use the storage space in /freetmp/cktuggle-free
+Large temporary space /freetmp is mounted on free nodes and on condodtn (it's not mounted on condo login node). Users should use /freetmp/cktuggle-free. To access that space and use it as working space. Please follow the instruction belows after logging in the head node (login node):
+
+```bash
+# you should be at your home directory
+pwd 
+
+# replace <your ISU NetID> with your real NetID
+mkdir -p /freetmp/cktuggle-free/<your ISU NetID>_work   
+
+# Create a symbolic link to your workspace
+ln -s /freetmp/cktuggle-free/<your ISU NetID>_work   ./
+
+# now you can start real work in this directory
+cd   <your ISU NetID>_work   
+```

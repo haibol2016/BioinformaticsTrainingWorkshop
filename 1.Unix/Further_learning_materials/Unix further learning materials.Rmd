@@ -1,0 +1,28 @@
+---
+title: "Further learning for Uinx/Linux"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
+                      fig.height = 5, warning = FALSE, 
+                      message = FALSE, encoding = "UTF-16")
+```
+
+Here are a list of books for learning Unix/Linux.  
+
+* The Linux Command Line: A Complete Introduction by William Shotts.  
+![](image/Unix reference book.png)
+
+
+
+* Advanced Bash Scripting Guide - Volume 1 and 2: An in-depth exploration of the art of shell scripting ( Revision 10 )  by Mendel Cooper.  
+![](image/Advanced shell scripting vol1.png)
+![](image/Advanced shell scripting vol2.png)
+
+* Mastering Regular Expression by Jeffrey EF. Friedl  
+![](image/Mastering regular expression.png)  
+
