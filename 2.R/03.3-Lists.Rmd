@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4,
                       message = FALSE, encoding = "UTF-16")
 ```
 
-Lists are also call recursive vectors because a list can contain other list. Their elements can be of any type of R object, including lists.  
+Lists are also called recursive vectors because a list can contain other list. Their elements can be of any type of R object, including lists.  
 Lists are used to build up more complicated data structures in R. Generally used for complex objects returned by R functions.  
 ![](image/summary-tree.png)  
 

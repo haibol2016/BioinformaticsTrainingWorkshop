@@ -595,8 +595,8 @@ A name that doesn't follow these rules is a non-syntactic name; if you try to us
 day_1 <- "Jan 7, 2020"
 
 # Error
-#  _abc <- 1
-#  if <- 10
+# _abc <- 1
+# if <- 10
 ```
 
 ### Name-value binding by assignment  

@@ -77,8 +77,6 @@ z <- as.numeric(x)
 ```{r}
 ?cut
 
-tx0 <- c(9, 4, 6, 5, 3, 10, 5, 3, 5)
-x <- rep(0:8, tx0)
 wfact = cut(women$weight,3)
 table(wfact)
 

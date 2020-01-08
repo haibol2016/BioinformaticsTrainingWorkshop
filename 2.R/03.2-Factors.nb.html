@@ -2913,7 +2913,7 @@ You CANNOT directly combine factors.</p>
 <h2>Create factors using <em>factor()</em> function</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImdlbm9taWNfZmVhdHVyZXMgPC0gZmFjdG9yKGMoXCI1X3ByaW1lX1VUUlwiLCBcIkNEU1wiLCBcIjNfcHJpbWVfVVRSXCIsIFwiaW50cm9uXCIpKSIsImdlbm9taWNfZmVhdHVyZXMiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2Vub21pY19mZWF0dXJlcyA8LSBmYWN0b3IoYyhcIjVfcHJpbWVfVVRSXCIsIFwiQ0RTXCIsIFwiM19wcmltZV9VVFJcIiwgXCJpbnRyb25cIikpXG5nZW5vbWljX2ZlYXR1cmVzXG5gYGAifQ== -->
 <pre class="r"><code>genomic_features &lt;- factor(c(&quot;5_prime_UTR&quot;, &quot;CDS&quot;, &quot;3_prime_UTR&quot;, &quot;intron&quot;))
 genomic_features</code></pre>
 <!-- rnb-source-end -->
@@ -2921,41 +2921,34 @@ genomic_features</code></pre>
 <pre><code>[1] 5_prime_UTR CDS         3_prime_UTR intron     
 Levels: 3_prime_UTR 5_prime_UTR CDS intron</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiY2xhc3MoZ2Vub21pY19mZWF0dXJlcykifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MoZ2Vub21pY19mZWF0dXJlcylcbmBgYCJ9 -->
 <pre class="r"><code>class(genomic_features)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiZmFjdG9yXCJcbiJ9 -->
 <pre><code>[1] &quot;factor&quot;</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZmFjdG9yXG4ifQ== -->
-<pre><code>factor</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgQnkgZGVmYXVsdCwgdXNpbmcgYWxwaGFudW1lcmljIG9yZGVyLCBha2EsIEFTQ0lJIFNvcnQgT3JkZXIgQ2hhcnQgKGh0dHA6Ly9zdXBwb3J0LmVjaXNvbHV0aW9ucy5jb20vZG9jLWRkbXMvaGVscC9yZXBvcnRzbWVudS9hc2NpaV9zb3J0X29yZGVyX2NoYXJ0Lmh0bSk6ICIsImxldmVscyhnZW5vbWljX2ZlYXR1cmVzKSJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBCeSBkZWZhdWx0LCB1c2luZyBhbHBoYW51bWVyaWMgb3JkZXIsIGFrYSwgQVNDSUkgU29ydCBPcmRlciBDaGFydCAoaHR0cDovL3N1cHBvcnQuZWNpc29sdXRpb25zLmNvbS9kb2MtZGRtcy9oZWxwL3JlcG9ydHNtZW51L2FzY2lpX3NvcnRfb3JkZXJfY2hhcnQuaHRtKTogXG5sZXZlbHMoZ2Vub21pY19mZWF0dXJlcylcbmBgYCJ9 -->
 <pre class="r"><code># By default, using alphanumeric order, aka, ASCII Sort Order Chart (http://support.ecisolutions.com/doc-ddms/help/reportsmenu/ascii_sort_order_chart.htm): 
 levels(genomic_features)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiM19wcmltZV9VVFJcIiBcIjVfcHJpbWVfVVRSXCIgXCJDRFNcIiAgICAgICAgIFwiaW50cm9uXCIgICAgIFxuIn0= -->
 <pre><code>[1] &quot;3_prime_UTR&quot; &quot;5_prime_UTR&quot; &quot;CDS&quot;         &quot;intron&quot;     </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbIjNfcHJpbWVfVVRSXG4iLCI1X3ByaW1lX1VUUlxuIiwiQ0RTXG4iLCJpbnRyb25cbiJdfQ== -->
-<pre><code>3_prime_UTR
-
-5_prime_UTR
-
-CDS
-
-intron</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgTkEgYWRkZWQiLCJnZW5vbWljX2ZlYXR1cmVzWzJdIDwtIFwiZXhvblwiIiwiZ2Vub21pY19mZWF0dXJlcyJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBOQSBhZGRlZFxuZ2Vub21pY19mZWF0dXJlc1syXSA8LSBcImV4b25cIlxuYGBgIn0= -->
 <pre class="r"><code># NA added
-genomic_features[2] &lt;- &quot;exon&quot;
-genomic_features</code></pre>
+genomic_features[2] &lt;- &quot;exon&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiaW52YWxpZCBmYWN0b3IgbGV2ZWwsIE5BIGdlbmVyYXRlZFxuIn0= -->
+<pre><code>invalid factor level, NA generated</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2Vub21pY19mZWF0dXJlc1xuYGBgIn0= -->
+<pre class="r"><code>genomic_features</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDVfcHJpbWVfVVRSIDxOQT4gICAgICAgIDNfcHJpbWVfVVRSIGludHJvbiAgICAgXG5MZXZlbHM6IDNfcHJpbWVfVVRSIDVfcHJpbWVfVVRSIENEUyBpbnRyb25cbiJ9 -->
 <pre><code>[1] 5_prime_UTR &lt;NA&gt;        3_prime_UTR intron     
 Levels: 3_prime_UTR 5_prime_UTR CDS intron</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKFwiQVwiLCBcIlRcIiwgXCJDXCIsIFwiR1wiKSkiLCJjKGdlbm9taWNfZmVhdHVyZXMsIG51Y2xlb3RpZGVzKSJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoXCJBXCIsIFwiVFwiLCBcIkNcIiwgXCJHXCIpKVxuYyhnZW5vbWljX2ZlYXR1cmVzLCBudWNsZW90aWRlcylcbmBgYCJ9 -->
 <pre class="r"><code>nucleotides &lt;- factor(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;))
 c(genomic_features, nucleotides)</code></pre>
 <!-- rnb-source-end -->
@@ -2969,7 +2962,7 @@ c(genomic_features, nucleotides)</code></pre>
 <h2>Coerce vectors of other object types into factors and change factors to other types</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInggPC0gYygnYScsICdiJywgJ2MnKSIsIiIsIiMgY29udmVydCB0aGUgY2hhcmFjdGVyIHZlY3RvciB0byBmYWN0b3IiLCJ4IDwtIGFzLmZhY3Rvcih4KSIsIngiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBjKCdhJywgJ2InLCAnYycpXG5cbiMgY29udmVydCB0aGUgY2hhcmFjdGVyIHZlY3RvciB0byBmYWN0b3JcbnggPC0gYXMuZmFjdG9yKHgpXG54XG5gYGAifQ== -->
 <pre class="r"><code>x &lt;- c(&#39;a&#39;, &#39;b&#39;, &#39;c&#39;)
 
 # convert the character vector to factor
@@ -2980,7 +2973,7 @@ x</code></pre>
 <pre><code>[1] a b c
 Levels: a b c</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgY29udmVydCBiYWNrIHRvIGEgY2hhcmFjdGVyIHZlY3RvciIsInkgPC0gYXMuY2hhcmFjdGVyKHgpIiwieSJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb252ZXJ0IGJhY2sgdG8gYSBjaGFyYWN0ZXIgdmVjdG9yXG55IDwtIGFzLmNoYXJhY3Rlcih4KVxueVxuYGBgIn0= -->
 <pre class="r"><code># convert back to a character vector
 y &lt;- as.character(x)
 y</code></pre>
@@ -2988,14 +2981,7 @@ y</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiYVwiIFwiYlwiIFwiY1wiXG4ifQ== -->
 <pre><code>[1] &quot;a&quot; &quot;b&quot; &quot;c&quot;</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbImFcbiIsImJcbiIsImNcbiJdfQ== -->
-<pre><code>a
-
-b
-
-c</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgY29udmVydCBmYWN0b3IgYmFjayB0byBhbiBpbnRlZ2VyIHZlY3RvciIsInggPC0gYygxLCA0LCAzLCA2LCA5KSIsIngiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBjb252ZXJ0IGZhY3RvciBiYWNrIHRvIGFuIGludGVnZXIgdmVjdG9yXG54IDwtIGMoMSwgNCwgMywgNiwgOSlcbnhcbmBgYCJ9 -->
 <pre class="r"><code># convert factor back to an integer vector
 x &lt;- c(1, 4, 3, 6, 9)
 x</code></pre>
@@ -3003,7 +2989,7 @@ x</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEgNCAzIDYgOVxuIn0= -->
 <pre><code>[1] 1 4 3 6 9</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbInggPC0gYXMuZmFjdG9yKHgpIiwieCJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBhcy5mYWN0b3IoeClcbnhcbmBgYCJ9 -->
 <pre class="r"><code>x &lt;- as.factor(x)
 x</code></pre>
 <!-- rnb-source-end -->
@@ -3011,7 +2997,7 @@ x</code></pre>
 <pre><code>[1] 1 4 3 6 9
 Levels: 1 3 4 6 9</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgQ29ycmVjdCB3YXkiLCJ5IDwtIGFzLm51bWVyaWMoYXMuY2hhcmFjdGVyKHgpKSIsInkiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDb3JyZWN0IHdheVxueSA8LSBhcy5udW1lcmljKGFzLmNoYXJhY3Rlcih4KSlcbnlcbmBgYCJ9 -->
 <pre class="r"><code># Correct way
 y &lt;- as.numeric(as.character(x))
 y</code></pre>
@@ -3019,7 +3005,7 @@ y</code></pre>
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEgNCAzIDYgOVxuIn0= -->
 <pre><code>[1] 1 4 3 6 9</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgV3Jvbmcgd2F5IiwieiA8LSBhcy5udW1lcmljKHgpIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBXcm9uZyB3YXlcbnogPC0gYXMubnVtZXJpYyh4KVxuYGBgIn0= -->
 <pre class="r"><code># Wrong way
 z &lt;- as.numeric(x)</code></pre>
 <!-- rnb-source-end -->
@@ -3030,12 +3016,9 @@ z &lt;- as.numeric(x)</code></pre>
 <h2>Converting a numeric vector into a factor vector using the <em>cut()</em> function</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiP2N1dCJ9 -->
-<pre class="r"><code>?cut</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbInR4MCA8LSBjKDksIDQsIDYsIDUsIDMsIDEwLCA1LCAzLCA1KSIsInggPC0gcmVwKDA6OCwgdHgwKSIsIndmYWN0ID0gY3V0KHdvbWVuJHdlaWdodCwzKSIsInRhYmxlKHdmYWN0KSJdfQ== -->
-<pre class="r"><code>tx0 &lt;- c(9, 4, 6, 5, 3, 10, 5, 3, 5)
-x &lt;- rep(0:8, tx0)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP2N1dFxuXG53ZmFjdCA9IGN1dCh3b21lbiR3ZWlnaHQsMylcbnRhYmxlKHdmYWN0KVxuYGBgIn0= -->
+<pre class="r"><code>?cut
+
 wfact = cut(women$weight,3)
 table(wfact)</code></pre>
 <!-- rnb-source-end -->
@@ -3044,18 +3027,17 @@ table(wfact)</code></pre>
 (115,131] (131,148] (148,164] 
         6         5         4 </code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgYWRkIGxhYmVscyIsIndmYWN0ID0gY3V0KHdvbWVuJHdlaWdodCwzLGxhYmVscyA9IGMoJ0xvdycsJ01lZGl1bScsJ0hpZ2gnKSkiLCJ3ZmFjdCJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBhZGQgbGFiZWxzXG53ZmFjdCA9IGN1dCh3b21lbiR3ZWlnaHQsMyxsYWJlbHMgPSBjKCdMb3cnLCdNZWRpdW0nLCdIaWdoJykpXG53ZmFjdFxuYGBgIn0= -->
 <pre class="r"><code># add labels
 wfact = cut(women$weight,3,labels = c(&#39;Low&#39;,&#39;Medium&#39;,&#39;High&#39;))
 wfact</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBMb3cgICAgTG93ICAgIExvdyAgICBMb3cgICAgTG93ICAgIExvdyAgICBNZWRpdW1cbiBbOF0gTWVkaXVtIE1lZGl1bSBNZWRpdW0gTWVkaXVtIEhpZ2ggICBIaWdoICAgSGlnaCAgXG5bMTVdIEhpZ2ggIFxuTGV2ZWxzOiBMb3cgTWVkaXVtIEhpZ2hcbiJ9 -->
-<pre><code> [1] Low    Low    Low    Low    Low    Low    Medium
- [8] Medium Medium Medium Medium High   High   High  
-[15] High  
+<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBMb3cgICAgTG93ICAgIExvdyAgICBMb3cgICAgTG93ICAgIExvdyAgICBNZWRpdW0gTWVkaXVtIE1lZGl1bSBNZWRpdW1cblsxMV0gTWVkaXVtIEhpZ2ggICBIaWdoICAgSGlnaCAgIEhpZ2ggIFxuTGV2ZWxzOiBMb3cgTWVkaXVtIEhpZ2hcbiJ9 -->
+<pre><code> [1] Low    Low    Low    Low    Low    Low    Medium Medium Medium Medium
+[11] Medium High   High   High   High  
 Levels: Low Medium High</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoidGFibGUod2ZhY3QpIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFibGUod2ZhY3QpXG5gYGAifQ== -->
 <pre class="r"><code>table(wfact)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoid2ZhY3RcbiAgIExvdyBNZWRpdW0gICBIaWdoIFxuICAgICA2ICAgICAgNSAgICAgIDQgXG4ifQ== -->
@@ -3070,79 +3052,33 @@ Levels: Low Medium High</code></pre>
 <h2>Change the order of levels and labels of factors</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgcGlnIGNocm9tb3NvbWVzIiwiY2hyb21vc29tZXMgPC0gZmFjdG9yKGMoMToxMCwgXCJYXCIsIFwiWVwiLCBcIk1UXCIsIDExOjE4KSkiLCJjaHJvbW9zb21lcyJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBwaWcgY2hyb21vc29tZXNcbmNocm9tb3NvbWVzIDwtIGZhY3RvcihjKDE6MTAsIFwiWFwiLCBcIllcIiwgXCJNVFwiLCAxMToxOCkpXG5jaHJvbW9zb21lc1xuYGBgIn0= -->
 <pre class="r"><code># pig chromosomes
 chromosomes &lt;- factor(c(1:10, &quot;X&quot;, &quot;Y&quot;, &quot;MT&quot;, 11:18))
 chromosomes</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSAxICAyICAzICA0ICA1ICA2ICA3ICA4ICA5ICAxMCBYICBZICBNVCAxMSAxMiAxMyAxNCAxNVxuWzE5XSAxNiAxNyAxOFxuMjEgTGV2ZWxzOiAxIDEwIDExIDEyIDEzIDE0IDE1IDE2IDE3IDE4IDIgMyA0IDUgNiA3IC4uLiBZXG4ifQ== -->
-<pre><code> [1] 1  2  3  4  5  6  7  8  9  10 X  Y  MT 11 12 13 14 15
-[19] 16 17 18
-21 Levels: 1 10 11 12 13 14 15 16 17 18 2 3 4 5 6 7 ... Y</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSAxICAyICAzICA0ICA1ICA2ICA3ICA4ICA5ICAxMCBYICBZICBNVCAxMSAxMiAxMyAxNCAxNSAxNiAxNyAxOFxuTGV2ZWxzOiAxIDEwIDExIDEyIDEzIDE0IDE1IDE2IDE3IDE4IDIgMyA0IDUgNiA3IDggOSBNVCBYIFlcbiJ9 -->
+<pre><code> [1] 1  2  3  4  5  6  7  8  9  10 X  Y  MT 11 12 13 14 15 16 17 18
+Levels: 1 10 11 12 13 14 15 16 17 18 2 3 4 5 6 7 8 9 MT X Y</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgcmVvcmRlciB0aGUgY2hyb21vc29tZSBsZXZlbHMgYW5kIGdpdmUgbW9yZSBtZWFuaW5nZnVsIGxhYmVscyIsImNocm9tb3NvbWVzIDwtIGZhY3RvcihjaHJvbW9zb21lcywgbGV2ZWxzID0gYygxOjE4LCBcIlhcIiwgXCJZXCIsIFwiTVRcIiksIFxuICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhwYXN0ZTAoXCJjaHJcIiwgYygxOjE4LCBcIlhcIiwgXCJZXCIsIFwiTVRcIikpKSkiLCJjaHJvbW9zb21lcyJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZW9yZGVyIHRoZSBjaHJvbW9zb21lIGxldmVscyBhbmQgZ2l2ZSBtb3JlIG1lYW5pbmdmdWwgbGFiZWxzXG5jaHJvbW9zb21lcyA8LSBmYWN0b3IoY2hyb21vc29tZXMsIGxldmVscyA9IGMoMToxOCwgXCJYXCIsIFwiWVwiLCBcIk1UXCIpLCBcbiAgICAgICAgICAgICAgICAgICAgIGxhYmVscyA9IGMocGFzdGUwKFwiY2hyXCIsIGMoMToxOCwgXCJYXCIsIFwiWVwiLCBcIk1UXCIpKSkpXG5jaHJvbW9zb21lc1xuYGBgIn0= -->
 <pre class="r"><code># reorder the chromosome levels and give more meaningful labels
 chromosomes &lt;- factor(chromosomes, levels = c(1:18, &quot;X&quot;, &quot;Y&quot;, &quot;MT&quot;), 
                      labels = c(paste0(&quot;chr&quot;, c(1:18, &quot;X&quot;, &quot;Y&quot;, &quot;MT&quot;))))
 chromosomes</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBjaHIxICBjaHIyICBjaHIzICBjaHI0ICBjaHI1ICBjaHI2ICBjaHI3ICBjaHI4ICBjaHI5IFxuWzEwXSBjaHIxMCBjaHJYICBjaHJZICBjaHJNVCBjaHIxMSBjaHIxMiBjaHIxMyBjaHIxNCBjaHIxNVxuWzE5XSBjaHIxNiBjaHIxNyBjaHIxOFxuMjEgTGV2ZWxzOiBjaHIxIGNocjIgY2hyMyBjaHI0IGNocjUgY2hyNiBjaHI3IC4uLiBjaHJNVFxuIn0= -->
-<pre><code> [1] chr1  chr2  chr3  chr4  chr5  chr6  chr7  chr8  chr9 
-[10] chr10 chrX  chrY  chrMT chr11 chr12 chr13 chr14 chr15
-[19] chr16 chr17 chr18
-21 Levels: chr1 chr2 chr3 chr4 chr5 chr6 chr7 ... chrMT</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBjaHIxICBjaHIyICBjaHIzICBjaHI0ICBjaHI1ICBjaHI2ICBjaHI3ICBjaHI4ICBjaHI5ICBjaHIxMCBjaHJYIFxuWzEyXSBjaHJZICBjaHJNVCBjaHIxMSBjaHIxMiBjaHIxMyBjaHIxNCBjaHIxNSBjaHIxNiBjaHIxNyBjaHIxOFxuMjEgTGV2ZWxzOiBjaHIxIGNocjIgY2hyMyBjaHI0IGNocjUgY2hyNiBjaHI3IGNocjggY2hyOSBjaHIxMCAuLi4gY2hyTVRcbiJ9 -->
+<pre><code> [1] chr1  chr2  chr3  chr4  chr5  chr6  chr7  chr8  chr9  chr10 chrX 
+[12] chrY  chrMT chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18
+21 Levels: chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 ... chrMT</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoibGV2ZWxzKGNocm9tb3NvbWVzKSJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGV2ZWxzKGNocm9tb3NvbWVzKVxuYGBgIn0= -->
 <pre class="r"><code>levels(chromosomes)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcImNocjFcIiAgXCJjaHIyXCIgIFwiY2hyM1wiICBcImNocjRcIiAgXCJjaHI1XCIgIFwiY2hyNlwiIFxuIFs3XSBcImNocjdcIiAgXCJjaHI4XCIgIFwiY2hyOVwiICBcImNocjEwXCIgXCJjaHIxMVwiIFwiY2hyMTJcIlxuWzEzXSBcImNocjEzXCIgXCJjaHIxNFwiIFwiY2hyMTVcIiBcImNocjE2XCIgXCJjaHIxN1wiIFwiY2hyMThcIlxuWzE5XSBcImNoclhcIiAgXCJjaHJZXCIgIFwiY2hyTVRcIlxuIn0= -->
-<pre><code> [1] &quot;chr1&quot;  &quot;chr2&quot;  &quot;chr3&quot;  &quot;chr4&quot;  &quot;chr5&quot;  &quot;chr6&quot; 
- [7] &quot;chr7&quot;  &quot;chr8&quot;  &quot;chr9&quot;  &quot;chr10&quot; &quot;chr11&quot; &quot;chr12&quot;
-[13] &quot;chr13&quot; &quot;chr14&quot; &quot;chr15&quot; &quot;chr16&quot; &quot;chr17&quot; &quot;chr18&quot;
-[19] &quot;chrX&quot;  &quot;chrY&quot;  &quot;chrMT&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbImNocjFcbiIsImNocjJcbiIsImNocjNcbiIsImNocjRcbiIsImNocjVcbiIsImNocjZcbiIsImNocjdcbiIsImNocjhcbiIsImNocjlcbiIsImNocjEwXG4iLCJjaHIxMVxuIiwiY2hyMTJcbiIsImNocjEzXG4iLCJjaHIxNFxuIiwiY2hyMTVcbiIsImNocjE2XG4iLCJjaHIxN1xuIiwiY2hyMThcbiIsImNoclhcbiIsImNocllcbiIsImNock1UXG4iXX0= -->
-<pre><code>chr1
-
-chr2
-
-chr3
-
-chr4
-
-chr5
-
-chr6
-
-chr7
-
-chr8
-
-chr9
-
-chr10
-
-chr11
-
-chr12
-
-chr13
-
-chr14
-
-chr15
-
-chr16
-
-chr17
-
-chr18
-
-chrX
-
-chrY
-
-chrMT</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcImNocjFcIiAgXCJjaHIyXCIgIFwiY2hyM1wiICBcImNocjRcIiAgXCJjaHI1XCIgIFwiY2hyNlwiICBcImNocjdcIiAgXCJjaHI4XCIgXG4gWzldIFwiY2hyOVwiICBcImNocjEwXCIgXCJjaHIxMVwiIFwiY2hyMTJcIiBcImNocjEzXCIgXCJjaHIxNFwiIFwiY2hyMTVcIiBcImNocjE2XCJcblsxN10gXCJjaHIxN1wiIFwiY2hyMThcIiBcImNoclhcIiAgXCJjaHJZXCIgIFwiY2hyTVRcIlxuIn0= -->
+<pre><code> [1] &quot;chr1&quot;  &quot;chr2&quot;  &quot;chr3&quot;  &quot;chr4&quot;  &quot;chr5&quot;  &quot;chr6&quot;  &quot;chr7&quot;  &quot;chr8&quot; 
+ [9] &quot;chr9&quot;  &quot;chr10&quot; &quot;chr11&quot; &quot;chr12&quot; &quot;chr13&quot; &quot;chr14&quot; &quot;chr15&quot; &quot;chr16&quot;
+[17] &quot;chr17&quot; &quot;chr18&quot; &quot;chrX&quot;  &quot;chrY&quot;  &quot;chrMT&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -3150,7 +3086,7 @@ chrMT</code></pre>
 <h3>Ways to modify factors</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgYWRkIGxldmVscyB0byBhIGZhY3RvciIsIm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKFwiQVwiLCBcIlRcIiwgXCJDXCIsIFwiR1wiKSkiLCJudWNsZW90aWRlcyJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBhZGQgbGV2ZWxzIHRvIGEgZmFjdG9yXG5udWNsZW90aWRlcyA8LSBmYWN0b3IoYyhcIkFcIiwgXCJUXCIsIFwiQ1wiLCBcIkdcIikpXG5udWNsZW90aWRlc1xuYGBgIn0= -->
 <pre class="r"><code># add levels to a factor
 nucleotides &lt;- factor(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;))
 nucleotides</code></pre>
@@ -3159,7 +3095,7 @@ nucleotides</code></pre>
 <pre><code>[1] A T C G
 Levels: A C G T</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKGFzLmNoYXJhY3RlcihudWNsZW90aWRlcyksIFwiVVwiKSkiLCJudWNsZW90aWRlcyJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoYXMuY2hhcmFjdGVyKG51Y2xlb3RpZGVzKSwgXCJVXCIpKVxubnVjbGVvdGlkZXNcbmBgYCJ9 -->
 <pre class="r"><code>nucleotides &lt;- factor(c(as.character(nucleotides), &quot;U&quot;))
 nucleotides</code></pre>
 <!-- rnb-source-end -->
@@ -3167,7 +3103,7 @@ nucleotides</code></pre>
 <pre><code>[1] A T C G U
 Levels: A C G T U</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgcmVtb3ZlIGxldmVscyBmcm9tIGEgZmFjdG9yIiwibnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoXCJBXCIsIFwiVFwiLCBcIkNcIiwgXCJHXCIpKSIsIm51Y2xlb3RpZGVzIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZW1vdmUgbGV2ZWxzIGZyb20gYSBmYWN0b3Jcbm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKFwiQVwiLCBcIlRcIiwgXCJDXCIsIFwiR1wiKSlcbm51Y2xlb3RpZGVzXG5gYGAifQ== -->
 <pre class="r"><code># remove levels from a factor
 nucleotides &lt;- factor(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;))
 nucleotides</code></pre>
@@ -3176,7 +3112,7 @@ nucleotides</code></pre>
 <pre><code>[1] A T C G
 Levels: A C G T</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIm51Y2xlb3RpZGVzIDwtIGZhY3Rvcihhcy5jaGFyYWN0ZXIobnVjbGVvdGlkZXMpWy0yXSkiLCJudWNsZW90aWRlcyJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnVjbGVvdGlkZXMgPC0gZmFjdG9yKGFzLmNoYXJhY3RlcihudWNsZW90aWRlcylbLTJdKVxubnVjbGVvdGlkZXNcbmBgYCJ9 -->
 <pre class="r"><code>nucleotides &lt;- factor(as.character(nucleotides)[-2])
 nucleotides</code></pre>
 <!-- rnb-source-end -->
@@ -3184,7 +3120,7 @@ nucleotides</code></pre>
 <pre><code>[1] A C G
 Levels: A C G</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgb3IgdXNlIHN1YnNldHRpbmcgYW5kIGZhY3RvciBhZ2FpbiIsIm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKFwiQVwiLCBcIlRcIiwgXCJDXCIsIFwiR1wiKSkiLCIjIGRyb3AgdGhlIHJlbW92ZWQgbGV2ZWxzIiwibnVjbGVvdGlkZXMgPC0gbnVjbGVvdGlkZXNbLTIsIGRyb3AgPSBUUlVFXSIsIm51Y2xlb3RpZGVzIl19 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBvciB1c2Ugc3Vic2V0dGluZyBhbmQgZmFjdG9yIGFnYWluXG5udWNsZW90aWRlcyA8LSBmYWN0b3IoYyhcIkFcIiwgXCJUXCIsIFwiQ1wiLCBcIkdcIikpXG4jIGRyb3AgdGhlIHJlbW92ZWQgbGV2ZWxzXG5udWNsZW90aWRlcyA8LSBudWNsZW90aWRlc1stMiwgZHJvcCA9IFRSVUVdXG5udWNsZW90aWRlc1xuYGBgIn0= -->
 <pre class="r"><code># or use subsetting and factor again
 nucleotides &lt;- factor(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;))
 # drop the removed levels
@@ -3195,7 +3131,7 @@ nucleotides</code></pre>
 <pre><code>[1] A C G
 Levels: A C G</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiMgbW9kaWZ5IGxldmVscyBmaXJzdCIsIm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKFwiQVwiLCBcIlRcIiwgXCJDXCIsIFwiR1wiKSkiLCJsZXZlbHMobnVjbGVvdGlkZXMpIDwtIGMobGV2ZWxzKG51Y2xlb3RpZGVzKSwgXCJVXCIpIiwibnVjbGVvdGlkZXNbNV0gPC0gXCJVXCIiLCJudWNsZW90aWRlcyJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBtb2RpZnkgbGV2ZWxzIGZpcnN0XG5udWNsZW90aWRlcyA8LSBmYWN0b3IoYyhcIkFcIiwgXCJUXCIsIFwiQ1wiLCBcIkdcIikpXG5sZXZlbHMobnVjbGVvdGlkZXMpIDwtIGMobGV2ZWxzKG51Y2xlb3RpZGVzKSwgXCJVXCIpXG5udWNsZW90aWRlc1s1XSA8LSBcIlVcIlxubnVjbGVvdGlkZXNcbmBgYCJ9 -->
 <pre class="r"><code># modify levels first
 nucleotides &lt;- factor(c(&quot;A&quot;, &quot;T&quot;, &quot;C&quot;, &quot;G&quot;))
 levels(nucleotides) &lt;- c(levels(nucleotides), &quot;U&quot;)
@@ -3206,7 +3142,7 @@ nucleotides</code></pre>
 <pre><code>[1] A T C G U
 Levels: A C G T U</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjpbIm51Y2xlb3RpZGVzWzNdIDwtIFwiVVwiIiwibnVjbGVvdGlkZXMiXX0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnVjbGVvdGlkZXNbM10gPC0gXCJVXCJcbm51Y2xlb3RpZGVzXG5gYGAifQ== -->
 <pre class="r"><code>nucleotides[3] &lt;- &quot;U&quot;
 nucleotides</code></pre>
 <!-- rnb-source-end -->
@@ -3222,7 +3158,7 @@ Levels: A C G T U</code></pre>
 <p>Same to regular atomic vector indexing, except levels attribute does NOT change</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInggPC0gZmFjdG9yKGMoXCJzaW5nbGVcIixcIm1hcnJpZWRcIixcIm1hcnJpZWRcIixcInNpbmdsZVwiKSkiLCIiLCJ4WzNdICAgICAgICAgICAjIGFjY2VzcyAzcmQgZWxlbWVudCJdfQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueCA8LSBmYWN0b3IoYyhcInNpbmdsZVwiLFwibWFycmllZFwiLFwibWFycmllZFwiLFwic2luZ2xlXCIpKVxuXG54WzNdICAgICAgICAgICAjIGFjY2VzcyAzcmQgZWxlbWVudFxuYGBgIn0= -->
 <pre class="r"><code>x &lt;- factor(c(&quot;single&quot;,&quot;married&quot;,&quot;married&quot;,&quot;single&quot;))
 
 x[3]           # access 3rd element</code></pre>
@@ -3231,21 +3167,21 @@ x[3]           # access 3rd element</code></pre>
 <pre><code>[1] married
 Levels: married single</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoieFtjKDIsIDQpXSAgICAgIyBhY2Nlc3MgMm5kIGFuZCA0dGggZWxlbWVudCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueFtjKDIsIDQpXSAgICAgIyBhY2Nlc3MgMm5kIGFuZCA0dGggZWxlbWVudFxuYGBgIn0= -->
 <pre class="r"><code>x[c(2, 4)]     # access 2nd and 4th element</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIG1hcnJpZWQgc2luZ2xlIFxuTGV2ZWxzOiBtYXJyaWVkIHNpbmdsZVxuIn0= -->
 <pre><code>[1] married single 
 Levels: married single</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoieFstMV0gICAgICAgICAgIyBhY2Nlc3MgYWxsIGJ1dCAxc3QgZWxlbWVudCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueFstMV0gICAgICAgICAgIyBhY2Nlc3MgYWxsIGJ1dCAxc3QgZWxlbWVudFxuYGBgIn0= -->
 <pre class="r"><code>x[-1]          # access all but 1st element</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIG1hcnJpZWQgbWFycmllZCBzaW5nbGUgXG5MZXZlbHM6IG1hcnJpZWQgc2luZ2xlXG4ifQ== -->
 <pre><code>[1] married married single 
 Levels: married single</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoieFtjKFRSVUUsIEZBTFNFLCBGQUxTRSwgVFJVRSldICAjIHVzaW5nIGxvZ2ljYWwgdmVjdG9yIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueFtjKFRSVUUsIEZBTFNFLCBGQUxTRSwgVFJVRSldICAjIHVzaW5nIGxvZ2ljYWwgdmVjdG9yXG5gYGAifQ== -->
 <pre class="r"><code>x[c(TRUE, FALSE, FALSE, TRUE)]  # using logical vector</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIHNpbmdsZSBzaW5nbGVcbkxldmVsczogbWFycmllZCBzaW5nbGVcbiJ9 -->
@@ -3256,7 +3192,7 @@ Levels: married single</code></pre>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZhY3RvcnMiDQpvdXRwdXQ6IA0KICBodG1sX25vdGVib29rOg0KICAgIHRvYzogdHJ1ZQ0KICAgIHRvY19mbG9hdDogdHJ1ZQ0KICAgIGNzczogc3R5bGUuY3NzDQotLS0NCg0KYGBge3IgaW5jbHVkZSA9IEZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFLCBldmFsPVRSVUUsIGZpZy53aWR0aCA9IDQsIA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy5oZWlnaHQgPSA1LCB3YXJuaW5nID0gRkFMU0UsIA0KICAgICAgICAgICAgICAgICAgICAgIG1lc3NhZ2UgPSBGQUxTRSwgZW5jb2RpbmcgPSAiVVRGLTE2IikNCg0KYGBgDQoNCg0KQSBmYWN0b3IgaXMgYSB2ZWN0b3IgY29udGFpbmluZyBvbmx5IHByZWRlZmluZWQgdmFsdWVzLCBhbmQgaXMgdXNlZCB0byBzdG9yZSBjYXRlZ29yaWNhbCBkYXRhKGdlbmRlciwgc29jaWFsIGNsYXNzLCBldGMpLg0KDQpGYWN0b3IgYXJlIGJ1aWx0IG9uIHRvcCBvZiBpbnRlZ2VyIHZlY3RvcnMsIHVzaW5nIHR3byBlc3NlbnRpYWwgYXR0cmlidXRlczogIA0KDQoqIFRoZSBjbGFzcyAiZmFjdG9yIiwgd2hpY2ggbWFrZXMgdGhlbSBiZWhhdmUgZGlmZmVyZW50bHkgZnJvbSByZWd1bGFyIGludGVnZXIgdmVjdG9ycw0KKiBUaGUgbGV2ZWxzIGF0dHJpYnV0ZSwgd2hpY2ggZGVmaW5lcyB0aGUgc2V0IG9mIGFsbG93ZWQgdmFsdWVzLiAgDQohW10oaW1hZ2UvZmFjdG9yLnBuZykgIA0KDQoNCllvdSBDQU5OT1QgZGlyZWN0bHkgYWRkIG90aGVyIHVuZGVmaW5lZCB2YWx1ZXMgdG8gYSBmYWN0b3IgdmVjdG9yLCB3aGljaCBsZWFkcyB0byBOQS4gIA0KWW91IENBTk5PVCBkaXJlY3RseSBjb21iaW5lIGZhY3RvcnMuDQoNCkEgZXhjZWxsZW50IFIgcGFja2FnZSwgZm9yY2F0cywgcHJvdmlkZXMgZnJpZW5kbHkgZnVuY3Rpb25hbGl0aWVzIHRvIGhhbmRsZSBmYWN0b3JzLiBTZWUgYSBbY2hlYXQgc2hlZXRdKGh0dHBzOi8vZ2l0aHViLmNvbS9yc3R1ZGlvL2NoZWF0c2hlZXRzL3Jhdy9tYXN0ZXIvZmFjdG9ycy5wZGYpLg0KDQojIyBDcmVhdGUgZmFjdG9ycyB1c2luZyBfZmFjdG9yKClfIGZ1bmN0aW9uDQoNCmBgYHtyfQ0KZ2Vub21pY19mZWF0dXJlcyA8LSBmYWN0b3IoYygiNV9wcmltZV9VVFIiLCAiQ0RTIiwgIjNfcHJpbWVfVVRSIiwgImludHJvbiIpKQ0KZ2Vub21pY19mZWF0dXJlcw0KY2xhc3MoZ2Vub21pY19mZWF0dXJlcykNCg0KIyBCeSBkZWZhdWx0LCB1c2luZyBhbHBoYW51bWVyaWMgb3JkZXIsIGFrYSwgQVNDSUkgU29ydCBPcmRlciBDaGFydCAoaHR0cDovL3N1cHBvcnQuZWNpc29sdXRpb25zLmNvbS9kb2MtZGRtcy9oZWxwL3JlcG9ydHNtZW51L2FzY2lpX3NvcnRfb3JkZXJfY2hhcnQuaHRtKTogDQpsZXZlbHMoZ2Vub21pY19mZWF0dXJlcykNCg0KIyBOQSBhZGRlZA0KZ2Vub21pY19mZWF0dXJlc1syXSA8LSAiZXhvbiINCmdlbm9taWNfZmVhdHVyZXMNCg0KbnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoIkEiLCAiVCIsICJDIiwgIkciKSkNCmMoZ2Vub21pY19mZWF0dXJlcywgbnVjbGVvdGlkZXMpDQpgYGANCg0KIyMgQ29lcmNlIHZlY3RvcnMgb2Ygb3RoZXIgb2JqZWN0IHR5cGVzIGludG8gZmFjdG9ycyBhbmQgY2hhbmdlIGZhY3RvcnMgdG8gb3RoZXIgdHlwZXMNCmBgYHtyfQ0KeCA8LSBjKCdhJywgJ2InLCAnYycpDQoNCiMgY29udmVydCB0aGUgY2hhcmFjdGVyIHZlY3RvciB0byBmYWN0b3INCnggPC0gYXMuZmFjdG9yKHgpDQp4DQoNCiMgY29udmVydCBiYWNrIHRvIGEgY2hhcmFjdGVyIHZlY3Rvcg0KeSA8LSBhcy5jaGFyYWN0ZXIoeCkNCnkNCg0KIyBjb252ZXJ0IGZhY3RvciBiYWNrIHRvIGFuIGludGVnZXIgdmVjdG9yDQp4IDwtIGMoMSwgNCwgMywgNiwgOSkNCngNCg0KeCA8LSBhcy5mYWN0b3IoeCkNCngNCg0KIyBDb3JyZWN0IHdheQ0KeSA8LSBhcy5udW1lcmljKGFzLmNoYXJhY3Rlcih4KSkNCnkNCg0KIyBXcm9uZyB3YXkNCnogPC0gYXMubnVtZXJpYyh4KQ0KYGBgDQojIyBDb252ZXJ0aW5nIGEgbnVtZXJpYyB2ZWN0b3IgaW50byBhIGZhY3RvciB2ZWN0b3IgdXNpbmcgdGhlIF9jdXQoKV8gZnVuY3Rpb24NCmBgYHtyfQ0KP2N1dA0KDQp0eDAgPC0gYyg5LCA0LCA2LCA1LCAzLCAxMCwgNSwgMywgNSkNCnggPC0gcmVwKDA6OCwgdHgwKQ0Kd2ZhY3QgPSBjdXQod29tZW4kd2VpZ2h0LDMpDQp0YWJsZSh3ZmFjdCkNCg0KIyBhZGQgbGFiZWxzDQp3ZmFjdCA9IGN1dCh3b21lbiR3ZWlnaHQsMyxsYWJlbHMgPSBjKCdMb3cnLCdNZWRpdW0nLCdIaWdoJykpDQp3ZmFjdA0KDQp0YWJsZSh3ZmFjdCkNCmBgYA0KDQoNCiMjIENoYW5nZSB0aGUgb3JkZXIgb2YgbGV2ZWxzIGFuZCBsYWJlbHMgb2YgZmFjdG9ycw0KYGBge3J9DQojIHBpZyBjaHJvbW9zb21lcw0KY2hyb21vc29tZXMgPC0gZmFjdG9yKGMoMToxMCwgIlgiLCAiWSIsICJNVCIsIDExOjE4KSkNCmNocm9tb3NvbWVzDQojIHJlb3JkZXIgdGhlIGNocm9tb3NvbWUgbGV2ZWxzIGFuZCBnaXZlIG1vcmUgbWVhbmluZ2Z1bCBsYWJlbHMNCmNocm9tb3NvbWVzIDwtIGZhY3RvcihjaHJvbW9zb21lcywgbGV2ZWxzID0gYygxOjE4LCAiWCIsICJZIiwgIk1UIiksIA0KICAgICAgICAgICAgICAgICAgICAgbGFiZWxzID0gYyhwYXN0ZTAoImNociIsIGMoMToxOCwgIlgiLCAiWSIsICJNVCIpKSkpDQpjaHJvbW9zb21lcw0KbGV2ZWxzKGNocm9tb3NvbWVzKQ0KYGBgDQoNCiMjIyBXYXlzIHRvIG1vZGlmeSBmYWN0b3JzDQpgYGB7cn0NCiMgYWRkIGxldmVscyB0byBhIGZhY3Rvcg0KbnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoIkEiLCAiVCIsICJDIiwgIkciKSkNCm51Y2xlb3RpZGVzDQpudWNsZW90aWRlcyA8LSBmYWN0b3IoYyhhcy5jaGFyYWN0ZXIobnVjbGVvdGlkZXMpLCAiVSIpKQ0KbnVjbGVvdGlkZXMNCg0KIyByZW1vdmUgbGV2ZWxzIGZyb20gYSBmYWN0b3INCm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKCJBIiwgIlQiLCAiQyIsICJHIikpDQpudWNsZW90aWRlcw0KbnVjbGVvdGlkZXMgPC0gZmFjdG9yKGFzLmNoYXJhY3RlcihudWNsZW90aWRlcylbLTJdKQ0KbnVjbGVvdGlkZXMNCiMgb3IgdXNlIHN1YnNldHRpbmcgYW5kIGZhY3RvciBhZ2Fpbg0KbnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoIkEiLCAiVCIsICJDIiwgIkciKSkNCiMgZHJvcCB0aGUgcmVtb3ZlZCBsZXZlbHMNCm51Y2xlb3RpZGVzIDwtIG51Y2xlb3RpZGVzWy0yLCBkcm9wID0gVFJVRV0NCm51Y2xlb3RpZGVzDQoNCiMgbW9kaWZ5IGxldmVscyBmaXJzdA0KbnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoIkEiLCAiVCIsICJDIiwgIkciKSkNCmxldmVscyhudWNsZW90aWRlcykgPC0gYyhsZXZlbHMobnVjbGVvdGlkZXMpLCAiVSIpDQpudWNsZW90aWRlc1s1XSA8LSAiVSINCm51Y2xlb3RpZGVzDQpudWNsZW90aWRlc1szXSA8LSAiVSINCm51Y2xlb3RpZGVzDQoNCmBgYA0KIyMjIEFjY2VzcyBlbGVtZW50cyBvZiBmYWN0b3JzDQpTYW1lIHRvIHJlZ3VsYXIgYXRvbWljIHZlY3RvciBpbmRleGluZywgZXhjZXB0IGxldmVscyBhdHRyaWJ1dGUgZG9lcyBOT1QgY2hhbmdlDQoNCmBgYHtyfQ0KeCA8LSBmYWN0b3IoYygic2luZ2xlIiwibWFycmllZCIsIm1hcnJpZWQiLCJzaW5nbGUiKSkNCg0KeFszXSAgICAgICAgICAgIyBhY2Nlc3MgM3JkIGVsZW1lbnQNCg0KeFtjKDIsIDQpXSAgICAgIyBhY2Nlc3MgMm5kIGFuZCA0dGggZWxlbWVudA0KDQp4Wy0xXSAgICAgICAgICAjIGFjY2VzcyBhbGwgYnV0IDFzdCBlbGVtZW50DQoNCnhbYyhUUlVFLCBGQUxTRSwgRkFMU0UsIFRSVUUpXSAgIyB1c2luZyBsb2dpY2FsIHZlY3Rvcg0KYGBgDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZhY3RvcnMiDQpvdXRwdXQ6IA0KICBodG1sX25vdGVib29rOg0KICAgIHRvYzogdHJ1ZQ0KICAgIHRvY19mbG9hdDogdHJ1ZQ0KICAgIGNzczogc3R5bGUuY3NzDQotLS0NCg0KYGBge3IgaW5jbHVkZSA9IEZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFLCBldmFsPVRSVUUsIGZpZy53aWR0aCA9IDQsIA0KICAgICAgICAgICAgICAgICAgICAgIGZpZy5oZWlnaHQgPSA1LCB3YXJuaW5nID0gRkFMU0UsIA0KICAgICAgICAgICAgICAgICAgICAgIG1lc3NhZ2UgPSBGQUxTRSwgZW5jb2RpbmcgPSAiVVRGLTE2IikNCg0KYGBgDQoNCg0KQSBmYWN0b3IgaXMgYSB2ZWN0b3IgY29udGFpbmluZyBvbmx5IHByZWRlZmluZWQgdmFsdWVzLCBhbmQgaXMgdXNlZCB0byBzdG9yZSBjYXRlZ29yaWNhbCBkYXRhKGdlbmRlciwgc29jaWFsIGNsYXNzLCBldGMpLg0KDQpGYWN0b3IgYXJlIGJ1aWx0IG9uIHRvcCBvZiBpbnRlZ2VyIHZlY3RvcnMsIHVzaW5nIHR3byBlc3NlbnRpYWwgYXR0cmlidXRlczogIA0KDQoqIFRoZSBjbGFzcyAiZmFjdG9yIiwgd2hpY2ggbWFrZXMgdGhlbSBiZWhhdmUgZGlmZmVyZW50bHkgZnJvbSByZWd1bGFyIGludGVnZXIgdmVjdG9ycw0KKiBUaGUgbGV2ZWxzIGF0dHJpYnV0ZSwgd2hpY2ggZGVmaW5lcyB0aGUgc2V0IG9mIGFsbG93ZWQgdmFsdWVzLiAgDQohW10oaW1hZ2UvZmFjdG9yLnBuZykgIA0KDQoNCllvdSBDQU5OT1QgZGlyZWN0bHkgYWRkIG90aGVyIHVuZGVmaW5lZCB2YWx1ZXMgdG8gYSBmYWN0b3IgdmVjdG9yLCB3aGljaCBsZWFkcyB0byBOQS4gIA0KWW91IENBTk5PVCBkaXJlY3RseSBjb21iaW5lIGZhY3RvcnMuDQoNCkEgZXhjZWxsZW50IFIgcGFja2FnZSwgZm9yY2F0cywgcHJvdmlkZXMgZnJpZW5kbHkgZnVuY3Rpb25hbGl0aWVzIHRvIGhhbmRsZSBmYWN0b3JzLiBTZWUgYSBbY2hlYXQgc2hlZXRdKGh0dHBzOi8vZ2l0aHViLmNvbS9yc3R1ZGlvL2NoZWF0c2hlZXRzL3Jhdy9tYXN0ZXIvZmFjdG9ycy5wZGYpLg0KDQojIyBDcmVhdGUgZmFjdG9ycyB1c2luZyBfZmFjdG9yKClfIGZ1bmN0aW9uDQoNCmBgYHtyfQ0KZ2Vub21pY19mZWF0dXJlcyA8LSBmYWN0b3IoYygiNV9wcmltZV9VVFIiLCAiQ0RTIiwgIjNfcHJpbWVfVVRSIiwgImludHJvbiIpKQ0KZ2Vub21pY19mZWF0dXJlcw0KY2xhc3MoZ2Vub21pY19mZWF0dXJlcykNCg0KIyBCeSBkZWZhdWx0LCB1c2luZyBhbHBoYW51bWVyaWMgb3JkZXIsIGFrYSwgQVNDSUkgU29ydCBPcmRlciBDaGFydCAoaHR0cDovL3N1cHBvcnQuZWNpc29sdXRpb25zLmNvbS9kb2MtZGRtcy9oZWxwL3JlcG9ydHNtZW51L2FzY2lpX3NvcnRfb3JkZXJfY2hhcnQuaHRtKTogDQpsZXZlbHMoZ2Vub21pY19mZWF0dXJlcykNCg0KIyBOQSBhZGRlZA0KZ2Vub21pY19mZWF0dXJlc1syXSA8LSAiZXhvbiINCmdlbm9taWNfZmVhdHVyZXMNCg0KbnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoIkEiLCAiVCIsICJDIiwgIkciKSkNCmMoZ2Vub21pY19mZWF0dXJlcywgbnVjbGVvdGlkZXMpDQpgYGANCg0KIyMgQ29lcmNlIHZlY3RvcnMgb2Ygb3RoZXIgb2JqZWN0IHR5cGVzIGludG8gZmFjdG9ycyBhbmQgY2hhbmdlIGZhY3RvcnMgdG8gb3RoZXIgdHlwZXMNCmBgYHtyfQ0KeCA8LSBjKCdhJywgJ2InLCAnYycpDQoNCiMgY29udmVydCB0aGUgY2hhcmFjdGVyIHZlY3RvciB0byBmYWN0b3INCnggPC0gYXMuZmFjdG9yKHgpDQp4DQoNCiMgY29udmVydCBiYWNrIHRvIGEgY2hhcmFjdGVyIHZlY3Rvcg0KeSA8LSBhcy5jaGFyYWN0ZXIoeCkNCnkNCg0KIyBjb252ZXJ0IGZhY3RvciBiYWNrIHRvIGFuIGludGVnZXIgdmVjdG9yDQp4IDwtIGMoMSwgNCwgMywgNiwgOSkNCngNCg0KeCA8LSBhcy5mYWN0b3IoeCkNCngNCg0KIyBDb3JyZWN0IHdheQ0KeSA8LSBhcy5udW1lcmljKGFzLmNoYXJhY3Rlcih4KSkNCnkNCg0KIyBXcm9uZyB3YXkNCnogPC0gYXMubnVtZXJpYyh4KQ0KYGBgDQojIyBDb252ZXJ0aW5nIGEgbnVtZXJpYyB2ZWN0b3IgaW50byBhIGZhY3RvciB2ZWN0b3IgdXNpbmcgdGhlIF9jdXQoKV8gZnVuY3Rpb24NCmBgYHtyfQ0KP2N1dA0KDQp3ZmFjdCA9IGN1dCh3b21lbiR3ZWlnaHQsMykNCnRhYmxlKHdmYWN0KQ0KDQojIGFkZCBsYWJlbHMNCndmYWN0ID0gY3V0KHdvbWVuJHdlaWdodCwzLGxhYmVscyA9IGMoJ0xvdycsJ01lZGl1bScsJ0hpZ2gnKSkNCndmYWN0DQoNCnRhYmxlKHdmYWN0KQ0KYGBgDQoNCg0KIyMgQ2hhbmdlIHRoZSBvcmRlciBvZiBsZXZlbHMgYW5kIGxhYmVscyBvZiBmYWN0b3JzDQpgYGB7cn0NCiMgcGlnIGNocm9tb3NvbWVzDQpjaHJvbW9zb21lcyA8LSBmYWN0b3IoYygxOjEwLCAiWCIsICJZIiwgIk1UIiwgMTE6MTgpKQ0KY2hyb21vc29tZXMNCiMgcmVvcmRlciB0aGUgY2hyb21vc29tZSBsZXZlbHMgYW5kIGdpdmUgbW9yZSBtZWFuaW5nZnVsIGxhYmVscw0KY2hyb21vc29tZXMgPC0gZmFjdG9yKGNocm9tb3NvbWVzLCBsZXZlbHMgPSBjKDE6MTgsICJYIiwgIlkiLCAiTVQiKSwgDQogICAgICAgICAgICAgICAgICAgICBsYWJlbHMgPSBjKHBhc3RlMCgiY2hyIiwgYygxOjE4LCAiWCIsICJZIiwgIk1UIikpKSkNCmNocm9tb3NvbWVzDQpsZXZlbHMoY2hyb21vc29tZXMpDQpgYGANCg0KIyMjIFdheXMgdG8gbW9kaWZ5IGZhY3RvcnMNCmBgYHtyfQ0KIyBhZGQgbGV2ZWxzIHRvIGEgZmFjdG9yDQpudWNsZW90aWRlcyA8LSBmYWN0b3IoYygiQSIsICJUIiwgIkMiLCAiRyIpKQ0KbnVjbGVvdGlkZXMNCm51Y2xlb3RpZGVzIDwtIGZhY3RvcihjKGFzLmNoYXJhY3RlcihudWNsZW90aWRlcyksICJVIikpDQpudWNsZW90aWRlcw0KDQojIHJlbW92ZSBsZXZlbHMgZnJvbSBhIGZhY3Rvcg0KbnVjbGVvdGlkZXMgPC0gZmFjdG9yKGMoIkEiLCAiVCIsICJDIiwgIkciKSkNCm51Y2xlb3RpZGVzDQpudWNsZW90aWRlcyA8LSBmYWN0b3IoYXMuY2hhcmFjdGVyKG51Y2xlb3RpZGVzKVstMl0pDQpudWNsZW90aWRlcw0KIyBvciB1c2Ugc3Vic2V0dGluZyBhbmQgZmFjdG9yIGFnYWluDQpudWNsZW90aWRlcyA8LSBmYWN0b3IoYygiQSIsICJUIiwgIkMiLCAiRyIpKQ0KIyBkcm9wIHRoZSByZW1vdmVkIGxldmVscw0KbnVjbGVvdGlkZXMgPC0gbnVjbGVvdGlkZXNbLTIsIGRyb3AgPSBUUlVFXQ0KbnVjbGVvdGlkZXMNCg0KIyBtb2RpZnkgbGV2ZWxzIGZpcnN0DQpudWNsZW90aWRlcyA8LSBmYWN0b3IoYygiQSIsICJUIiwgIkMiLCAiRyIpKQ0KbGV2ZWxzKG51Y2xlb3RpZGVzKSA8LSBjKGxldmVscyhudWNsZW90aWRlcyksICJVIikNCm51Y2xlb3RpZGVzWzVdIDwtICJVIg0KbnVjbGVvdGlkZXMNCm51Y2xlb3RpZGVzWzNdIDwtICJVIg0KbnVjbGVvdGlkZXMNCg0KYGBgDQojIyMgQWNjZXNzIGVsZW1lbnRzIG9mIGZhY3RvcnMNClNhbWUgdG8gcmVndWxhciBhdG9taWMgdmVjdG9yIGluZGV4aW5nLCBleGNlcHQgbGV2ZWxzIGF0dHJpYnV0ZSBkb2VzIE5PVCBjaGFuZ2UNCg0KYGBge3J9DQp4IDwtIGZhY3RvcihjKCJzaW5nbGUiLCJtYXJyaWVkIiwibWFycmllZCIsInNpbmdsZSIpKQ0KDQp4WzNdICAgICAgICAgICAjIGFjY2VzcyAzcmQgZWxlbWVudA0KDQp4W2MoMiwgNCldICAgICAjIGFjY2VzcyAybmQgYW5kIDR0aCBlbGVtZW50DQoNCnhbLTFdICAgICAgICAgICMgYWNjZXNzIGFsbCBidXQgMXN0IGVsZW1lbnQNCg0KeFtjKFRSVUUsIEZBTFNFLCBGQUxTRSwgVFJVRSldICAjIHVzaW5nIGxvZ2ljYWwgdmVjdG9yDQpgYGANCg==</div>
 
 
 </div>
