@@ -73,7 +73,7 @@ unlist(x)
 ## Indexing list
 Attention should be paid to the different ways to indexing lists, especially the difference between "[]" and "[[]]".
 
->"If list x is a train carrying objects, then x[[1]] is the object in car 1; x[2:3] is a train of cars 2-3."
+>"If list x is a train carrying objects, then x[[1]] is the object in car 1; x[2:3] is a train of cars 2-3."  
 >- @RLangTip
 
 A diagram representation of different subsetting of lists: 

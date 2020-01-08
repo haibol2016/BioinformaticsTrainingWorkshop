@@ -131,7 +131,7 @@ do.call(mean, args)
 ```
 
 ## Lexical scoping
-Scoping is the set of rules that govern how R looks up the value of a name/symbol. Understanding scoping allows you to be a advanced and developer of R applications.  
+Scoping is the set of rules that govern how R looks up the value of a name/symbol. Understanding scoping allows you to be a advanced user and developer of R applications.  
 
 * build tools by composing functions  
 * overrule the usual evaluation rules and do non-standard evaluation. 

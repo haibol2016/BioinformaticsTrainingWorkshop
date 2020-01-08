@@ -5,6 +5,8 @@ output:
     toc: true
     toc_float: true
     css: style.css
+  md_document:
+    variant: markdown_github
 ---
 
 ```{r include = FALSE}
@@ -40,4 +42,15 @@ cd UNIX_tutorial
 
 cp /home/haibol/cktuggle-free/Bioinformatics.workshop/UNIX/*   ./
 
+```
+
+## Submit a batch job
+We have to two nodes reserved for the Workshop. You can submit your batch jobs to these specific nodes as follows:
+
+```bash
+# for RNA-seq data analysis on Jan 9
+sbatch --reservation=root_47 my_job_script.sbatch
+
+# for ChIP-seq data analysis on Jan 10
+sbatch --reservation=root_48 my_job_script.sbatch
 ```

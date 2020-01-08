@@ -77,11 +77,6 @@ list_1 <- list(x = 1:3,
 as.data.frame(list_1)
 
 
-list_2 <- list(x = 1:3, 
-               y = letters[1:3], 
-               z = c(TRUE, FALSE, TRUE))
-as.data.frame(list_2)
-
 # A matrix will become a data frame with the same dimensions.
 mat <- matrix(1:10, nrow = 5)
 as.data.frame(mat)
@@ -144,7 +139,7 @@ df[, 2] <- NULL
 ```
 
 ## Tibble
-Tibbles are also extended and enhanced data frames, implemented by the R package **Tibble**. They tweak some older behaviors to make life a little easier. A data structure adopted by the tidyverse packages.
+Tibbles are extended and enhanced data frames, implemented by the R package **Tibble**. They tweak some older behaviors to make life a little easier. A data structure adopted by the tidyverse packages.
 
 Key differences between tibbles and data frames are printing, subsetting, and recycling rules.  
 

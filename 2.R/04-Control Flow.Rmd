@@ -19,7 +19,7 @@ There are two primary tools of control flow: choices and loops. Choices, like **
 ### Choices
 1. **if-else** statement  
 **Attention**:  
-* Curly brace after **else** must be in the same line as **else**.  
+* Curly brace before **else** must be in the same line as **else**.  
 * The condition should evaluate to a single TRUE or FALSE.  
 Syntax  
 ```{r eval = FALSE}
@@ -72,7 +72,8 @@ try({
   if (x > 0)
   {
      print("Non-negative number")
-  } else                                # not valid syntax
+  } 
+  else                                # not valid syntax
   {
      print("Negative number")
   }
@@ -94,7 +95,7 @@ if (x < 0)
 ![](image/r_switch_statement.png)
 It's a compact, special purpose equivalent to if-else statement.  
 The switch() function returns the corresponding item to the numeric value evaluated, like indexing a vector.  
-If the numeric value is out of range (greater than the number of items in the list or smaller than 1), then, NULL is returned.  
+If the numeric value is out of range (greater than the number of items in the list or smaller than 1), then NULL is returned.  
 The expression used in the switch () function can be a string as well. In this case, the **matching named item's value** is returned, like indexing a named vector.  
 
 ```{r eval = FALSE}
@@ -156,13 +157,13 @@ dplyr::case_when(
 ```
 
 ### Loops  
-![](image/For,while, repeat.png)
+![](image/For,while, repeat.png)  
 1. **For** loop  
 **for** loops are used to iterate over items in a vector. Use a **for** loop, if you know how many iterations it will run in advance.  
 
 There are two ways to terminate a for loop early:  
-* **next** exits the current iteration.  
-* **break** exits the entire for loop.  
+* **next** exits the current iteration and go to the next iteration.  
+* **break** exits the entire **for** loop.  
 
 
 ```{r eval = FALSE}

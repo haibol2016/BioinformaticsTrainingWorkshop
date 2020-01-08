@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4,
 ```
 
 ## Matrix  
-* Matrices and arrays are implemented as vectors with special attributes: dimension.  
+* Matrices and arrays are implemented as vectors with a special attribute: dimension.  
 * Every element must have the SAME type.  
 * By default, matrices are filled in a column-major order.  
 * It is a common data structure in math.  
