@@ -10,8 +10,8 @@ output:
 ```{r include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval=TRUE, fig.width = 4, 
                       fig.height = 5, warning = FALSE, 
-                      message = FALSE, encoding = "UTF-16")
-
+                      message = FALSE, encoding = "UTF-8")
+Sys.setlocale("LC_ALL", "en_US.UTF-8")
 ```
 
 ![](image/R logo.png)  
@@ -118,6 +118,8 @@ x <- c(0.109, 0.359, 0.63, 0.996, 0.515, 0.142, 0.017, 0.829, 0.907)
 round(exp(diff(log(x))), 1)
 
 # Change the above script to a pipe-based expression
+library("tidyverse")
+x %>% log() %>% diff() %>% exp() %>% round(digits = 1)
 ```
 
 ### Logical Operators  
@@ -140,7 +142,7 @@ round(exp(diff(log(x))), 1)
 
 **Attention**: difference between | and ||, and & and &&.  
 
-* | and & are vector boolean operators.  
+* \| and & are vector boolean operators.  
 * || and && are short-circuiting boolean operators.  
 * || and && are used in if-else statement, while | and  & are used in subsetting.  
 
@@ -507,7 +509,7 @@ The types of R objects are often coerced/changed to more flexible types during c
 
 ### Attributes of R objects
 All objects can have arbitrary additional attributes, used to store meta data about the object. 
-Attributes can be thought of as a names list, with unique names.
+Attributes can be thought of as a named list, with unique names.
 
 ```{r}
 y <- 1:10
@@ -523,6 +525,7 @@ str(attr(y, "mock_attribute"))
 attributes(y)
 ```
 By default, most attributes are lost when modifying a vector. The only attributes not lost are the three most important ones:  
+
 * Names, a character vector giving each element a name
 * Dimensions, used to turn vectors into matrices and arrays
 * Class, used to implement the S3 object system  
@@ -578,7 +581,7 @@ Differences between names and values:
 
 R has strict rules about what constitutes a valid name:  
 
-* A syntactic name must consist of **letters (A-Za-z), digits (0-9), dot(.) and underscore (\_)**;  
+* A syntactic name can only consist of **letters (A-Za-z), digits (0-9), dot(.) and underscore (\_)**;  
 * A name can't begin with **underscore _ or a digit**;  
 * If a name begin with **a dot .**, next character CAN'T be **a digit**;  
 * Reserved words, like TRUE, NULL, if, and function (see the complete list in ?Reserved), CAN'T be used as names.  
@@ -610,7 +613,7 @@ The following code is doing two things:
 x <- c(1, 2, 3)
 ```
 See a diagram help clarify:  
-![](image/Name-value binding.png).
+![](image/Name-value binding.png)  
 
 The name, x, is drawn with a rounded rectangle. It has an arrow that points to (or binds or references) the value, the vector c(1, 2, 3). The arrow points in opposite direction to the assignment arrow: <- creates a binding from the name on the left-hand side to the object on the right-hand side.
 
