@@ -22,6 +22,8 @@ Large temporary space /freetmp is mounted on free nodes and on condodtn (it's no
 # you should be at your home directory
 pwd 
 
+ssh condodtn
+
 # replace <your ISU NetID> with your real NetID
 mkdir -p /freetmp/cktuggle-free/<your ISU NetID>_work   
 

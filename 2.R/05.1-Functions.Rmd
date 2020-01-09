@@ -545,7 +545,6 @@ str(k01(2, 3, a = 1))
 
 # But this doesn't work because abbreviation is ambiguous
 try({str(k01(1, 3, b = 1))})
-#> Error in k01(1, 3, b = 1): argument 3 matches multiple formal arguments
 
 # Arguments after ... must be fully named
 args(paste)

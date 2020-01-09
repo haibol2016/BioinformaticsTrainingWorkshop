@@ -67,18 +67,6 @@ if (x > 0)
     print("Negative number")
 }
 
-# Error
-try({
-  if (x > 0)
-  {
-     print("Non-negative number")
-  } 
-  else                                # not valid syntax
-  {
-     print("Negative number")
-  }
-})
-
 # nested if-else statements
 x <- 0
 if (x < 0) 
@@ -92,7 +80,7 @@ if (x < 0)
 }
 ```
 2. Swith() function  
-![](image/r_switch_statement.png)
+
 It's a compact, special purpose equivalent to if-else statement.  
 The switch() function returns the corresponding item to the numeric value evaluated, like indexing a vector.  
 If the numeric value is out of range (greater than the number of items in the list or smaller than 1), then NULL is returned.  
