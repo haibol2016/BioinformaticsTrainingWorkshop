@@ -18,7 +18,7 @@ suppressPackageStartupMessages(
 {
   library(ggplot2)
   library(grid)
-  library(dplyr)
+  library(tidyverse)
 })
 
 ```                      
@@ -85,7 +85,7 @@ First, we are going to make our first plot. This plot will be based on the gapmi
 
 ```{r}
 # to download the data directly:
-gapminder <- read.csv("https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/_episodes_rmd/data/gapminder-FiveYearData.csv")
+gapminder <- read_csv("https://raw.githubusercontent.com/swcarpentry/r-novice-gapminder/gh-pages/_episodes_rmd/data/gapminder-FiveYearData.csv")
 head(gapminder)
 str(gapminder)
 colnames(gapminder)
@@ -98,6 +98,7 @@ The output of this function is a grid with gdpPercap as the x-axis and lifeExp a
 
 ```{r}
 # describe the base ggplot object and tell it what data we are interested in along with the aesthetic mapping
+
 ggplot(data = gapminder, mapping = aes(x = gdpPercap, y = lifeExp))
 ```
 ### Aesthetic mapping to layers
@@ -128,6 +129,7 @@ One of the truly powerful features of ggplot2 is the ability to **change these a
 ```{r}
 unique(gapminder$continent)
 
+gapminder <- gapminder %>% mutate(continent = factor(continent))
 ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
   geom_point(alpha = 0.5, size = 0.5)
 ```
@@ -182,7 +184,7 @@ The scale of a plot describes the features of the space in which it is plotted. 
 ```{r}
 ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
   geom_point(alpha = 0.5) +
-  scale_x_log10()
+  scale_x_log10() +theme_clean()
 ```
 
 The default x- (and y-) axes scales are scale_x_continuous and scale_y_continuous, but other options include scale_x_sqrt and scale_x_reverse.
@@ -293,7 +295,7 @@ As an example of further customization of the ggplot theme, below we do the foll
 * move the title to the center (plot.title = element_text(hjust = 0.5))
 
 ```{r}
-ggplot(gapminder_2007) +
+gdp <- ggplot(gapminder_2007) +
   # add scatter points
   geom_point(aes(x = gdpPercap, y = lifeExp, 
                  color = continent, size = pop),alpha = 0.5) +
@@ -373,7 +375,7 @@ Use print() explicitly in functions or ggsave() with the plotting object specifi
 savePlot <- function(myPlot)
 {
   pdf("myPlot.pdf")  # Attention to path
-  print(myPlot)
+  myPlot
   dev.off()
   
   

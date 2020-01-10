@@ -81,10 +81,13 @@ We will use the following datasets.
 All data can be accessed from the Condo HPC directory: **/home/haibol/cktuggle-free/Bioinformatics.workshop/ChIP-seq/chipseq_project**. You can create a symbolic link to the directory as follows:
 
 ```bash
+salloc -N 1 -n 8 -t 4:00:00  --reservation=root_48
 mkdir -p chipseq_project_demon
 cd chipseq_project_demon
-ln -s  /home/haibol/cktuggle-free/Bioinformatics.workshop/ChIP-seq/chipseq_project/*   ./
-cd ../
+
+# ln -s  /home/haibol/cktuggle-free/Bioinformatics.workshop/ChIP-seq/chipseq_project/*   ./
+
+
 ```
 
 **Directory setup** (10 minutes)
@@ -105,6 +108,11 @@ cd chipseq_project
 
 ```
 mkdir -p data/fastq
+
+cd data/fastq
+ln -s   /home/haibol/cktuggle-free/Bioinformatics.workshop/ChIP-seq/chipseq_project/data/fastq/*.fastq  ./
+
+cd ../../
 
 mkdir -p data/map
 

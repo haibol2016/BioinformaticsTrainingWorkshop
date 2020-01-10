@@ -12,12 +12,12 @@ knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.width = 4,
                       message = FALSE, encoding = "UTF-16")
 ```
 
-In this session we will analyze a RNA-seq data set from whole blood of pigs selected for high residue feed intake (RFI) and muscularlly injected with LPS.This data set was part of the data published recently (Liu et al., 2019) in [BMC Genomics](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-019-6127-x). For more details about the experimental design, RNA preparation, RNA-seq and data preprocessing, Please see below.
-
+In this session we will analyze a RNA-seq data set from whole blood of pigs selected for high residue feed intake (RFI) and muscularlly injected with LPS.This data set was part of the data published recently (Liu et al., 2019) in [BMC Genomics](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-019-6127-x). For more details about the experimental design, RNA preparation, RNA-seq and data preprocessing, Please see below.  
+![](experimental design.png)  
 
 ## Introduction to RNA-seq data generation
 ### Animals, Experimental design and sample collection
-The pigs were from Generation 8 of the Yorkshire pig lines selected for high RFI at ISU. Figure 1 shows the experimental design. A total of 7 gilts with an initial body weight (BW) of 63 ± 4 kg from the high-RFI lines  were randomly selected. Pigs were housed in randomly assigned individual metabolism crates, had ad libitum access to water, and were fed a corn-soy-based diet twice daily (8:00 am and 5:00 pm), with feed restriction (1.5 kg/day), as previously described. After a 9-day adaptation period, pigs within each line were randomly assigned to either a control (n = 3) or LPS treatment (n = 4) group. Pigs in the treatment group were then challenged with LPS using an established method via intramuscular injection of 30 μg/kg BW of LPS from E. coli O55:B5 (Sigma-Aldrich, St. Louis, MO, USA) dissolved in a endotoxin-free, sterile saline solution at baseline, 0 h post injection (hpi). Pigs in the control group were injected with an equivalent volume of endotoxin-free, sterile saline solution at the equivalent time. At 0, 2, 6, and 24 hpi, blood samples were collected from the jugular vein into Tempus Blood RNA tubes (Life Technologies, Grand Island, NY, USA) for long-term storage at -80 C,  Injection and blood collection followed the same order which was the predefined order of metabolism crates in the pen rooms.
+The pigs were from Generation 8 of the Yorkshire pig lines selected for high RFI at ISU. Figure 1 shows the experimental design. A total of 7 gilts with an initial body weight (BW) of [59,67] kg from the high-RFI lines  were randomly selected. Pigs were housed in randomly assigned individual metabolism crates, had ad libitum access to water, and were fed a corn-soy-based diet twice daily (8:00 am and 5:00 pm), with feed restriction (1.5 kg/day), as previously described. After a 9-day adaptation period, pigs within each line were randomly assigned to either a control (n = 3) or LPS treatment (n = 4) group. Pigs in the treatment group were then challenged with LPS using an established method via intramuscular injection of 30 ug/kg BW of LPS from E. coli O55:B5 (Sigma-Aldrich, St. Louis, MO, USA) dissolved in a endotoxin-free, sterile saline solution at baseline, 0 h post injection (hpi). Pigs in the control group were injected with an equivalent volume of endotoxin-free, sterile saline solution at the equivalent time. At 0, 2, 6, and 24 hpi, blood samples were collected from the jugular vein into Tempus Blood RNA tubes (Life Technologies, Grand Island, NY, USA) for long-term storage at -80 C, Injection and blood collection followed the same order which was the predefined order of metabolism crates in the pen rooms.
 
 ### RNA preparation
 Total RNA was extracted from the Tempus tube samples of the treatment groups by using preserved blood RNA purification kit I (Norgen Biotek Corp, Thorold, Ontario, CA) per the manufacturer's instructions. On-column DNA digestion was performed using DNase I (Qiagen, Valencia, CA, USA). Globin transcripts (HBB and HBA) were depleted by following an RNase H-mediated method. The quantity and integrity of the RNA were monitored by using Nanodrop 2000 (Thermo Scientific, Waltham, MA, USA) and Bioanalyzer 2100 (Agilent Technologies, Santa Clara, CA, USA) before and after globin depletion. The efficiency of globin depletion of each sample was checked by conventional RT-qPCR with ACTB and GAPDH as the internal controls. Globin depletion efficiencies for all RNA samples were above 85%. Metadata, including RNA integrity numbers (RINs) and concentration of RNA post globin depletion, CBC, and sequencing batches are available in the file: "metadata.txt".
@@ -62,7 +62,13 @@ wget ftp://ftp.ensembl.org/pub/release-97/gtf/sus_scrofa/Sus_scrofa.Sscrofa11.1.
 gunzip Sus_scrofa.Sscrofa11.1.97.gtf.gz
 ```
 
-2. create genome index for mapping using STAR. This step takes a long time (~2 hours). You don't need to run the script below because I have generate the genome index for you.  
+2. create genome index for mapping using STAR. This step takes a long time (~2 hours). You don't need to run the script below because I have generate the genome index for you. To generate a SLURM job script, you can use [this web tool](https://www.hpc.iastate.edu/guides/classroom-hpc-cluster/slurm-job-script-generator).   
+
+```bash
+cd ../
+pwd
+```
+
 ```bash
 #!/bin/bash
 
@@ -83,18 +89,20 @@ gunzip Sus_scrofa.Sscrofa11.1.97.gtf.gz
 
 i=$(($SLURM_ARRAY_TASK_ID - 1))
 
-module load star/2.5.3a-rdzqclb
-fasta=pig_genome/Sus_scrofa.Sscrofa11.1.dna.toplevel.fa
-gtf=pig_genome/Sus_scrofa.Sscrofa11.1.97.gtf
-mkdir -p  P.97.sjdboverhang49
+STAR=/home/haibol/cktuggle-free/bin/STAR/bin/Linux_x86_64/STAR
+in=pig_genome
+fasta=$in/Sus_scrofa.Sscrofa11.1.dna.toplevel.fa
+gtf=$in/Sus_scrofa.Sscrofa11.1.97.gtf
+out=$in/P.97.sjdboverhang48
+mkdir -p $out
 
-STAR  --runThreadN 4  \
+$STAR --runThreadN 4  \
       --runMode  genomeGenerate \
       --limitGenomeGenerateRAM  128000000000 \
-      --genomeDir  P.97.sjdboverhang49  \
+      --genomeDir $out  \
       --genomeFastaFiles  $fasta \
       --sjdbGTFfile    $gtf \
-      --sjdbOverhang 49
+      --sjdbOverhang 48
 ```
 
 To get acess to the genome index I have created, create symbolic links to the genome index directory.
@@ -102,7 +110,7 @@ To get acess to the genome index I have created, create symbolic links to the ge
 ```bash
    pwd  # you should in the pig_genome directory you just created
    
-   ln -s /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/pig_genome/P.97.sjdboverhang49 ./
+   ln -s /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/pig_genome/P.97.sjdboverhang48 ./
 ```
 
 3. check quality of the sequencing data. This will only take a few minutes (< 5 min). Copy the following scripts to the folder **scripts** and save as **0.1.fastqc.sbatch**.
@@ -118,6 +126,7 @@ To get acess to the genome index I have created, create symbolic links to the ge
 #SBATCH --ntasks-per-node=4   # 2 processor core(s) per node
 #SBATCH --mem=8G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --reservation=root_48
 #SBATCH --array=1-2   # we only have two files
 #SBATCH --job-name="fastqc"
 #SBATCH --mail-user=haibol@iastate.edu   # email address
@@ -162,6 +171,7 @@ scancel <jobID>
 #SBATCH --ntasks-per-node=1   # 2 processor core(s) per node
 #SBATCH --mem=4G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --reservation=root_48
 #SBATCH --array=1  
 #SBATCH --job-name="multiqc"
 #SBATCH --mail-user=haibol@iastate.edu   # email address
@@ -192,6 +202,7 @@ multiqc --filename  LPS.HRFI.multiQC  --outdir  $out  results/fastqc.out
 #SBATCH --ntasks-per-node=4  # 36 processor core(s) per node 
 #SBATCH --mem=32G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --reservation=root_48
 #SBATCH --job-name="STAR"
 #SBATCH --array=1
 #SBATCH --output="logs/out.star.%A_%a.txt" # job standard output file (%j replaced by job id)
@@ -199,9 +210,10 @@ multiqc --filename  LPS.HRFI.multiQC  --outdir  $out  results/fastqc.out
 
 # LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
 
-module load star/2.5.3a-rdzqclb
+
 
 i=$(($SLURM_ARRAY_TASK_ID - 1))
+STAR=/home/haibol/cktuggle-free/bin/STAR/bin/Linux_x86_64/STAR
 
 R1=(`ls data/*_1.fq.gz`)
 R2=(`ls data/*_2.fq.gz`)
@@ -213,7 +225,7 @@ gtf=pig_genome/Sus_scrofa.Sscrofa11.1.97.gtf
 out=results/STAR.out
 mkdir -p $out
 
-STAR  --runThreadN 4  \
+$STAR  --runThreadN 4  \
       --readFilesCommand  zcat  \
       --outFileNamePrefix  ${out}/${names[${i}]}. \
       --genomeDir  $genomeDir  \
@@ -249,6 +261,7 @@ STAR  --runThreadN 4  \
 #SBATCH --ntasks-per-node=2   # 36 processor core(s) per node 
 #SBATCH --mem=8G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --reservation=root_48
 #SBATCH --job-name="featureCounts"
 #SBATCH --array=1
 #SBATCH --output="logs/out.featureCount.%A_%a.txt" # job standard output file (%j replaced by job id)
@@ -287,6 +300,7 @@ First, we need to sort the BAM file by coordinate using samtools. This step take
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=4   # 36 processor core(s) per node 
 #SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --reservation=root_48
 #SBATCH --mem=16G   # maximum memory per node
 #SBATCH --job-name="samtools"
 #SBATCH --array=1
@@ -319,6 +333,7 @@ Then we run the post-alignment QC using QoRTs. This step takes ~33 min.
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # 36 processor core(s) per node 
 #SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --reservation=root_48
 #SBATCH --mem=8G   # maximum memory per node
 #SBATCH --job-name="QoRTs"
 #SBATCH --array=1
@@ -363,6 +378,8 @@ For this practice, you don't need to run the following script. If you have multi
 #SBATCH --time=12:00:00   # walltime limit (HH:MM:SS)
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # 36 processor core(s) per node 
+#SBATCH --partition=freecompute    # freecompute node(s)
+#SBATCH --reservation=root_48
 #SBATCH --mem=24G   # maximum memory per node
 #SBATCH --job-name="markdup"
 #SBATCH --array=1

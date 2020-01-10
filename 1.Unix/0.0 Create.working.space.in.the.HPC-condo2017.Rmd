@@ -42,7 +42,7 @@ The Materials for the UNIX session (except the PPTX files) are located in the co
 mkdir UNIX_tutorial
 cd UNIX_tutorial
 
-cp /home/haibol/cktuggle-free/Bioinformatics.workshop/UNIX/*   ./
+cp -r /home/haibol/cktuggle-free/Bioinformatics.workshop/UNIX/*   ./
 
 ```
 
