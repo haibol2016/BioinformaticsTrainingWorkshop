@@ -20,6 +20,7 @@ R topics we will cover in this workshop are lsit below.
 * Basics of P programming  
   + About R  
   + Installation of R and Rstudio  
+  + Basic R operators
   + R objects  
   + Names and values  
   + R object housekeeping  
@@ -34,6 +35,9 @@ R topics we will cover in this workshop are lsit below.
   + Matrices and arrays
   + Data frames and the like
   + More on subsetting
+* Control flow
+  + Choices (if-else, switch, ifelse)
+  + Loops (for, while, repeat)
 * Functions
   + Overview of functions 
   + Create functions
@@ -43,25 +47,24 @@ R topics we will cover in this workshop are lsit below.
   + ... arguments
   + Exiting a function
   + Argument matching rules for function calls
-  + Common functions
-* Control flow
-  + Choices (if-else, switch, ifelse)
-  + Loops (for, while, repeat)
-* I/O
+  + Common built-in functions
+* Data input and output
   + Input
-  + Output
-  + Viewing data
-  + Handling missing values
-* Data manipulation
-  + Operators
-  + Tidy data with tidyr
-  + Data manipulation with dplyr
-  + Data structure and type conversion
-* Data visualization
-  + Overview of R graphics systems
+  + Output  
+  + Viewing data  
+  + Handling missing values  
+* Data manipulation  
+  + Tidy data with tidyr  
+  + Data manipulation with dplyr  
+  + Data structure and type conversion  
+* Data visualization  
+  + Overview of R graphics systems  
+  + R base graphics  
   + ggplot2 and the like
+  + Correlation and heatmap
 * Statistical analysis
-  + Univariate statistics
+  + Descriptive statistics
+  + hypothesis test
   + Multivariate statistics
 * Running R in batch mode
   + Rscript
@@ -77,16 +80,34 @@ R topics we will cover in this workshop are lsit below.
 BiocManager::install() can be used to install packages from CRAN and Bioconductor sites.
 
 ```bash
-# on Linux, where gfortran is used for fortran-based R package installation, run the following code:
-module load r/
-export f77=gfortran
-export FC=gfortran
-export FLIBS=-L/usr/local/gfortran/lib
+module load r/3.6.0-py2-fupx2uq
+
+# Create a R configuration files to sepcify compiling parameters for R package installation: .R/Makevars
+
+f77 = gfortran
+FC = gfortran
+CFLAGS = -std=gnu99 -Wall
+
+CXX = g++
+CXXSTD = -std=c++11
+
+CXX98 = g++
+CXX98STD = -std=c++98
+
+CXX11 = g++
+CXX11STD = -std=c++11
+
+CXX14 = g++
+CXX14STD = -std=c++14
+```
+
+```bash
+# start R in an interactive mode
+R
 ```
 
 ```{r}
-# Install all required packages for this R session, and later RNA-seq and ChIP-seq data analysis practice.
-
+# Install all required packages for R, and later RNA-seq and ChIP-seq data analysis practice.
 
 packages_list <- c("aplpack", "bootstrap", "broom", "ca", "car", "cluster", "colorspace", "ComplexHeatmap", "corrplot", "d3heatmap", "DAAG", "datasets", "dendextend", "devtools", "doBy", "downloader", "dplyr", "factoextra", "FactoMineR", "fpc", "gclus", "ggforce", "ggm", "ggthemes", "gplots", "grDevices", "grid", "gvlma", "hexbin", "Hmisc", "lattice", "leaps", "MASS", "mclust", "methods", "multcomp", "NbClust", "nFactors", "openxlsx", "pastecs", "pheatmap", "polycor", "psych", "pvclust", "Rcmdr", "RColorBrewer", "readxl", "relaimpo", "rgl", "rmarkdown", "scatterplot3d", "sm", "tibble", "tidyverse", "vcd", "vioplot", "XLConnect", "DESeq2", "edgeR", "pca3d", "sva", "limma", "genefilter", "WriteXLS", "DiffBind", "ChIPQC",  "ChIPseeker", "GenomicFeatures", "magick")
 
@@ -109,6 +130,7 @@ for (pkg in packages_list)
     }
 }
 
+q(save = "no")
 ```
 
 To use devtools, you have to install devtools along with a working development environment.  
