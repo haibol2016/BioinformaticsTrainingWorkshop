@@ -41,6 +41,7 @@ The files are located in my work directory: /home/haibol/cktuggle-free/Bioinform
 ```bash
 # login to the Condo cluster
 ssh <ISU NetID>@condo2017.its.iastate.edu
+ssh condodtn
 
 # make directories
 mkdir -p RNA-seq
@@ -51,7 +52,7 @@ mkdir -p data scripts results logs pig_genome
 cd data
 ln -s /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/data/*.fq.gz ./
 
-# Download the pig genome fasta file and the gtf filefrom Ensembl
+# Download the pig genome fasta file and the gtf file from Ensembl
 cd ../pig_genome
 
 # download SSC11.1 fasta file and uncompress the file
@@ -62,12 +63,14 @@ wget ftp://ftp.ensembl.org/pub/release-97/gtf/sus_scrofa/Sus_scrofa.Sscrofa11.1.
 gunzip Sus_scrofa.Sscrofa11.1.97.gtf.gz
 ```
 
-2. create genome index for mapping using STAR. This step takes a long time (~2 hours). You don't need to run the script below because I have generate the genome index for you. To generate a SLURM job script, you can use [this web tool](https://www.hpc.iastate.edu/guides/classroom-hpc-cluster/slurm-job-script-generator).   
+2. Create genome index for mapping using STAR. This step takes a long time (~2 hours). You don't need to run the script below because I have generated the genome index for you. To generate a SLURM job script, you can use [this web tool](https://www.hpc.iastate.edu/guides/classroom-hpc-cluster/slurm-job-script-generator).  
 
 ```bash
 cd ../
 pwd
 ```
+
+Copy the following script to the **scripts** folder and save as **0.0.starindex.sbatch**.
 
 ```bash
 #!/bin/bash
@@ -105,15 +108,31 @@ $STAR --runThreadN 4  \
       --sjdbOverhang 48
 ```
 
-To get acess to the genome index I have created, create symbolic links to the genome index directory.
-
+Submit the job and check its running status:
 ```bash
-   pwd  # you should in the pig_genome directory you just created
-   
-   ln -s /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/pig_genome/P.97.sjdboverhang48 ./
+pwd   # you should in the RNA_seq directory. if not change your directory to RNA_seq.
+
+# Submit the job by running the following code:
+sbatch scripts/0.0.starindex.sbatch
+
+# Chech job running status
+squeue -u  <ISU NetID>
+
+# cancle a job if needed
+scancel <jobID>
 ```
 
-3. check quality of the sequencing data. This will only take a few minutes (< 5 min). Copy the following scripts to the folder **scripts** and save as **0.1.fastqc.sbatch**.
+For this workshop, I have created the genome index. To get acess to the genome index I have created, create symbolic links to the genome index directory.
+
+```bash
+cd pig_genome
+
+pwd  # you should in the pig_genome directory you just created
+   
+ln -s /home/haibol/cktuggle-free/Bioinformatics.workshop/RNA-seq/pig_genome/P.97.sjdboverhang48 ./
+```
+
+3. Check the quality of the sequencing data. This will only take a few minutes (< 5 min). Copy the following scripts to the folder **scripts** and save as **0.1.fastqc.sbatch**.
 
 ```bash
 #!/bin/bash
@@ -126,7 +145,6 @@ To get acess to the genome index I have created, create symbolic links to the ge
 #SBATCH --ntasks-per-node=4   # 2 processor core(s) per node
 #SBATCH --mem=8G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
-#SBATCH --reservation=root_48
 #SBATCH --array=1-2   # we only have two files
 #SBATCH --job-name="fastqc"
 #SBATCH --mail-user=haibol@iastate.edu   # email address
@@ -147,18 +165,21 @@ mkdir -p $out
 fastqc -o $out -t 4  --extract ${fastq[$i]}
 ```
 
-Submit and check job running status:
+Submit the job and check its running status:
 ```bash
+pwd   # you should in the RNA_seq directory. If not change to the destination.
+
+
 # Submit the job by running the following code:
-sbatch 0.1.fastqc.sbatch
+sbatch scripts/0.1.fastqc.sbatch
 
 # Chech job running status
 squeue -u  <ISU NetID>
 
-# cancle a job
+# cancle a job if needed
 scancel <jobID>
 ```
-4. synthesize a QC report using MultiQC (< 2 min)  
+4. synthesize a QC report using MultiQC (< 2 min). Copy the following script and save to the **scripts** folder as **0.2.multiqc.sbatch**.
 
 ```bash
 #!/bin/bash
@@ -171,7 +192,6 @@ scancel <jobID>
 #SBATCH --ntasks-per-node=1   # 2 processor core(s) per node
 #SBATCH --mem=4G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
-#SBATCH --reservation=root_48
 #SBATCH --array=1  
 #SBATCH --job-name="multiqc"
 #SBATCH --mail-user=haibol@iastate.edu   # email address
@@ -189,7 +209,19 @@ mkdir -p $out
 multiqc --filename  LPS.HRFI.multiQC  --outdir  $out  results/fastqc.out
 ```
 
-5. Alignment of reads to the reference genome. Please refer to the [STAR manual](https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf) for detailed explanation of the option setting. This step takes ~18 min.  
+Submit the job and check job running status:
+```bash
+pwd   # you should in the RNA_seq directory. if not, change to it.
+
+# Submit the job by running the following code:
+sbatch scripts/0.2.multiqc.sbatch
+
+# Chech job running status
+squeue -u  <ISU NetID>
+
+```
+
+5. Alignment of reads to the reference genome. Please refer to the [STAR manual](https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf) for detailed explanation of the option setting. This step takes ~18 min. Copy the following script and save to the **scripts** folder as **0.3.starmapping.sbatch**. 
 
 ```bash
 #!/bin/bash
@@ -202,7 +234,6 @@ multiqc --filename  LPS.HRFI.multiQC  --outdir  $out  results/fastqc.out
 #SBATCH --ntasks-per-node=4  # 36 processor core(s) per node 
 #SBATCH --mem=32G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
-#SBATCH --reservation=root_48
 #SBATCH --job-name="STAR"
 #SBATCH --array=1
 #SBATCH --output="logs/out.star.%A_%a.txt" # job standard output file (%j replaced by job id)
@@ -210,16 +241,14 @@ multiqc --filename  LPS.HRFI.multiQC  --outdir  $out  results/fastqc.out
 
 # LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
 
-
-
 i=$(($SLURM_ARRAY_TASK_ID - 1))
 STAR=/home/haibol/cktuggle-free/bin/STAR/bin/Linux_x86_64/STAR
 
 R1=(`ls data/*_1.fq.gz`)
 R2=(`ls data/*_2.fq.gz`)
-names=(`ls data/*_1.fq.gz | perl -p -e 's{.+/(.+?)_fq.gz}{$1}'`)
+names=(`ls data/*_1.fq.gz | perl -p -e 's{.+/(.+?)_1.fq.gz}{$1}'`)
 
-genomeDir=pig_genome/P.97.sjdboverhang49
+genomeDir=pig_genome/P.97.sjdboverhang48
 gtf=pig_genome/Sus_scrofa.Sscrofa11.1.97.gtf
 
 out=results/STAR.out
@@ -248,7 +277,19 @@ $STAR  --runThreadN 4  \
       --outSAMtype BAM Unsorted \
       --outReadsUnmapped Fastx
 ```
-6. Get read count table per gene using featureCounts. This step takes ~ 6 min.  
+
+Submit the job and check job running status:
+```bash
+pwd   # you should in the RNA_seq directory. if not, change to it.
+
+# Submit the job by running the following code:
+sbatch scripts/0.3.starmapping.sbatch
+
+# Chech job running status
+squeue -u  <ISU NetID>
+```
+
+6. Get read count table per gene using featureCounts. This step takes ~ 6 min. Copy the following script and save to the **scripts** folder as **0.4.featurecounts.sbatch**.  
 
 ```bash
 #!/bin/bash
@@ -261,7 +302,6 @@ $STAR  --runThreadN 4  \
 #SBATCH --ntasks-per-node=2   # 36 processor core(s) per node 
 #SBATCH --mem=8G   # maximum memory per node
 #SBATCH --partition=freecompute    # freecompute node(s)
-#SBATCH --reservation=root_48
 #SBATCH --job-name="featureCounts"
 #SBATCH --array=1
 #SBATCH --output="logs/out.featureCount.%A_%a.txt" # job standard output file (%j replaced by job id)
@@ -284,13 +324,25 @@ time featureCounts -a $gtf  -p -d 25 \
                 -F GTF -g gene_id -G $genome -s 0 \
                 -o ${out}/LPS_RNAseq.count.table.txt \
                 -t exon -T 2  ${bam[@]}
+                
 # cut -f2-6 --complement ${out}/LPS_RNAseq.count.table.txt > ${out}/LPS_RNAseq.count.table.reformatted.txt
 
 ```
+Submit the job and check job running status:
+```bash
+pwd   # you should in the RNA_seq directory. if not, change to it.
 
-7. Post-alignment quality control using QoRT. 
+# Submit the job by running the following code:
+sbatch scripts/0.4.featurecounts.sbatch
 
-First, we need to sort the BAM file by coordinate using samtools. This step takes ~10 min.
+# Chech job running status
+squeue -u  <ISU NetID>
+```
+
+7. Post-alignment quality control using QoRTs. 
+
+First, we need to sort the BAM file by coordinate using samtools. This step takes ~10 min. Copy the following script and save to the **scripts** folder as **0.5.samtools.sort.sbatch**.  
+
 ```bash
 #!/bin/bash
 # Copy/paste this job script into a text file and submit with the command:
@@ -300,7 +352,6 @@ First, we need to sort the BAM file by coordinate using samtools. This step take
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=4   # 36 processor core(s) per node 
 #SBATCH --partition=freecompute    # freecompute node(s)
-#SBATCH --reservation=root_48
 #SBATCH --mem=16G   # maximum memory per node
 #SBATCH --job-name="samtools"
 #SBATCH --array=1
@@ -323,7 +374,19 @@ samtools sort  -l 5 -m 4G -o ${out}/${name[$i]}.srt.bam  -O BAM -@ 4  ${bam[$i]}
 samtools index  ${out}/${name[$i]}.srt.bam
 ```
 
-Then we run the post-alignment QC using QoRTs. This step takes ~33 min.
+Submit the job and check job running status:
+```bash
+pwd   # you should in the RNA_seq directory. if not, change to it.
+
+# Submit the job by running the following code:
+sbatch scripts/0.5.samtools.sort.sbatch
+
+# Chech job running status
+squeue -u  <ISU NetID>
+```
+
+Then we run the post-alignment QC using QoRTs. This step takes ~33 min. Copy the following script and save to the **scripts** folder as **0.6.QoRTs.sbatch**.
+
 ```bash
 #!/bin/bash
 # Copy/paste this job script into a text file and submit with the command:
@@ -333,7 +396,6 @@ Then we run the post-alignment QC using QoRTs. This step takes ~33 min.
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # 36 processor core(s) per node 
 #SBATCH --partition=freecompute    # freecompute node(s)
-#SBATCH --reservation=root_48
 #SBATCH --mem=8G   # maximum memory per node
 #SBATCH --job-name="QoRTs"
 #SBATCH --array=1
@@ -355,7 +417,7 @@ mkdir -p ${out_dir}
 
 
 ## USAGE: java [Java Options] -jar QoRTs.jar QC [options] infile  gtffile.gtf qcDataDir
-QoRT  QC --RNA \
+QoRTs  QC --RNA \
         --keepMultiMapped \
         --noGzipOutput  \
         --generateMultiPlot \
@@ -367,8 +429,18 @@ QoRT  QC --RNA \
         --outfilePrefix  ${names[$i]} \
         ${bams[$i]}  $gtf  ${out_dir}
 ```
+Submit the job and check job running status:
+```bash
+pwd   # you should in the RNA_seq directory. if not, change to it.
 
-For this practice, you don't need to run the following script. If you have multiple samples, you can generate a synthesized report by running the following script. For the format of the "sample.decoder.txt" file, see Page 6 of the [QoRTs tutorial](https://hartleys.github.io/QoRTs/doc/example-walkthrough.pdf).  
+# Submit the job by running the following code:
+sbatch scripts/0.6.QoRTs.sbatch
+
+# Chech job running status
+squeue -u  <ISU NetID>
+```
+
+For this practice, you don't need to run the following script. If you have multiple samples, you can generate a synthesized report by running the following script. For the format of the "sample.decoder.txt" file, see Page 6 of the [QoRTs tutorial](https://hartleys.github.io/QoRTs/doc/example-walkthrough.pdf). Copy the following script and save to the **scripts** folder as **0.7.multiqc.QoRTs.sbatch**. 
 ```bash
 #!/bin/bash
 
@@ -379,7 +451,6 @@ For this practice, you don't need to run the following script. If you have multi
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --ntasks-per-node=1   # 36 processor core(s) per node 
 #SBATCH --partition=freecompute    # freecompute node(s)
-#SBATCH --reservation=root_48
 #SBATCH --mem=24G   # maximum memory per node
 #SBATCH --job-name="markdup"
 #SBATCH --array=1
@@ -395,11 +466,23 @@ module load r/3.6.0-py2-fupx2uq
 Rscript  ~/bin/QoRTs/scripts/qortsGenMultiQC.R  results/QoRTs_QC.out/  sample.decoder.txt   results/QoRTs_QC.out/
 ```
 
+Submit the job and check job running status:
+```bash
+pwd   # you should in the RNA_seq directory. if not, change to it.
+
+# Submit the job by running the following code:
+sbatch scripts/0.7.multiqc.QoRTs.sbatch
+
+# Chech job running status
+squeue -u  <ISU NetID>
+```
 
 ## Differential expression analysis
 Please download the full count table ("LPS.HRFI.count.table.txt"), along with the metadata("metadata.txt"), for RNA-seq of the 16 HRFI pigs from the GitHub folder, which are located in the folder: haibol2016/BioinformaticsTrainingWorkshop/3.RNA_seq/.
 
 Prior to differential expression analysis, please remove the **hemoglobin genes (HBA and HBB)** and genes with few reads from the count table, such that only genes with count per million (cpm) mapped reads greater than one in at least four samples were kept.
+
+Perform DEG analysis using R installed in your local computer.
 
 ```{r eval = FALSE}
 pkgs <- c("tidyverse", "DESeq2", "edgeR", "limma", "WriteXLS", "pheatmap",
@@ -430,8 +513,8 @@ plot.3dPCA <- function(exp.data, meta.data, legend = FALSE)
                show.ellipses = TRUE, group = meta.data$groups, radius = 2, 
                shape = "sphere", show.axes = TRUE, show.axe.titles = TRUE,
                show.plane = FALSE, legend = "topright") 
-    }else{
-        pca3d( pc, components = 1:3, col = as.integer(meta.data$groups), 
+    } else {
+        pca3d(pc, components = 1:3, col = as.integer(meta.data$groups), 
                show.ellipses = TRUE, group = meta.data$groups, radius = 2, 
                shape = "sphere", show.axes = TRUE, show.axe.titles = TRUE,
                show.plane = FALSE) 
@@ -475,7 +558,7 @@ get.adj <- function(expr.data=NULL, design=NULL, ncol.interest = NULL)
     adj.exp
 }
 
-#### Heatmap showing sample distances
+## Heatmap showing sample distances
 distancePlot <- function(sampleDists, sampleNames)
 {
     sampleDistMatrix <- as.matrix(sampleDists)
@@ -522,7 +605,7 @@ count <- as.data.frame(count)
 rownames(count) <- count[, 1]
 count <- count[, -1]
 
-#### plot raw  read count mapped to the transcriptome per sample
+# plot raw  read count mapped to the transcriptome per sample
 pdf(file = file.path(out, "1.0 Number of reads assigened to gene features.pdf"), 
     width = 6, height = 4)
 # par(mar=c(9.1,4.1,4.1,2.1))
@@ -711,5 +794,3 @@ heat <- pheatmap(
 print(heat)
 dev.off()
 ```
-
-
