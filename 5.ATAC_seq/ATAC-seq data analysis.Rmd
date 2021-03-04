@@ -454,8 +454,9 @@ macs2 callpeak  --treatment  ${bam[$i]}  -f BAMPE  -g hs  --keep-dup 1  \
                 --outdir  ${peak_dir} \
                 --name  ${bam[$i]} \
                 --bdg  --trackline \
-                --SPMR  \
-                --shift  0 \
+		--nomodel \
+                --shift  -50 \
+		--extsize 100 \
                 --tempdir ./ 
 ```
 ## Plot saturation curves  (Figure 4A and 4B)
