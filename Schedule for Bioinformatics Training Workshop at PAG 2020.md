@@ -1,4 +1,5 @@
 # **Schedule for Bioinformatics Training Workshop @ PAG2020**
+This Bioinformatics Training Workshop was financially supported by USDA NIFA grant 2020-67015-30982, as well as the Swine, Horse, Poultry and Bovine NRSP8 Genome Coordinators.
 >**Notice: For participants do not meet the prerequisites, the workshop will start at 2:00PM January 8, 2020; while for advanced participants who have basic knowledge of and experience with UNIX command line and R programming language are expected to start at 8:00 AM January 9, 2020. To prepare yourself for the workshop, you can teach yourself some basic Unix and R via the resources provided by the appendix**.
 ***
 ## **Day 1: Jan 8, 2020 (2:00 PM - 5:30 PM)**
