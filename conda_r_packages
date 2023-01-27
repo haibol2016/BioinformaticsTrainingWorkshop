@@ -1,0 +1,13 @@
+#Chris HPC administrator
+# I was able to build an enviroment with the packages you requested, the anaconda search page at https://anaconda.org/search was quite helpful.  Most just needed the bioconda and conda-forge channels with minor name changes:
+
+conda create -p /path/to/conda/location -c bioconda -c conda-forge r-base r-essentials gcc gxx gfortran \
+          "bioconductor-AnnotationDbi" "r-batchtools" "bioconductor-Biobase" "bioconductor-Biostrings" \
+           "bioconductor-bsgenome" "bioconductor-cleanUpdTSeq" "r-depmixS4" "r-dplyr" "r-flock" "r-future" \
+           "r-future.apply" "bioconductor-GenomeInfoDb" "bioconductor-GenomicRanges" "bioconductor-GenomicFeatures" \
+           "r-ggplot2" "bioconductor-IRanges" "bioconductor-limma" "r-magrittr" "r-parallelly" "bioconductor-plyranges" \
+           "bioconductor-preprocessCore" "r-readr" "r-reshape2" "r-RSQLite" "bioconductor-S4Vectors" "r-r.utils" \
+           "bioconductor-BiocGenerics" "bioconductor-BiocStyle" "bioconductor-bsgenome.Mmusculus.UCSC.mm10" \
+           "bioconductor-bsgenome.Hsapiens.UCSC.hg19" "bioconductor-EnsDb.Hsapiens.v86" "bioconductor-EnsDb.Mmusculus.v79" \
+           "bioconductor-rtracklayer" "r-optparse" "bioconductor-TxDb.Hsapiens.UCSC.hg19.knownGene" \
+           "bioconductor-TxDb.Mmusculus.UCSC.mm10.knownGene"
